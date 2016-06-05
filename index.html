@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Math Playground</title>
+    <link rel="stylesheet" href="app/css/mathquill.css"/>
+    <link rel="stylesheet" href="app/css/main.css">
+</head>
+<body>
+<!-- I don't know how to properly import this stuff using JSPM, so until I figure out how to do that here they are.
+MathQuill depends on jQuery so I can't import that using jspm. -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.4/TweenMax.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.16.1/plugins/TextPlugin.min.js"></script>
+<script src="app/js/lib/jquery-ui.js"></script> <!--TODO: Download only the parts of jQuery UI that I need, maybe use jspm. Also remember I edited stuff in jquery-ui -->
+<script src="app/js/lib/mathquill.min.js"></script>
+
+<script src="jspm_packages/system.js"></script>
+<script src="config.js"></script>
+
+<div id="magic-box-div">
+<span id="magic-box">2^3</span>
+</div>
+
+<div id="playground">
+    <div id="testsnapboxcontainer">
+        <div id="testsnapbox"></div>
+    </div>
+
+    <div id="testdragger"></div>
+</div>
+<!--<script src="js/main.js"></script>
+<script src="js/lib.js"></script>-->
+<script>
+    System.import('app/js/main.js');
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "mathplayground",
+  "version": "1.0.0",
+  "dependencies": {
+    "babel-preset-es2015": "^6.9.0",
+    "babel-cli": "^6.9.0",
+    "gulp": "^3.9.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "jspm": "^0.16.35"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "jspm": {
+    "dependencies": {
+      "jquery": "npm:jquery@^2.2.4",
+      "mathquill": "npm:mathquill@^0.10.1-b",
+      "snap.svg": "github:adobe-webplatform/Snap.svg@^0.4.1"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4"
+    }
+  }
+}
