@@ -12,8 +12,38 @@ $(document).ready()
             enter: onBoxEnter
         }
     });
+    $('#testsnapboxcontainer').draggable();
     $('#testdragger').draggable();
-    $('#testdragger').draggable("option", {snap: "#testsnapbox", snapMode: "inner", snapTolerance: 10});
+    let lastOffset;
+    $('#testdragger').draggable("option", {snap: "#testsnapbox", snapMode: "inner", containment: "#playground", snapTolerance: 10, stop:
+        function( event, ui ) {
+            //Thanks to this answer: http://stackoverflow.com/a/5181159
+            let dragger = $(this);
+            /* Get the possible snap targets: */
+            let snapElements = dragger.data('ui-draggable').snapElements;
+
+            /* Pull out only the snap targets that are "snapping": */
+            let snappedTo = $.map(snapElements, function(element) {
+                return element.snapping ? element.item : null;
+            });
+
+            if (snappedTo[0] != null) {
+                let snapped = $(snappedTo[0]);
+                lastOffset = snapped;
+                dragger.detach().appendTo(snapped);
+                dragger.position({"my": "top left", "at": "top left", "of": snapped});
+            }
+            else {
+                let top = dragger.offset().top;
+                let left = dragger.offset().left;
+                dragger.detach().appendTo(playgroundDiv);
+                if (lastOffset != null) {
+                    dragger.offset({top: top, left: left});
+                    lastOffset = null;
+                }
+
+            }
+        }});
 }
 function onBoxEdit() {
 

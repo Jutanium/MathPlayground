@@ -23,33 +23,42 @@
 }
 
 .number, .operation{
+    display: inline-block;
     font-family: "Symbola";
     font-size: 3em;
-    width: 0.8em;
-    height: 1em;
+    border: 1px solid black;
 }
 
 #testdragger {
+    position: absolute;
     width: 2em;
     height: 2em;
     background: red;
     border: 1px solid black;
 }
 
+#testsnapbox {
+    position: absolute;
+    left: 4em;
+    top: 4em;
+    width: 2em;
+    height: 2em;
+    border: 1px solid black;
+}
+
+#testsnapboxcontainer {
+    position: absolute;
+    left: 15em;
+    top: 15em;
+    width: 10em;
+    height: 10em;
+    background: blue;
+}
 #playground {
     position: relative;
     margin-top: 5px;
     border: 1px solid black;
     width: 100%;
     height: 64em;
-}
-
-#testsnapbox {
-    position: absolute;
-    left: 4em;
-    top: 4em;
-    width: 2.1em;
-    height: 2.1em;
-    border: 1px solid black;
 }
 
