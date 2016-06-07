@@ -1,18 +1,20 @@
-#magic-box-div {
+/*Top strip*/
+div#magic-box-div {
     margin-left: auto;
     margin-right: auto;
     width: 30em;
 }
 
-#magic-box {
+span#magic-box {
     width: inherit;
     font-size: 3em;
     text-align:center;
 }
 
-.draggable {
+div.draggable {
     /*position: absolute; Doesn't seem to be needed*/
     user-select: none;
+
     /*Make it unselectable*/
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none;   /* Chrome/Safari/Opera*/
@@ -22,11 +24,41 @@
     user-select: none;           /* currently not supported*/
 }
 
-.number, .operation{
+div.numberContainer, div.operationContainer {
+    position: absolute;
+    width: 2em;
+    height: 2em;
+}
+div.number, div.operation{
+
+    width: 2em;
+    height: 2em;
+    /*border: 1px solid black;*/
+}
+
+/*The text inside the draggable divs*/
+div.operationText, div.numberText {
     display: inline-block;
     font-family: "Symbola";
     font-size: 3em;
-    border: 1px solid black;
+    margin-top: -0.24em; /*Oddly specific values? idk but they work*/
+    margin-left: 0.04em;
+}
+
+div.snapboxLeft  {
+    position: absolute;
+    left: -3em;
+    width: 2em;
+    height: 2em;
+    border: 1px dotted black;
+}
+
+div.snapboxRight {
+    position: absolute;
+    left: 3em;
+    width: 2em;
+    height: 2em;
+    border: 1px dotted black;
 }
 
 #testdragger {
