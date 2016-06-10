@@ -53,8 +53,9 @@ function onBoxEdit() {
 function onBoxEnter() {
     new RenderedNumber('testy', 100, 100, 5).createElements(playgroundDiv);
     new RenderedNumber('testy2', 200, 200, 2).createElements(playgroundDiv);
-    new RenderedOperation('testy3', 250, 250, 'divide').createElements(playgroundDiv);
-    new RenderedOperation('testy4', 300, 250, 'multiply').createElements(playgroundDiv);
+    new RenderedOperation('testy3', 250, 250, 'add').createElements(playgroundDiv);
+    new RenderedOperation('testy4', 500, 250, 'subtract').createElements(playgroundDiv);
     new RenderedNumber('testy5', 400, 250, 7).createElements(playgroundDiv);
+    new RenderedNumber('testy6', 400, 100, 9).createElements(playgroundDiv);
 }
 

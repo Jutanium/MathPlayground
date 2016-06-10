@@ -17,6 +17,7 @@
   "license": "ISC",
   "jspm": {
     "dependencies": {
+      "gsap": "npm:gsap@^1.18.5",
       "jquery": "npm:jquery@^2.2.4",
       "mathquill": "npm:mathquill@^0.10.1-b",
       "snap.svg": "github:adobe-webplatform/Snap.svg@^0.4.1"

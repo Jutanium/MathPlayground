@@ -17,6 +17,7 @@ System.config({
     "babel": "npm:babel-core@5.8.38",
     "babel-runtime": "npm:babel-runtime@5.8.38",
     "core-js": "npm:core-js@1.2.6",
+    "gsap": "npm:gsap@1.18.5",
     "jquery": "npm:jquery@2.2.4",
     "mathquill": "npm:mathquill@0.10.1-b",
     "snap.svg": "github:adobe-webplatform/Snap.svg@0.4.1",
@@ -57,6 +58,9 @@ System.config({
       "path": "github:jspm/nodelibs-path@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2",
       "systemjs-json": "github:systemjs/plugin-json@0.1.2"
+    },
+    "npm:gsap@1.18.5": {
+      "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:inherits@2.0.1": {
       "util": "github:jspm/nodelibs-util@0.1.0"

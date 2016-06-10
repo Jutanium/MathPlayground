@@ -11,29 +11,31 @@ span#magic-box {
     text-align:center;
 }
 
-div.draggable {
-    /*position: absolute; Doesn't seem to be needed*/
-    user-select: none;
-
-    /*Make it unselectable*/
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none;   /* Chrome/Safari/Opera*/
-    -khtml-user-select: none;    /* Konqueror */
-    -moz-user-select: none;      /* Firefox */
-    -ms-user-select: none;       /* IE/Edge */
-    user-select: none;           /* currently not supported*/
-}
-
 div.numberContainer, div.operationContainer {
     position: absolute;
     width: 2em;
     height: 2em;
 }
 div.number, div.operation{
-
     width: 2em;
     height: 2em;
     /*border: 1px solid black;*/
+}
+
+div.snapped {
+    font-weight: bold;
+}
+div.snapped.add {
+    color: #0074D9;
+}
+div.snapped.subtract{
+    color: red;
+}
+div.snapped.multiply{
+    color: green;
+}
+div.snapped.divide{
+    color: #FFD700;
 }
 
 /*The text inside the draggable divs*/
@@ -45,47 +47,19 @@ div.operationText, div.numberText {
     margin-left: 0.04em;
 }
 
+div.snapbox {
+    position: absolute;
+    width: 2em;
+    height: 2em;
+    border: 1px dotted black;
+}
 div.snapboxLeft  {
-    position: absolute;
-    left: -3em;
-    width: 2em;
-    height: 2em;
-    border: 1px dotted black;
+    margin-left: -3em;
 }
-
 div.snapboxRight {
-    position: absolute;
-    left: 3em;
-    width: 2em;
-    height: 2em;
-    border: 1px dotted black;
+    margin-left: 3em;
 }
 
-#testdragger {
-    position: absolute;
-    width: 2em;
-    height: 2em;
-    background: red;
-    border: 1px solid black;
-}
-
-#testsnapbox {
-    position: absolute;
-    left: 4em;
-    top: 4em;
-    width: 2em;
-    height: 2em;
-    border: 1px solid black;
-}
-
-#testsnapboxcontainer {
-    position: absolute;
-    left: 15em;
-    top: 15em;
-    width: 10em;
-    height: 10em;
-    background: blue;
-}
 #playground {
     position: relative;
     margin-top: 5px;
