@@ -9085,7 +9085,7 @@ $.extend(Datepicker.prototype, {
 			inst = this._getInst(target[0]);
 
 		inst["selected" + (period === "M" ? "Month" : "Year")] =
-		inst["draw" + (period === "M" ? "Month" : "Year")] =
+		inst["go" + (period === "M" ? "Month" : "Year")] =
 			parseInt(select.options[select.selectedIndex].value,10);
 
 		this._notifyChange(inst);
@@ -9825,7 +9825,7 @@ $.extend(Datepicker.prototype, {
 					(/all|left/.test(cornerClass) && row === 0 ? (isRTL ? next : prev) : "") +
 					(/all|right/.test(cornerClass) && row === 0 ? (isRTL ? prev : next) : "") +
 					this._generateMonthYearHeader(inst, drawMonth, drawYear, minDate, maxDate,
-					row > 0 || col > 0, monthNames, monthNamesShort) + // draw month headers
+					row > 0 || col > 0, monthNames, monthNamesShort) + // go month headers
 					"</div><table class='ui-datepicker-calendar'><thead>" +
 					"<tr>";
 				thead = (showWeek ? "<th class='ui-datepicker-week-col'>" + this._get(inst, "weekHeader") + "</th>" : "");

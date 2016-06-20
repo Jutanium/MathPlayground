@@ -1,3 +1,5 @@
+/*Not sure if it's wrong use ems for everything, but it seems to work well.*/
+
 /*Top strip*/
 div#magic-box-div {
     margin-left: auto;
@@ -11,7 +13,7 @@ span#magic-box {
     text-align:center;
 }
 
-div.numberContainer, div.operationContainer {
+div.number-container, div.operation-container {
     position: absolute;
     width: 2em;
     height: 2em;
@@ -39,9 +41,9 @@ div.snapped.divide{
 }
 
 /*The text inside the draggable divs*/
-div.operationText, div.numberText {
+div.operation-text, div.number-text {
     display: inline-block;
-    font-family: "Symbola";
+    font-family: "Times New Roman";
     font-size: 3em;
     margin-top: -0.24em; /*Oddly specific values? idk but they work*/
     margin-left: 0.04em;
@@ -53,10 +55,10 @@ div.snapbox {
     height: 2em;
     border: 1px dotted black;
 }
-div.snapboxLeft  {
+div.snapbox-left  {
     margin-left: -3em;
 }
-div.snapboxRight {
+div.snapbox-right {
     margin-left: 3em;
 }
 
@@ -68,3 +70,6 @@ div.snapboxRight {
     height: 64em;
 }
 
+#snap-test {
+    border: 1px solid red;
+}
