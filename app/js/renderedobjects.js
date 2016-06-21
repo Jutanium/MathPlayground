@@ -18,15 +18,15 @@ class RenderedObject {
     }
     //Creates the DOM elements and children to the parent parameter. Only call this once!
     createElements(parent) {
-        let container = $("<div></div>", {
+        const container = $("<div></div>", {
             "id": this._id,
             "class": this._type + "-container",
             "style": "left: " + this._x + "px; top: " + this._y + "px",
         });
-        let contentDraggable = $("<div></div>", {
+        const contentDraggable = $("<div></div>", {
             "class":  this._type,
         });
-        let content = $("<div></div>", {
+        const content = $("<div></div>", {
             "class": this._type + "-text",
         }).html(this._contents);
         content.appendTo(contentDraggable);
@@ -50,7 +50,7 @@ class SnapObject extends RenderedObject {
 
     //Override to configure snapping
     createElements(parent) {
-        let elem = super.createElements(parent);
+        const elem = super.createElements(parent);
 
         if (this._snapTo != null)
             elem.draggable("option", {
@@ -272,9 +272,10 @@ class RenderedSubtract extends RenderedOperation {
     }
 }
 
+import MultiplyAnimator from "app/js/animations/multiply"
 class RenderedMultiply extends RenderedOperation {
     constructor (id, x, y) {
-        super (id, x, y, "multiply", "&times;");
+        super (id, x, y, "multiply", "&times;", MultiplyAnimator);
     }
 }
 

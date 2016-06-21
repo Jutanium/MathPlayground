@@ -13,6 +13,16 @@ span#magic-box {
     text-align:center;
 }
 
+div.ui-draggable {
+    cursor: pointer;
+
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+
 div.number-container, div.operation-container {
     position: absolute;
     width: 2em;
@@ -68,6 +78,7 @@ div.snapbox-right {
     border: 1px solid black;
     width: 100%;
     height: 64em;
+    background-color: paleturquoise;
 }
 
 #snap-test {

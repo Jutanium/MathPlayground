@@ -1,11 +1,6 @@
 import { TweenMax, TimelineMax } from "gsap";
 
-export default class {
-
-    static colorTween(element, color, onComplete, duration = 0.5, ) {
-        TweenMax.to(element, duration,
-            {color: color, ease: Power1.easeNone, onComplete: onComplete});
-    }
+export default class Utils {   
 
     static addClass(element, newClass, duration = 0.6) {
         TweenMax.to(element, duration, {className: "+=" + newClass, ease:Power1.easeNone});
