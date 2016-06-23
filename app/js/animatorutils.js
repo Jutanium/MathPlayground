@@ -33,4 +33,8 @@ export default class Utils {
         }
         return square;
     }
+    
+    static highlightSquare(squareGroup) {
+        
+    }
 }

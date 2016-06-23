@@ -2,7 +2,7 @@ import { TweenMax, TimelineMax } from "gsap";
 import { Snap } from "snap.svg";
 import { RenderedEquals } from "app/js/renderedobjects";
 import Utils from "app/js/animatorutils";
-export default class MultiplyAnimator {
+export default class ShortMultiplyAnimator {
 
     constructor (containerElement) {
         const elem = containerElement;
@@ -84,7 +84,7 @@ export default class MultiplyAnimator {
         //Count the squares
         for (let y = squares.length - 1; y >= 0; y--) {
             for (let x = 0; x < secondOp; x++) {
-                const rect = $(squares[y][x]).children("rect");
+                const rect = $(squares[y][x]).is("rect") ? $(squares[y][x]) : $(squares[y][x]).find("rect");
                 this._timeline.set(rect, {delay: (x == 0 ? 0.5 : 0), "stroke-width": 2});
                 this._timeline.to(rect, 0.1, {stroke: "orange", onStart: () => {
                     equals.tickBy(1);

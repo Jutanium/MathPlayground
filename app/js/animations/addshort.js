@@ -2,7 +2,7 @@ import { TweenMax, TimelineMax } from "gsap";
 import { Snap } from "snap.svg";
 import { RenderedEquals } from "app/js/renderedobjects";
 import Utils from "app/js/animatorutils";
-export default class AddAnimator {
+export default class ShortAddAnimator {
     
     constructor (containerElement) {
         const elem = containerElement;
@@ -11,6 +11,7 @@ export default class AddAnimator {
         this._rightBox = elem.children(".snapbox-right");
         this._timeline = new TimelineMax();
         this._svgId = this._container.attr("id") + "-animation";
+        alert("hi");
     }
 
     drawGo() {
@@ -28,7 +29,8 @@ export default class AddAnimator {
 
         const canvas = Snap(svgWidth, svgHeight);
         canvas.node.id = svgId;
-        $(canvas.node).css({"margin-left": "-" + (svgWidth / 2 - this._container.width() / 2), "margin-top": "0.5em"});
+        console.log("-" + (svgWidth / 2 - this._container.width() / 2) + "px");
+        $(canvas.node).css({"margin-left": "-" + (svgWidth / 2 - this._container.width() / 2) + "px", "margin-top": "0.5em"});
         this._container.append(canvas.node);
 
         const leftLine = svgWidth / 2 - 25;
@@ -91,8 +93,9 @@ export default class AddAnimator {
 
         //Move the boxes
         this._timeline.to(plus, 1, {"margin-top": svgHeight / 2, ease: Power1.easeInOut});
-        this._timeline.to(this._leftBox, 1, {"margin-left": -leftLine / 2 - this._leftBox.width() * .8, ease: Power1.easeInOut}, "-=1");
-        this._timeline.to(this._rightBox, 1, {"margin-left": (svgWidth - rightLine) / 2 + this._rightBox.width() * .8, ease: Power1.easeInOut}, "-=1");
+        //TODO: Get this 72 into a constants class. (It's 3 * the width of a single digit)
+        this._timeline.to(this._leftBox, 1, {"margin-left": -leftLine / 2 - (72 - this._leftBox.width()) / 2, ease: Power1.easeInOut}, "-=1");
+        this._timeline.to(this._rightBox, 1, {"margin-left": (svgWidth - rightLine) / 2 + (72 - this._rightBox.width()) * .5, ease: Power1.easeInOut}, "-=1");
 
         //Drop the squares
         const dropOverlap = Math.max(firstOp, secondOp) <= 9 ? "-=0.35" : "-=0.45";
@@ -120,14 +123,14 @@ export default class AddAnimator {
         this._timeline.addLabel("beforeCount");
         const countDuration = 3.6 / Math.max(9, Math.max(firstOp, secondOp)); //Because this arbitrary number looks good (3.6 / 9 = .4 which also looks good). I could change it.
         for (let i = 0; i < leftSquares.length; i++) {
-            const rect = $(leftSquares[i]).children("rect");
+            const rect = $(leftSquares[i]).is("rect") ? $(leftSquares[i]) : $(leftSquares[i]).find("rect");
             this._timeline.set(rect, {"stroke-width": 2});
             this._timeline.to(rect, countDuration, {"stroke": "orange", onStart: () => {
                 equals.tickBy(1);
             }});
         }
         for (let i = 0; i < rightSquares.length; i++) {
-            const rect = $(rightSquares[i]).children("rect");
+            const rect = $(rightSquares[i]).is("rect") ? $(rightSquares[i]) : $(rightSquares[i]).find("rect");
             this._timeline.set(rect, {"stroke-width": 2});
             this._timeline.to(rect, countDuration, {"stroke": "orange", onStart: () => {
                  equals.tickBy(1);

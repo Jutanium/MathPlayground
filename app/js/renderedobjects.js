@@ -115,7 +115,7 @@ class SnapObject extends RenderedObject {
             dragger.detach().appendTo(snapped);
             dragger.css({"left": 0, "top": 0});
             $(snapped).trigger("snapped", dragger);
-            if (lastSnapped != null && lastSnapped != snapped)
+            if (lastSnapped != null && !$(lastSnapped).is($(snapped)))
                 $(lastSnapped).trigger("unsnapped");
             this._lastSnapped = snapped;
         }
@@ -146,42 +146,82 @@ class HasSnapboxes extends SnapObject {
     set onUnsnapped(event) {
         this._onUnsnapped = event;
     }
+
+    //For manual attaching
+    snapLeft(number) {
+        const numberDiv = number.containerDiv;
+        if (numberDiv && this._leftSnapbox) {
+            numberDiv.css({"left":0, "top":0});
+            //this.fixLeftMarginIssue(number.containerDiv)
+            number._lastSnapped = this._leftSnapbox;
+            this._leftSnapbox.append(numberDiv);
+            this._leftSnapbox.trigger("snapped", numberDiv);
+            this._leftSnapbox.trigger("dragStop");
+        }
+    }
+    snapRight(number) {
+        const numberDiv = number._containerDiv;
+        if (numberDiv && this._rightSnapbox) {
+            numberDiv.css({"left":0, "top":0});
+            number._lastSnapped = this._rightSnapbox;
+            this._rightSnapbox.append(numberDiv);
+            this._rightSnapbox.trigger("snapped", numberDiv);
+            this._rightSnapbox.trigger("dragStop");
+        }
+    }
+
+    fixLeftBoxIssue(numberContainer) {
+        const textElement = numberContainer.find(".number-text");
+        const defaultWidth = 24; //Magic number, I know, just... please. It's the width of a single digit TODO: If something bad happens, it might be because of this
+        console.log(textElement.width());
+        this._leftSnapbox.css("left", "-=" + (textElement.width() - defaultWidth) *.9);
+    }
     //Override
     createElements(parent) {
         const element = super.createElements(parent);
         const me = this;
 
-        $("<div></div>", {
+        this._leftSnapbox = $("<div></div>", {
             class: this.type + "snapbox snapbox snapbox-left"
         }).on("dragStart", function(event, dragger) {
             if (!me.snapped.left || $(me.snapped.left).is(dragger))
-                $(this).css("border", "1px dotted black");
+            {
+                $(this).css({"border": "1px dotted black", "left": "", "width": ""});
+            }
         }).on("dragStop", function(event) {
             if (me.snapped.left)
                 $(this).css("border", "none");
         }).on("snapped", function (event, dragger) {
             me._leftSnapped = dragger;
+            if ($(dragger).hasClass("number-container")) {
+                me.fixLeftBoxIssue($(dragger));
+                $(this).css("width", $(dragger).find(".number-text").width());
+            }
             if ($(me.snapped.right).is(dragger))
                 me._rightSnapped = null;
             if(me.snapped.right)
                 if (me._onBothSnapped != null) me._onBothSnapped();
             console.log("left snapped", $(me.snapped.left).attr("id"), $(me.snapped.right).attr("id"));
         }).on("unsnapped", function (event) {
+            console.log("leftUnsnapped");
             if (me.snapped.left && me.snapped.right)
                 if (me._onUnsnapped != null) me._onUnsnapped();
             me._leftSnapped = null;
         }).prependTo(element);
 
-        $("<div></div>", {
+        this._rightSnapbox = $("<div></div>", {
             class: this.type + "snapbox snapbox snapbox-right"
         }).on("dragStart", function(event, dragger) {
             if (!me.snapped.right || $(me.snapped.right).is(dragger))
-                $(this).css("border", "1px dotted black");
+                $(this).css({"border": "1px dotted black", "left": "", "width": ""});
         }).on("dragStop", function(event) {
             if (me.snapped.right)
                 $(this).css("border", "none");
         }).on("snapped", function (event, dragger) {
             me._rightSnapped = dragger;
+            if ($(dragger).hasClass("number-container")) {
+                $(this).css("width", $(dragger).find(".number-text").width());
+            }
             if ($(me.snapped.left).is(dragger))
                 me._leftSnapped = null;
             if(me.snapped.left)
@@ -197,11 +237,11 @@ class HasSnapboxes extends SnapObject {
 }
 
 class RenderedNumber extends SnapObject {
-    constructor (id, x, y, number) {
-        super(id, x, y, "number", number, "operation");
+    constructor (name, x, y, number) {
+        super("number"+number+"-"+name, x, y, "number", number, "operation");
         this._number = number;
     }
-
+    
     get number () { return this._number; }
 }
 
@@ -227,13 +267,13 @@ class RenderedOperation extends HasSnapboxes {
 
         if (this._animatorClass) {
             if (!this._animator) {
-                this._animator = new this._animatorClass(this.containerDiv);
+                this._animator = this._animatorClass(this.containerDiv);
                 return;
             }
             if ($(this.snapped.left).attr("id") != this._lastLeft || $(this.snapped.right).attr("id") != this._lastRight) {
                 console.log("tossing old add animator");
                 this._animator.removeElements();
-                this._animator = new this._animatorClass(this.containerDiv);
+                this._animator = this._animatorClass(this.containerDiv);
             }
         }
     }
@@ -259,29 +299,29 @@ class RenderedOperation extends HasSnapboxes {
     get operation() { return this._operation; }
 }
 
-import AddAnimator from "app/js/animations/add";
+import Controller from "app/js/controller";
+
 class RenderedAdd extends RenderedOperation {
-    constructor (id, x, y) {
-        super (id, x, y, "add", "+", AddAnimator);
+    constructor (name, x, y) {
+        super ("add-"+name, x, y, "add", "+", Controller.getAddAnimation);
     }
 }
 
 class RenderedSubtract extends RenderedOperation {
-    constructor (id, x, y) {
-        super (id, x, y, "subtract", "&minus;");
+    constructor (name, x, y) {
+        super ("subtract-"+name, x, y, "subtract", "&minus;");
     }
 }
 
-import MultiplyAnimator from "app/js/animations/multiply"
 class RenderedMultiply extends RenderedOperation {
-    constructor (id, x, y) {
-        super (id, x, y, "multiply", "&times;", MultiplyAnimator);
+    constructor (name, x, y) {
+        super ("multiply-"+name, x, y, "multiply", "&times;", Controller.getMultiplyAnimation);
     }
 }
 
 class RenderedDivide extends RenderedOperation {
-    constructor (id, x, y) {
-        super (id, x, y, "divide", "&divide;");
+    constructor (name, x, y) {
+        super ("divide-"+name, x, y, "divide", "&divide;");
     }
 }
 class RenderedEquals extends RenderedObject {
