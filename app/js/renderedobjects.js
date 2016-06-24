@@ -342,4 +342,4 @@ class RenderedEquals extends RenderedObject {
         this.contents = "=" + "&nbsp;" + value;
     }
 }
-export { RenderedEquals, RenderedNumber, RenderedOperation, RenderedAdd, RenderedSubtract, RenderedMultiply, RenderedDivide };
+export { RenderedObject, RenderedEquals, RenderedNumber, RenderedOperation, RenderedAdd, RenderedSubtract, RenderedMultiply, RenderedDivide };

@@ -28,7 +28,7 @@ export default class ShortMultiplyAnimator {
 
         const canvas = Snap(svgWidth, svgHeight);
         canvas.node.id = svgId;
-        $(canvas.node).css({"margin-left": "-" + (svgWidth / 2 - this._container.width() * .6), "margin-top": "0.5em"});
+        $(canvas.node).css({"margin-left": "-" + (svgWidth / 2 - this._container.width() * .6) + "px", "margin-top": "0.5em"});
         this._container.append(canvas.node);
 
         const squares = new Array(firstOp);

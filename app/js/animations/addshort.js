@@ -11,7 +11,6 @@ export default class ShortAddAnimator {
         this._rightBox = elem.children(".snapbox-right");
         this._timeline = new TimelineMax();
         this._svgId = this._container.attr("id") + "-animation";
-        alert("hi");
     }
 
     drawGo() {
@@ -29,7 +28,7 @@ export default class ShortAddAnimator {
 
         const canvas = Snap(svgWidth, svgHeight);
         canvas.node.id = svgId;
-        console.log("-" + (svgWidth / 2 - this._container.width() / 2) + "px");
+        //console.log("-" + (svgWidth / 2 - this._container.width() / 2) + "px");
         $(canvas.node).css({"margin-left": "-" + (svgWidth / 2 - this._container.width() / 2) + "px", "margin-top": "0.5em"});
         this._container.append(canvas.node);
 
