@@ -26,6 +26,8 @@ export default class ShortAddAnimator {
         const svgHeight = 150;
         const svgId = this._svgId;
 
+        const numWidth = Utils.numWidth;
+        
         const canvas = Snap(svgWidth, svgHeight);
         canvas.node.id = svgId;
         //console.log("-" + (svgWidth / 2 - this._container.width() / 2) + "px");
@@ -92,9 +94,8 @@ export default class ShortAddAnimator {
 
         //Move the boxes
         this._timeline.to(plus, 1, {"margin-top": svgHeight / 2, ease: Power1.easeInOut});
-        //TODO: Get this 72 into a constants class. (It's 3 * the width of a single digit)
-        this._timeline.to(this._leftBox, 1, {"margin-left": -leftLine / 2 - (72 - this._leftBox.width()) / 2, ease: Power1.easeInOut}, "-=1");
-        this._timeline.to(this._rightBox, 1, {"margin-left": (svgWidth - rightLine) / 2 + (72 - this._rightBox.width()) * .5, ease: Power1.easeInOut}, "-=1");
+        this._timeline.to(this._leftBox, 1, {"margin-left": -leftLine / 2 - (numWidth * 3 - this._leftBox.width()) / 2, ease: Power1.easeInOut}, "-=1");
+        this._timeline.to(this._rightBox, 1, {"margin-left": (svgWidth - rightLine) / 2 + (numWidth * 3 - this._rightBox.width()) * .5, ease: Power1.easeInOut}, "-=1");
 
         //Drop the squares
         const dropOverlap = Math.max(firstOp, secondOp) <= 9 ? "-=0.35" : "-=0.45";

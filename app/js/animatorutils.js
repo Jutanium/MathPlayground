@@ -1,6 +1,8 @@
 import { TweenMax, TimelineMax } from "gsap";
 
-export default class Utils {   
+export default class Utils {
+
+    static get numWidth() { return 24; }
 
     static addClass(element, newClass, duration = 0.6) {
         TweenMax.to(element, duration, {className: "+=" + newClass, ease:Power1.easeNone});

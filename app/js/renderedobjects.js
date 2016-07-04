@@ -41,8 +41,8 @@ class RenderedObject {
 
 class SnapObject extends RenderedObject { 
     //Abstract. A RenderedObject that snaps to snapboxes
-    constructor (id, x, y, type, contents, snapTo, snapboxes) {
-        super (id, x, y, type, contents, snapboxes);
+    constructor (id, x, y, type, contents, snapTo, snapboxes, draggable) {
+        super (id, x, y, type, contents, snapboxes, draggable);
         this._snapTo = snapTo;
 
         this._lastSnapped = null;
@@ -52,7 +52,7 @@ class SnapObject extends RenderedObject {
     createElements(parent) {
         const elem = super.createElements(parent);
 
-        if (this._snapTo != null)
+        if (elem.data("ui-draggable") && this._snapTo != null)
             elem.draggable("option", {
                 snap: "." + this._snapTo +  "snapbox",
                 snapMode: "inner",
@@ -129,8 +129,8 @@ class SnapObject extends RenderedObject {
 
 class HasSnapboxes extends SnapObject {
     
-    constructor (id, x, y, type, contents, snapTo) {
-        super(id, x, y, type, contents, snapTo);
+    constructor (id, x, y, type, contents, snapTo, draggable) {
+        super(id, x, y, type, contents, snapTo, draggable);
         this._leftSnapped = null;
         this._rightSnapped = null;
     }
@@ -237,8 +237,8 @@ class HasSnapboxes extends SnapObject {
 }
 
 class RenderedNumber extends SnapObject {
-    constructor (name, x, y, number) {
-        super("number"+number+"-"+name, x, y, "number", number, "operation");
+    constructor (name, x, y, number, draggable) {
+        super("number"+number+"-"+name, x, y, "number", number, "operation", draggable);
         this._number = number;
     }
     

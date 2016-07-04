@@ -24,6 +24,7 @@ div.ui-draggable {
 }
 
 div.number-container, div.operation-container {
+    display: inline-block;
     position: absolute;
     width: 2em;
     height: 2em;
@@ -38,7 +39,6 @@ div.operation{
 
 div.number {
     display: inline-block;
-    hieght: 2em;
 }
 
 div.snapped {

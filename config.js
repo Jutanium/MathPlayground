@@ -19,7 +19,7 @@ System.config({
     "core-js": "npm:core-js@1.2.6",
     "gsap": "npm:gsap@1.18.5",
     "jquery": "npm:jquery@2.2.4",
-    "mathquill": "npm:mathquill@0.10.1-b",
+    "mathquill": "npm:mathquill@0.10.1",
     "snap.svg": "github:adobe-webplatform/Snap.svg@0.4.1",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.4.1"
@@ -71,7 +71,7 @@ System.config({
     "npm:jquery@1.12.4": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:mathquill@0.10.1-b": {
+    "npm:mathquill@0.10.1": {
       "jquery": "npm:jquery@1.12.4",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
