@@ -20,8 +20,9 @@ export default class ShortAddAnimator {
             return;
         }
         this._drawn = true;
-        const firstOp = this._leftBox.find(".number-text").text();
-        const secondOp = this._rightBox.find(".number-text").text();
+        const firstOp = parseInt(this._leftBox.find(".number-text").text());
+        const secondOp = parseInt(this._rightBox.find(".number-text").text());
+        const allZero = firstOp === 0 && secondOp === 0;
         const svgWidth = 300;
         const svgHeight = 150;
         const svgId = this._svgId;
@@ -37,30 +38,6 @@ export default class ShortAddAnimator {
         const leftLine = svgWidth / 2 - 25;
         const rightLine = svgWidth / 2 + 25;
 
-        // canvas.line(leftLine, 0, leftLine, svgHeight)
-        //     .attr({
-        //         stroke: "black",
-        //         strokeWidth: 1,
-        //         shapeRendering: "crispEdges"
-        //     });
-        // canvas.line(rightLine, 0, rightLine, svgHeight)
-        //     .attr({
-        //         stroke: "black",
-        //         strokeWidth: 1,
-        //         shapeRendering: "crispEdges"
-        //     });
-        /*const plusWidth = (rightLine - leftLine) - (rightLine - leftLine) / 2;
-        const plus = canvas.path(
-            "M".concat((svgWidth / 2) + " " + (svgHeight / 2 - plusWidth / 2))
-            + "L".concat((svgWidth / 2) + " " + (svgHeight / 2 + plusWidth / 2))
-            + "M".concat((svgWidth / 2 - plusWidth / 2) + " " + (svgHeight / 2))
-            + "L".concat((svgWidth / 2 + plusWidth / 2) + " " + (svgHeight / 2))
-        )  .attr({
-            stroke: "#0074D9",
-            strokeWidth: 3,
-            shapeRendering: "crispEdges"
-        });*/
-
         let squaresPerRow = 3;
         while (Math.max(firstOp, secondOp) > squaresPerRow * squaresPerRow)
         {
@@ -69,6 +46,7 @@ export default class ShortAddAnimator {
 
         const leftSquares = new Array(firstOp);
         const rightSquares = new Array(secondOp);
+        //console.log(secondOp, rightSquares.length, new Array(0).length, rightSquares, parseInt(secondOp));
         const squareWidth = leftLine / squaresPerRow * .75;
         const squareMargins = leftLine / squaresPerRow * .25;
 
@@ -88,14 +66,24 @@ export default class ShortAddAnimator {
 
 
         const plus = this._container.find(".operation-text");
-        const equals = new RenderedEquals(svgId+"-equals", svgWidth / 2 + plus.width(), svgHeight / 2 + plus.width() / 2);
+
+        let equalsX = this._rightBox.position().left + this._rightBox.outerWidth(true) + plus.width() / 2;
+        let equalsY = 0;
+        if (!allZero) {
+            equalsX = svgWidth / 2 + plus.width();
+            equalsY = svgHeight / 2 + plus.width() / 2;
+        }
+        const equals = new RenderedEquals(svgId+"-equals", equalsX, equalsY);
         const equalsDiv = equals.createElements(this._container);
         equalsDiv.css("opacity", 0);
 
         //Move the boxes
-        this._timeline.to(plus, 1, {"margin-top": svgHeight / 2, ease: Power1.easeInOut});
-        this._timeline.to(this._leftBox, 1, {"margin-left": -leftLine / 2 - (numWidth * 3 - this._leftBox.width()) / 2, ease: Power1.easeInOut}, "-=1");
-        this._timeline.to(this._rightBox, 1, {"margin-left": (svgWidth - rightLine) / 2 + (numWidth * 3 - this._rightBox.width()) * .5, ease: Power1.easeInOut}, "-=1");
+        if (!allZero) {
+            this._timeline.to(plus, 1, {"margin-top": svgHeight / 2, ease: Power1.easeInOut});
+            this._timeline.to(this._leftBox, 1, {"margin-left": -leftLine / 2 - (numWidth * 3 - this._leftBox.width()) / 2, ease: Power1.easeInOut}, "-=1");
+            this._timeline.to(this._rightBox, 1, {"margin-left": (svgWidth - rightLine) / 2 + (numWidth * 3 - this._rightBox.width()) * .5, ease: Power1.easeInOut}, "-=1");
+        }
+
 
         //Drop the squares
         const dropOverlap = Math.max(firstOp, secondOp) <= 9 ? "-=0.35" : "-=0.45";
@@ -105,11 +93,15 @@ export default class ShortAddAnimator {
                 ease: Power1.easeOut,
             }, dropOverlap);
         }
-        this._timeline.from(rightSquares[0], 0.5, {
-            y: "-=200",
-            delay: 0.1,
-            ease: Power1.easeOut
-        });
+
+        if (rightSquares.length > 0) {
+            this._timeline.from(rightSquares[0], 0.5, {
+                y: "-=200",
+                delay: 0.1,
+                ease: Power1.easeOut
+            });
+        }
+
         for (let i = 1; i < rightSquares.length; i++) {
             this._timeline.from(rightSquares[i], 0.5, {
                 y: "-=200",
@@ -120,6 +112,9 @@ export default class ShortAddAnimator {
         this._timeline.to(equalsDiv, 1, {opacity: 1, ease: Power1.easeIn});
         
         //Count the squares
+
+        if (allZero)
+            equals.value = 0;
         this._timeline.addLabel("beforeCount");
         const countDuration = 3.6 / Math.max(9, Math.max(firstOp, secondOp)); //Because this arbitrary number looks good (3.6 / 9 = .4 which also looks good). I could change it.
         for (let i = 0; i < leftSquares.length; i++) {
@@ -129,7 +124,9 @@ export default class ShortAddAnimator {
                 equals.tickBy(1);
             }});
         }
+
         for (let i = 0; i < rightSquares.length; i++) {
+            console.log(rightSquares.length);
             const rect = $(rightSquares[i]).is("rect") ? $(rightSquares[i]) : $(rightSquares[i]).find("rect");
             this._timeline.set(rect, {"stroke-width": 2});
             this._timeline.to(rect, countDuration, {"stroke": "orange", onStart: () => {

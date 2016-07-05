@@ -14,6 +14,7 @@ export default class LongAddAnimator {
     }
 
     drawGo() {
+
         if (this._drawn)
         {
             this.go();
@@ -26,12 +27,14 @@ export default class LongAddAnimator {
 
         const leftBox = this._container.children(".snapbox-left");
         const rightBox = this._container.children(".snapbox-right");
-
         const firstOpText = leftBox.find(".number-text").text();
         const secondOpText = rightBox.find(".number-text").text();
+
         const firstOp = parseInt(firstOpText);
         const secondOp = parseInt(secondOpText);
+
         const biggerOpLength = Math.max(firstOpText.length, secondOpText.length);
+
         const firstOpArray = firstOpText.split("").map((c) => parseInt(c));
         const secondOpArray= secondOpText.split("").map((c) => parseInt(c));
         const firstOpReversed = firstOpArray.slice().reverse();
@@ -167,7 +170,7 @@ export default class LongAddAnimator {
                     color: "black",
                     top: rightBox.height() * heightMultiplier * 2,
                     ease:Power1.easeOut});
-                this._toRemove.add(copy);
+                this._toRemove.push(copy);
                 continue;
             }
 
@@ -259,7 +262,7 @@ export default class LongAddAnimator {
     }
 
     removeElements() {
-        this._toRemove.forEach( (element) => element.remove());
+        this._toRemove.forEach( element => $(element).remove());
     }
 
 }

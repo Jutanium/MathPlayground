@@ -1,4 +1,6 @@
-//TODO: Maybe switch from classes to a factory pattern?
+import AnimatorUtils from "app/js/animatorutils";
+
+// /TODO: Maybe switch from classes to a factory pattern?
 class RenderedObject {
     //A draggable element
     constructor (id, x, y, type, contents, draggable = true) {
@@ -8,6 +10,7 @@ class RenderedObject {
         this._type = type;
         this._contents = contents;
         this._draggable = draggable;
+        this._times = false;
     }
     get id () { return this._id; }
     get type () { return this._type; }
@@ -23,17 +26,22 @@ class RenderedObject {
             "class": this._type + "-container",
             "style": "left: " + this._x + "px; top: " + this._y + "px",
         });
+
         const contentDraggable = $("<div></div>", {
             "class":  this._type,
         });
+
         const content = $("<div></div>", {
             "class": this._type + "-text",
         }).html(this._contents);
+
         content.appendTo(contentDraggable);
-        this._contentDiv = content;
         contentDraggable.appendTo(container);
         container.appendTo(parent);
+
         if (this._draggable) container.draggable();
+
+        this._contentDiv = content
         this._containerDiv = container;
         return container;
     }
@@ -127,6 +135,7 @@ class SnapObject extends RenderedObject {
 
 }
 
+
 class HasSnapboxes extends SnapObject {
     
     constructor (id, x, y, type, contents, snapTo, draggable) {
@@ -170,11 +179,15 @@ class HasSnapboxes extends SnapObject {
         }
     }
 
+
     fixLeftBoxIssue(numberContainer) {
         const textElement = numberContainer.find(".number-text");
-        const defaultWidth = 24; //Magic number, I know, just... please. It's the width of a single digit TODO: If something bad happens, it might be because of this
-        console.log(textElement.width());
-        this._leftSnapbox.css("left", "-=" + (textElement.width() - defaultWidth) *.9);
+        const defaultWidth = AnimatorUtils.numWidth;
+        if (!this._times) {
+            console.log("width: " + textElement.width(), "margin-left:" + textElement.css("margin-left"));
+            this._leftSnapbox.css("left", "-=" + (textElement.width() - defaultWidth) *.9);
+            this._times = true;
+        }
     }
     //Override
     createElements(parent) {
@@ -189,8 +202,7 @@ class HasSnapboxes extends SnapObject {
                 $(this).css({"border": "1px dotted black", "left": "", "width": ""});
             }
         }).on("dragStop", function(event) {
-            if (me.snapped.left)
-                $(this).css("border", "none");
+            if (me.snapped.left) $(this).css("border", "none");
         }).on("snapped", function (event, dragger) {
             me._leftSnapped = dragger;
             if ($(dragger).hasClass("number-container")) {
@@ -245,13 +257,16 @@ class RenderedNumber extends SnapObject {
     get number () { return this._number; }
 }
 
-import AnimatorUtils from "app/js/animatorutils";
-class RenderedOperation extends HasSnapboxes {
+class RenderedOperation extends HasSnapboxes { //Abstract
     constructor (id, x, y, operation, contents, animatorClass) {
         super (id, x, y, "operation", contents, "number");
+
         super.onBothSnapped = this.onBothSnapped;
         super.onUnsnapped = this.onUnsnapped;
+
         this._operation = operation;
+
+        //jQuery onClick calls this onClick, set in the createElements method
         if (animatorClass) {
             this._animatorClass = animatorClass;
             this.onClick = () => {
@@ -288,6 +303,7 @@ class RenderedOperation extends HasSnapboxes {
     }
 
     set onClick (event) { this._onClick = event}
+
     //Override
     createElements(parent) {
         return super.createElements(parent).on("click", () => {
@@ -303,6 +319,7 @@ import Controller from "app/js/controller";
 
 class RenderedAdd extends RenderedOperation {
     constructor (name, x, y) {
+        //TODO: possibly move the getAnimations into this
         super ("add-"+name, x, y, "add", "+", Controller.getAddAnimation);
     }
 }

@@ -43,6 +43,7 @@ export default class Controller {
     static getAddAnimation(container) {
         const firstOp = container.children(".snapbox-left").find(".number-text").text();
         const secondOp = container.children(".snapbox-right").find(".number-text").text();
+
         if (firstOp > 20 && secondOp > 20)
             return new AddLong(container);
         return new AddShort(container);
