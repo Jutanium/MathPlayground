@@ -108,7 +108,7 @@ class SnapObject extends RenderedObject {
                 for (let i = 1; i < snappedTo.length; i++) {
                     const s = $(snappedTo[i]);
                     console.log(snappedTo.length, i);
-                    let distance = Math.sqrt(
+                    let distance = Math.sqrt( //Distance formula :) Pre-Algebra was not for nothing!
                         Math.pow(dragger.offset().left - s.offset().left, 2) +
                         Math.pow(dragger.offset().top - s.offset().top, 2));
                     if (distance < closestDistance) {

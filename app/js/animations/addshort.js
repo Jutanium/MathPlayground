@@ -74,6 +74,7 @@ export default class ShortAddAnimator {
             equalsY = svgHeight / 2 + plus.width() / 2;
         }
         const equals = new RenderedEquals(svgId+"-equals", equalsX, equalsY);
+        this._equals = equals;
         const equalsDiv = equals.createElements(this._container);
         equalsDiv.css("opacity", 0);
 
@@ -109,13 +110,14 @@ export default class ShortAddAnimator {
             }, dropOverlap);
         }
 
+        if (allZero) {
+            this._timeline.call( () => equals.value = 0);
+        }
         this._timeline.to(equalsDiv, 1, {opacity: 1, ease: Power1.easeIn});
         
         //Count the squares
-
-        if (allZero)
-            equals.value = 0;
         this._timeline.addLabel("beforeCount");
+
         const countDuration = 3.6 / Math.max(9, Math.max(firstOp, secondOp)); //Because this arbitrary number looks good (3.6 / 9 = .4 which also looks good). I could change it.
         for (let i = 0; i < leftSquares.length; i++) {
             const rect = $(leftSquares[i]).is("rect") ? $(leftSquares[i]) : $(leftSquares[i]).find("rect");
@@ -133,8 +135,6 @@ export default class ShortAddAnimator {
                  equals.tickBy(1);
             }});
         }
-
-        this._equals = equals;
        // equals.css("margin-top", svgHeight / 2);
         //equals.css("margin-left", svgWidth / 2);
         //$("#snap-test").draggable();
