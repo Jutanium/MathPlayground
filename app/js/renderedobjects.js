@@ -10,7 +10,6 @@ class RenderedObject {
         this._type = type;
         this._contents = contents;
         this._draggable = draggable;
-        this._times = false;
     }
     get id () { return this._id; }
     get type () { return this._type; }
@@ -128,7 +127,7 @@ class SnapObject extends RenderedObject {
             this._lastSnapped = snapped;
         }
         $(".snapbox").each(function() {
-            $(this).trigger("dragStop");
+            $(this).trigger("dragStop", dragger);
         });
 
     }
@@ -165,7 +164,7 @@ class HasSnapboxes extends SnapObject {
             number._lastSnapped = this._leftSnapbox;
             this._leftSnapbox.append(numberDiv);
             this._leftSnapbox.trigger("snapped", numberDiv);
-            this._leftSnapbox.trigger("dragStop");
+            this._leftSnapbox.trigger("dragStop", numberDiv);
         }
     }
     snapRight(number) {
@@ -175,7 +174,7 @@ class HasSnapboxes extends SnapObject {
             number._lastSnapped = this._rightSnapbox;
             this._rightSnapbox.append(numberDiv);
             this._rightSnapbox.trigger("snapped", numberDiv);
-            this._rightSnapbox.trigger("dragStop");
+            this._rightSnapbox.trigger("dragStop", numberDiv);
         }
     }
 
@@ -183,11 +182,8 @@ class HasSnapboxes extends SnapObject {
     fixLeftBoxIssue(numberContainer) {
         const textElement = numberContainer.find(".number-text");
         const defaultWidth = AnimatorUtils.numWidth;
-        if (!this._times) {
-            console.log("width: " + textElement.width(), "margin-left:" + textElement.css("margin-left"));
-            this._leftSnapbox.css("left", "-=" + (textElement.width() - defaultWidth) *.9);
-            this._times = true;
-        }
+        console.log("width: " + textElement.width(), "margin-left:" + textElement.css("margin-left"));
+        this._leftSnapbox.css("left", "-=" + (textElement.width() - defaultWidth) *.9);
     }
     //Override
     createElements(parent) {
@@ -201,11 +197,14 @@ class HasSnapboxes extends SnapObject {
             {
                 $(this).css({"border": "1px dotted black", "left": "", "width": ""});
             }
-        }).on("dragStop", function(event) {
+        }).on("dragStop", function(event, dragger) {
             if (me.snapped.left) $(this).css("border", "none");
+            //$(this).css({"left": ""});
         }).on("snapped", function (event, dragger) {
             me._leftSnapped = dragger;
-            if ($(dragger).hasClass("number-container")) {
+            if ($(dragger).hasClass("number-container"))
+            {
+                console.log("fired");
                 me.fixLeftBoxIssue($(dragger));
                 $(this).css("width", $(dragger).find(".number-text").width());
             }
@@ -219,7 +218,9 @@ class HasSnapboxes extends SnapObject {
             if (me.snapped.left && me.snapped.right)
                 if (me._onUnsnapped != null) me._onUnsnapped();
             me._leftSnapped = null;
-        }).prependTo(element);
+        })
+            .on("click", function (event) { console.log($(this).css("left"), $(this).css("margin-left")) })
+            .prependTo(element);
 
         this._rightSnapbox = $("<div></div>", {
             class: this.type + "snapbox snapbox snapbox-right"
