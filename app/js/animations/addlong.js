@@ -24,13 +24,12 @@ export default class LongAddAnimator {
         const carryColor = "#FFC300";
 
         //FIXME: THIS IS A SHITTY SOLUTION
-        this._timeline.add(() => {
+        /*this._timeline.add(() => {
             if (!leftBox.find(".number-text").attr("class"))
             {
                 leftBox.css("left", "");
-                console.log("WHEEEEEE", leftBox.css("left"), leftBox.css("margin-left"));
             }
-        });
+        });*/
 
         const leftBox = this._container.children(".snapbox-left");
         const rightBox = this._container.children(".snapbox-right");

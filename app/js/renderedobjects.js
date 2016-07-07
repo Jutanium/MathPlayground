@@ -182,20 +182,18 @@ class HasSnapboxes extends SnapObject {
     fixLeftBoxIssue(numberContainer) {
         const textElement = numberContainer.find(".number-text");
         const defaultWidth = AnimatorUtils.numWidth;
-        console.log("width: " + textElement.width(), "margin-left:" + textElement.css("margin-left"));
-        this._leftSnapbox.css("left", "-=" + (textElement.width() - defaultWidth) *.9);
+        this._leftSnapbox.css("margin-left", "-=" + (textElement.width() - defaultWidth) *.9);
     }
     //Override
     createElements(parent) {
         const element = super.createElements(parent);
         const me = this;
-
         this._leftSnapbox = $("<div></div>", {
             class: this.type + "snapbox snapbox snapbox-left"
         }).on("dragStart", function(event, dragger) {
             if (!me.snapped.left || $(me.snapped.left).is(dragger))
             {
-                $(this).css({"border": "1px dotted black", "left": "", "width": ""});
+                $(this).css({"border": "1px dotted black", "margin-left": "", "left": "", "width": ""});
             }
         }).on("dragStop", function(event, dragger) {
             if (me.snapped.left) $(this).css("border", "none");
