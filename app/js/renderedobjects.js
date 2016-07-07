@@ -182,12 +182,14 @@ class HasSnapboxes extends SnapObject { //Abstract.
     fixLeftBoxIssue(numberContainer) {
         const textElement = numberContainer.find(".number-text");
         const defaultWidth = AnimatorUtils.numWidth;
+
         this._leftSnapbox.css("margin-left", "-=" + (textElement.width() - defaultWidth) * .9); //TODO: (low priority) find out from where this magic number derives
     }
     //Override
     createElements(parent) {
         const element = super.createElements(parent);
         const _this = this;
+
         this._leftSnapbox = $("<div></div>", {
             class: this.type + "snapbox snapbox snapbox-left"
         }).on("dragStart", function(event, dragger) {
