@@ -20,12 +20,12 @@ export default class ShortMultiplyAnimator {
             return;
         }
         this._drawn = true;
-        const firstOp = this._leftBox.find(".number-text").text();
-        const secondOp = this._rightBox.find(".number-text").text();
+        const firstOp = parseInt(this._leftBox.find(".number-text").text());
+        const secondOp = parseInt(this._rightBox.find(".number-text").text());
         const svgWidth = 300;
         const svgHeight = 300;
         const svgId = this._svgId;
-
+        const zero = firstOp === 0 || secondOp === 0;
         const canvas = Snap(svgWidth, svgHeight);
         canvas.node.id = svgId;
         $(canvas.node).css({"margin-left": "-" + (svgWidth / 2 - this._container.width() * .6) + "px", "margin-top": "0.5em"});
@@ -38,46 +38,64 @@ export default class ShortMultiplyAnimator {
         const squareMargin = Math.min(Math.min(svgWidth, svgHeight) / Math.max(firstOp, secondOp), 32) * .25;
         const startLeft = (svgWidth - secondOp * (squareWidth + squareMargin)) / 2;
         for (let y = 0; y < firstOp; y++) {
-            squares[y] = new Array(secondOp);
-            for (let x = 0; x < secondOp; x++) {
-                const square = Utils.drawSquare(canvas, (squareWidth + squareMargin) * x + startLeft,
-                    (squareWidth + squareMargin) * y + 2 /*because stroke*/, squareWidth);
-                squares[y][x] = "#" + (square.node.id = svgId + "-" + x + "-" + y);
+            if (secondOp > 0) {
+                squares[y] = new Array(secondOp);
+                for (let x = 0; x < secondOp; x++) {
+                    const square = Utils.drawSquare(canvas, (squareWidth + squareMargin) * x + startLeft,
+                        (squareWidth + squareMargin) * y + 2 /*because stroke*/, squareWidth);
+                    squares[y][x] = "#" + (square.node.id = svgId + "-" + x + "-" + y);
+                }
             }
         }
 
         const actualWidth = (squareWidth + squareMargin) * secondOp;
         const actualHeight = (squareWidth + squareMargin) * firstOp;
 
-        //Move the boxes
-        this._timeline.to(this._leftBox, 1, {
-            "margin-left":  -actualWidth / 2 - this._leftBox.width() / 2,
-            "margin-top": actualHeight / 2 + this._leftBox.height() / 2,
-            ease: Power1.easeInOut});
-        this._timeline.to(this._rightBox, 1, {
-            "margin-left": 0,
-            "margin-top": actualHeight + this._rightBox.height() * 1.5,
-            ease: Power1.easeInOut
-        }, "-=1");
         const operator = this._container.find(".operation-text");
-        this._timeline.to(operator, 1, {
-            "margin-left": -actualWidth / 2 - operator.width() / 2,
-            "margin-top": actualHeight + operator.width(),
-            ease: Power1.easeInOut
-        }, "-=1");
 
-        //Fade in the squares
-        for (let y = squares.length - 1; y >= 0; y--) {
-            this._timeline.from(squares[y][0], 0.5, {delay: 0.5, opacity: 0, ease: Power4.easeNone});
-            for (let x = 1; x < secondOp; x++) {
-                this._timeline.from(squares[y][x], 0.5, {opacity: 0, ease: Power4.easeNone}, "-=0.5");
+        //Move the boxes
+        if (!zero) {
+            this._timeline.to(this._leftBox, 1, {
+                "margin-left": -actualWidth / 2 - this._leftBox.width() / 2,
+                "margin-top": actualHeight / 2 + this._leftBox.height() / 2,
+                ease: Power1.easeInOut
+            });
+            this._timeline.to(this._rightBox, 1, {
+                "margin-left": 0,
+                "margin-top": actualHeight + this._rightBox.height() * 1.5,
+                ease: Power1.easeInOut
+            }, "-=1");
+            this._timeline.to(operator, 1, {
+                "margin-left": -actualWidth / 2 - operator.width() / 2,
+                "margin-top": actualHeight + operator.width(),
+                ease: Power1.easeInOut
+            }, "-=1");
+
+            //Fade in the squares
+            for (let y = squares.length - 1; y >= 0; y--) {
+                this._timeline.from(squares[y][0], 0.5, {delay: 0.5, opacity: 0, ease: Power4.easeNone});
+                for (let x = 1; x < secondOp; x++) {
+                    this._timeline.from(squares[y][x], 0.5, {opacity: 0, ease: Power4.easeNone}, "-=0.5");
+                }
             }
         }
 
         //Fade in equals
-        const equals = new RenderedEquals(svgId+"-equals", actualWidth / 2 + operator.width(), actualHeight / 2 + operator.width() * .75);
+        let equalsX = this._rightBox.position().left + this._rightBox.outerWidth(true) + operator.width() / 2;
+        let equalsY = 0;
+        console.log(zero);
+        if (!zero) {
+            equalsX = actualWidth / 2 + operator.width();
+            equalsY = actualHeight / 2 + operator.width() / 2;
+        }
+
+        const equals = new RenderedEquals(svgId+"-equals", equalsX, equalsY); //actualWidth / 2 + operator.width(), actualHeight / 2 + operator.width() * .75);
+        this._equals = equals;
         const equalsDiv = equals.createElements(this._container);
         equalsDiv.css("opacity", 0);
+        if (zero) {
+            this._timeline.call( () => equals.value = 0);
+        }
         this._timeline.to(equalsDiv, 1, {opacity: 1, ease: Power1.easeInOut});
 
         this._timeline.addLabel("beforeCount");
@@ -91,9 +109,6 @@ export default class ShortMultiplyAnimator {
                 }});
             }
         }
-
-        this._equals = equals;
-
     }
 
     go() {

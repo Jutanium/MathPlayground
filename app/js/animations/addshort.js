@@ -80,7 +80,7 @@ export default class ShortAddAnimator {
         //Move the boxes
         if (!allZero) {
             this._timeline.to(plus, 1, {"margin-top": svgHeight / 2, ease: Power1.easeInOut});
-            this._timeline.to(this._leftBox, 1, {"margin-left": -leftLine / 2 - (numWidth * 3 - this._leftBox.width()) / 2, ease: Power1.easeInOut}, "-=1");
+            this._timeline.to(this._leftBox, 1, {"margin-left": -leftLine / 2 - (numWidth * 3) / 2, ease: Power1.easeInOut}, "-=1");
             this._timeline.to(this._rightBox, 1, {"margin-left": (svgWidth - rightLine) / 2 + (numWidth * 3 - this._rightBox.width()) * .5, ease: Power1.easeInOut}, "-=1");
         }
 
@@ -133,9 +133,6 @@ export default class ShortAddAnimator {
                  equals.tickBy(1);
             }});
         }
-       // equals.css("margin-top", svgHeight / 2);
-        //equals.css("margin-left", svgWidth / 2);
-        //$("#snap-test").draggable();
     }
 
     go() {
