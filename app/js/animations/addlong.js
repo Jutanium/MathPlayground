@@ -85,13 +85,13 @@ export default class LongAddAnimator {
         //If AB + CD = XYZ, we need to move the plus and equals over to account for the new digit.
         const plusLeft = leftLine - (String(firstOp + secondOp).length - biggerOpLength) * (numWidth + letterSpacing);
 
-        const equals = new RenderedEquals(this._animationId+"-equals", plusLeft, rightBox.height() * heightMultiplier * 2);
+        const equals = new RenderedEquals(this._animationId + "-equals", plusLeft, rightBox.height() * heightMultiplier * 2);
         const equalsDiv = equals.createElements(this._container);
         equalsDiv.css("opacity", 0);
         this._toRemove.push(equalsDiv);
 
         const side = new RenderedObject(this._animationId + "-side",
-            leftLine + plus.width() + (leftBox.width() - leftBox.outerWidth(true)) + biggerOpLength * (numWidth + letterSpacing),
+            leftLine + plus.width() + (biggerOpLength + 1) * (numWidth + letterSpacing),
             rightBox.height() * .75,
             "small",
             "<span id='op'><span id='carryOp'></span>" +
@@ -182,7 +182,7 @@ export default class LongAddAnimator {
             let answerLeft, answerRight;
 
             answerLeft = new RenderedNumber(this._animationId + "-side-answerLeft-" + i,
-                side.containerDiv.position().left + side.containerDiv.width() + (addSet[2] ? 108 : 48),
+                side.containerDiv.position().left + side.containerDiv.width() + (addSet[2] ? numWidth * 4.5 : numWidth * 2),
                 side.containerDiv.height() - numWidth / 4, sum[0], false);
             answerLeft.createElements(this._container);
             answerLeft.contentDiv.css({"font-size": "2em"});
@@ -218,8 +218,7 @@ export default class LongAddAnimator {
             this._timeline.to(moveDown.containerDiv, 1, {
                 left: leftLine + plus.width() + numWidth / 2 + (biggerOpLength - i - 1) *  (numWidth + letterSpacing),
                 top: rightBox.height() * heightMultiplier * 2,
-                "font-size": numWidth, //Same as 2em
-                //onComplete: () => { side.containerDiv.find("#leftOp").text("2");}
+                "font-size": numWidth,
             });
 
             if (answerRight) {

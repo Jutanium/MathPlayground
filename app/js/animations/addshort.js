@@ -133,9 +133,6 @@ export default class ShortAddAnimator {
                  equals.tickBy(1);
             }});
         }
-       // equals.css("margin-top", svgHeight / 2);
-        //equals.css("margin-left", svgWidth / 2);
-        //$("#snap-test").draggable();
     }
 
     go() {
