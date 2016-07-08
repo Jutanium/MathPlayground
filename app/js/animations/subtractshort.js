@@ -133,23 +133,29 @@ export default class ShortSubtractAnimator {
         const max = Math.max(leftSquares.length, rightSquares.length);
         const min = Math.min(leftSquares.length, rightSquares.length);
 
+        // TODO: See if better way to wait
+        this._timeline.to(leftSquares[0], 1.0, {});
+
         //Fade combined squares
-        const fadeSpeed = 3 / (min * 2);
+        const fadeSpeed = .5;
         for (let i = 0; i < min; i++) {
             this._timeline.to(leftSquares[i], fadeSpeed, {
                 autoAlpha: .1
-            });
+            }, "-=" + fadeSpeed);
 
             this._timeline.to(rightSquares[i], fadeSpeed, {
                 autoAlpha: .1
             }, "-=" + fadeSpeed);
         }
 
+        // TODO: See if better way to wait
+        this._timeline.to(leftSquares[0], 1.0, {});
+
         //Count unfaded squares
         this._timeline.addLabel("beforeCount");
         const countDuration = 3.6 / Math.max(9, Math.max(firstOp, secondOp));
 
-        // FIXME: 0 is under = instead of to the left of it
+        // FIXME: 0 is under = instead of to the left of it on Windows Chrome
         equals.value = 0;
 
         for (let i = min; i < max; i++) {
