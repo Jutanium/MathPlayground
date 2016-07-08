@@ -327,7 +327,7 @@ class RenderedAdd extends RenderedOperation {
 
 class RenderedSubtract extends RenderedOperation {
     constructor (name, x, y) {
-        super ("subtract-"+name, x, y, "subtract", "&minus;");
+        super ("subtract-"+name, x, y, "subtract", "&minus;", Controller.getSubtractAnimation);
     }
 }
 
