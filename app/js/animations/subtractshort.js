@@ -79,7 +79,7 @@ export default class ShortSubtractAnimator {
 
         //Move the boxes
         if (!allZero) {
-            this._timeline.to(this._leftBox, 1, {"margin-left": -leftLine / 2 - (numWidth * 3 - this._leftBox.width()) / 2, ease: Power1.easeInOut}, "-=1");
+            this._timeline.to(this._leftBox, 1, {"margin-left": -leftLine / 2 - (numWidth * 3) / 2, ease: Power1.easeInOut}, "-=1");
             this._timeline.to(this._rightBox, 1, {"margin-left": (svgWidth - rightLine) / 2 + (numWidth * 3 - this._rightBox.width()) * .5, ease: Power1.easeInOut}, "-=1");
         }
 
@@ -139,14 +139,16 @@ export default class ShortSubtractAnimator {
         this._timeline.to(leftSquares[0], 1.0, {});
 
         //Fade combined squares
-        const fadeSpeed = .5;
+        const fadeSpeed = .7;
         for (let i = 0; i < min; i++) {
+            this._timeline.call(() => Utils.toggleInsides(leftSquares[i]));
             this._timeline.to(leftSquares[i], fadeSpeed, {
-                autoAlpha: .1
+                autoAlpha: .05
             }, "-=" + fadeSpeed);
 
+            this._timeline.call(() => Utils.toggleInsides(rightSquares[i]));
             this._timeline.to(rightSquares[i], fadeSpeed, {
-                autoAlpha: .1
+                autoAlpha: .05
             }, "-=" + fadeSpeed);
         }
 

@@ -12,7 +12,7 @@ export default class Utils {
         TweenMax.to(element, duration, {className: "-=" + newClass, ease:Power1.easeNone});
     }
 
-    static drawSquare(snap, x, y, width, draw = this.drawPlus) {
+    static drawSquare(snap, x, y, width, drawPath = this.drawPlus) {
         const square = snap.rect(x, y, width, width)
             .attr({
                 fill: "yellow",
@@ -21,13 +21,19 @@ export default class Utils {
                 shapeRendering: "crispEdges"
             });
         if (width > 15) {
-            const sign = draw(snap, x, y, width);
+            const sign = drawPath(snap, x, y, width);
 
             return snap.g().add(square, sign);
         }
         return square;
     }
 
+    static toggleInsides (square) {
+        const path = $(square).find("path");
+        if (path.css("opacity") == 0)
+            path.css("opacity", 1);
+        else path.css("opacity", 0);
+    }
     static drawPlus(snap, x, y, width) {
         return snap.path(
             "M".concat((x + width / 2) + " " + (y + width / 4))
