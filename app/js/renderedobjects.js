@@ -134,9 +134,9 @@ class SnapObject extends RenderedObject {
 
 }
 
+//TODO: Make this work or add a new classes for up/down (fraction) snapboxes and matrix snapboxes
+class HasSnapboxes extends SnapObject { //Abstract.
 
-class HasSnapboxes extends SnapObject {
-    
     constructor (id, x, y, type, contents, snapTo, draggable) {
         super(id, x, y, type, contents, snapTo, draggable);
         this._leftSnapped = null;
@@ -178,44 +178,45 @@ class HasSnapboxes extends SnapObject {
         }
     }
 
-
+    //Because big numbers caused problems on the left
     fixLeftBoxIssue(numberContainer) {
         const textElement = numberContainer.find(".number-text");
         const defaultWidth = AnimatorUtils.numWidth;
-        this._leftSnapbox.css("margin-left", "-=" + (textElement.width() - defaultWidth) *.9);
+        this._leftSnapbox.css("margin-left", "-=" + (textElement.width() - defaultWidth) * .9); //TODO: (low priority) find out from where this magic number derives
     }
     //Override
     createElements(parent) {
         const element = super.createElements(parent);
-        const me = this;
+        const _this = this;
         this._leftSnapbox = $("<div></div>", {
             class: this.type + "snapbox snapbox snapbox-left"
         }).on("dragStart", function(event, dragger) {
-            if (!me.snapped.left || $(me.snapped.left).is(dragger))
+            if (!_this.snapped.left || $(_this.snapped.left).is(dragger))
             {
                 $(this).css({"border": "1px dotted black", "margin-left": "", "left": "", "width": ""});
             }
         }).on("dragStop", function(event, dragger) {
-            if (me.snapped.left) $(this).css("border", "none");
-            //$(this).css({"left": ""});
+            if (_this.snapped.left) $(this).css("border", "none");
         }).on("snapped", function (event, dragger) {
-            me._leftSnapped = dragger;
+            _this._leftSnapped = dragger;
             if ($(dragger).hasClass("number-container"))
             {
                 console.log("fired");
-                me.fixLeftBoxIssue($(dragger));
+                _this.fixLeftBoxIssue($(dragger));
                 $(this).css("width", $(dragger).find(".number-text").width());
             }
-            if ($(me.snapped.right).is(dragger))
-                me._rightSnapped = null;
-            if(me.snapped.right)
-                if (me._onBothSnapped != null) me._onBothSnapped();
-            console.log("left snapped", $(me.snapped.left).attr("id"), $(me.snapped.right).attr("id"));
+            if ($(_this.snapped.right).is(dragger))
+                _this._rightSnapped = null;
+            if(_this.snapped.right)
+                if (_this._onBothSnapped != null) _this._onBothSnapped();
+            $(this).removeClass(_this.type + "snapbox");
+            console.log("left snapped", $(_this.snapped.left).attr("id"), $(_this.snapped.right).attr("id"));
         }).on("unsnapped", function (event) {
             console.log("leftUnsnapped");
-            if (me.snapped.left && me.snapped.right)
-                if (me._onUnsnapped != null) me._onUnsnapped();
-            me._leftSnapped = null;
+            if (_this.snapped.left && _this.snapped.right)
+                if (_this._onUnsnapped != null) _this._onUnsnapped();
+            _this._leftSnapped = null;
+            $(this).addClass(_this.type + "snapbox");
         })
             .on("click", function (event) { console.log($(this).css("left"), $(this).css("margin-left")) })
             .prependTo(element);
@@ -223,25 +224,26 @@ class HasSnapboxes extends SnapObject {
         this._rightSnapbox = $("<div></div>", {
             class: this.type + "snapbox snapbox snapbox-right"
         }).on("dragStart", function(event, dragger) {
-            if (!me.snapped.right || $(me.snapped.right).is(dragger))
+            if (!_this.snapped.right || $(_this.snapped.right).is(dragger))
                 $(this).css({"border": "1px dotted black", "left": "", "width": ""});
         }).on("dragStop", function(event) {
-            if (me.snapped.right)
+            if (_this.snapped.right)
                 $(this).css("border", "none");
         }).on("snapped", function (event, dragger) {
-            me._rightSnapped = dragger;
+            _this._rightSnapped = dragger;
             if ($(dragger).hasClass("number-container")) {
                 $(this).css("width", $(dragger).find(".number-text").width());
             }
-            if ($(me.snapped.left).is(dragger))
-                me._leftSnapped = null;
-            if(me.snapped.left)
-                if (me._onBothSnapped != null) me._onBothSnapped();
-            console.log("right snapped", $(me.snapped.left).attr("id"), $(me.snapped.right).attr("id"));
+            if ($(_this.snapped.left).is(dragger))
+                _this._leftSnapped = null;
+            if(_this.snapped.left)
+                if (_this._onBothSnapped != null) _this._onBothSnapped();
+            $(this).removeClass(_this.type + "snapbox");
         }).on("unsnapped", function (event) {
-            if (me.snapped.left && me.snapped.right)
-                if (me._onUnsnapped != null) me._onUnsnapped();
-            me._rightSnapped = null;
+            if (_this.snapped.left && _this.snapped.right)
+                if (_this._onUnsnapped != null) _this._onUnsnapped();
+            _this._rightSnapped = null;
+            $(this).addClass(_this.type + "snapbox");
         }).prependTo(element);
         return element;
     }
