@@ -7,29 +7,28 @@
     <link rel="stylesheet" href="app/css/main.css">
 </head>
 <body>
-<!-- I don't know how to properly import this stuff using JSPM, so until I figure out how to do that here they are.
-MathQuill depends on jQuery so I can't import that using jspm. -->
-<script src="app/js/lib/jquery-2.2.4.min.js"></script>
-<script src="app/js/lib/TextPlugin.min.js"></script>
-<script src="app/js/lib/jquery-ui.js"></script> <!--TODO: Download only the parts of jQuery UI that I need, maybe use jspm. Also remember I edited stuff in jquery-ui -->
-<script src="app/js/lib/mathquill.min.js"></script>
+    <!-- I don't know how to properly import this stuff using JSPM, so until I figure out how to do that here they are.
+    MathQuill depends on jQuery so I can't import that using jspm. -->
+    <script src="app/js/lib/jquery-2.2.4.min.js"></script>
+    <script src="app/js/lib/TextPlugin.min.js"></script>
+    <script src="app/js/lib/jquery-ui.js"></script> <!--TODO: Download only the parts of jQuery UI that I need, maybe use jspm. Also remember I edited stuff in jquery-ui -->
+    <script src="app/js/lib/mathquill.min.js"></script>
 
-<script src="jspm_packages/system.js"></script>
-<script src="config.js"></script>
+    <script src="jspm_packages/system.js"></script>
+    <script src="config.js"></script>
 
-<div id="magic-box-div">
-<span id="magic-box"></span>
-</div>
+    <div id="magic-box-div">
+        <span id="magic-box"></span>
+    </div>
 
-<div id="playground">
+    <div id="playground">
+        <!--<script src="js/main.js"></script>
+        <script src="js/lib.js"></script>-->
+    </div>
 
-<!--<script src="js/main.js"></script>
-<script src="js/lib.js"></script>-->
-
-</div>
-<script>
-    System.import('app/js/main.js');
-</script>
+    <script>
+        System.import('app/js/main.js');
+    </script>
 
 </body>
 </html>
