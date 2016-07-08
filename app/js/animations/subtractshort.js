@@ -150,7 +150,7 @@ export default class ShortSubtractAnimator {
         this._timeline.addLabel("beforeCount");
         const countDuration = 3.6 / Math.max(9, Math.max(firstOp, secondOp));
 
-        // FIXME: 0 is under = instead of to the left of
+        // FIXME: 0 is under = instead of to the left of it
         equals.value = 0;
 
         for (let i = min; i < max; i++) {
