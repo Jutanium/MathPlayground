@@ -2,6 +2,7 @@ import { RenderedNumber, RenderedAdd, RenderedSubtract, RenderedMultiply, Render
 import AddShort from "app/js/animations/addshort";
 import AddLong from "app/js/animations/addlong";
 import MultiplyShort from "app/js/animations/multiplyshort";
+import SubtractShort from "app/js/animations/subtractshort";
 export default class Controller {
     
     constructor (parentDiv) {
@@ -19,7 +20,7 @@ export default class Controller {
             attachRight = parameters.attachRight;
         }
 
-        if (x == null && y == null) {
+        if (!x && !y) {
             const pos = this._getRandomPos();
             x = pos.x;
             y = pos.y;
@@ -37,6 +38,7 @@ export default class Controller {
         this._objects.set(object.id, object);
         return object;
     }
+
     createAdd(parameters) {
         return this.createOperator(RenderedAdd, parameters);
     }
@@ -58,6 +60,9 @@ export default class Controller {
 
     createSubtract(parameters) {
         return this.createOperator(RenderedSubtract, parameters);
+    }
+    static getSubtractAnimation(container) {
+        return new SubtractShort(container);
     }
 
     createDivide(parameters) {

@@ -6,21 +6,26 @@ export default class Parser {
 
     parseAndCreate(text) {
         const add = /(\d+)\+(\d+)/.exec(text);
+        const subtract = /(\d+)\-(\d+)/.exec(text);
         const multiply = /(\d+)\*(\d+)/.exec(text);
         const number = /(\d+)/.exec(text);
-        if (add != null) {
+
+        if (add) {
             this._controller.createAdd({
                 attachLeft: this._controller.createNumber(add[1]),
                 attachRight: this._controller.createNumber(add[2])
             });
-        }
-        else if (multiply != null) {
+        } else if (subtract) {
+            this._controller.createSubtract({
+                attachLeft: this._controller.createNumber(subtract[1]),
+                attachRight: this._controller.createNumber(subtract[2])
+            });
+        } else if (multiply) {
             this._controller.createMultiply({
                 attachLeft: this._controller.createNumber(multiply[1]),
                 attachRight: this._controller.createNumber(multiply[2])
             });
-        }
-        else if (number != null) {
+        } else if (number) {
             this._controller.createNumber(number[0]);
         }
     }
