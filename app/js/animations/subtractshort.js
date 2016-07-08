@@ -110,7 +110,9 @@ export default class ShortSubtractAnimator {
         if (allZero) {
             this._timeline.call( () => equals.value = 0);
         }
-        this._timeline.to(equalsDiv, 1, {opacity: 1, ease: Power1.easeIn});
+
+        // TODO: See if better way to wait
+        this._timeline.to(leftSquares[0], 1.0, {});
 
         //Merge the squares
         const leftTotalSquareWidth = squaresPerRow * (squareWidth + squareMargins);
@@ -148,8 +150,7 @@ export default class ShortSubtractAnimator {
             }, "-=" + fadeSpeed);
         }
 
-        // TODO: See if better way to wait
-        this._timeline.to(leftSquares[0], 1.0, {});
+        this._timeline.to(equalsDiv, 1, {opacity: 1, ease: Power1.easeIn});
 
         //Count unfaded squares
         this._timeline.addLabel("beforeCount");
