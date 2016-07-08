@@ -54,13 +54,13 @@ export default class ShortSubtractAnimator {
             const squareX = i % squaresPerRow * (squareWidth + squareMargins) + squareMargins / 2;
             const squareY = Math.floor(i / squaresPerRow) * (squareWidth + squareMargins) + squareMargins / 2;
             const square = Utils.drawSquare(canvas, squareX, squareY, squareWidth);
-            leftSquares[i] = "#" + (square.node.id = svgId + "-left-" + i);
+            leftSquares[i] = "#" + (square.node.id = `${svgId}-left-` + i);
         }
         for (let i = 0; i < secondOp; i++) {
             const squareX = i % squaresPerRow * (squareWidth + squareMargins) + squareMargins / 2 + rightLine;
             const squareY = Math.floor(i / squaresPerRow) * (squareWidth + squareMargins) + squareMargins / 2;
             const square = Utils.drawSquare(canvas, squareX, squareY, squareWidth, Utils.drawMinus);
-            rightSquares[i] = "#" + (square.node.id = svgId + "-right-" + i);
+            rightSquares[i] = "#" + (square.node.id = `${svgId}-right-` + i);
         }
 
         const operand = this._container.find(".operation-text");
@@ -72,7 +72,7 @@ export default class ShortSubtractAnimator {
             equalsY = svgHeight / 2 + operand.width() / 2;
         }
 
-        const equals = new RenderedEquals(svgId + "-equals", equalsX, equalsY);
+        const equals = new RenderedEquals(`${svgId}-equals`, equalsX, equalsY);
         this._equals = equals;
         const equalsDiv = equals.createElements(this._container);
         equalsDiv.css("opacity", 0);
@@ -187,7 +187,7 @@ export default class ShortSubtractAnimator {
     }
 
     removeElements() {
-        $("#" + this._svgId).remove();
-        $("#" + this._svgId + "-equals").remove();
+        $(`#${this._svgId}`).remove();
+        $(`#${this._svgId}-equals`).remove();
     }
 }
