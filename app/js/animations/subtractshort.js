@@ -1,5 +1,5 @@
 /**
- * Created by Matthew Sklar on 7/7/2016.
+ * Created by Matthew Sklar on 7/07/2016.
  */
 
 import { TweenMax, TimelineMax } from "gsap";
