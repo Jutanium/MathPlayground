@@ -181,6 +181,7 @@ export default class LongAddAnimator {
 
             let answerLeft, answerRight;
 
+            console.log(`sum: ${sum[0]}`);
             answerLeft = new RenderedNumber(this._animationId + "-side-answerLeft-" + i,
                 side.containerDiv.position().left + side.containerDiv.width() + (addSet[2] ? numWidth * 4.5 : numWidth * 2),
                 side.containerDiv.height() - numWidth / 4, sum[0], false);

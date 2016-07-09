@@ -12,7 +12,7 @@ export default class LongSubtractAnimator {
         this._container = containerElement;
         this._timeline = new TimelineMax();
         this._animationId = this._container.attr("id") + "-animation";
-        this._toRemove = new Array();
+        this._toRemove = [];
     }
 
     drawGo() {
@@ -36,17 +36,15 @@ export default class LongSubtractAnimator {
 
         const firstOpArray = firstOpText.split("").map((c) => parseInt(c));
         const secondOpArray= secondOpText.split("").map((c) => parseInt(c));
-        const firstOpReversed = firstOpArray.slice().reverse();
-        const secondOpReversed = secondOpArray.slice().reverse();
 
-        let firstOpSpans = new Array();
+        let firstOpSpans = [];
         const newLeftHtml = firstOpArray.reduce( (prev, curr, currIndex, array) => {
             const id = this._animationId+"-firstOp-"+(array.length - currIndex);
             firstOpSpans.unshift("#" + id);
             return prev + "<span class='"+this._animationId + "-operand' id='" + id + "'>" + curr + "</span>";
         }, "");
 
-        let secondOpSpans = new Array();
+        let secondOpSpans = [];
         const newRightHtml = secondOpArray.reduce( (prev, curr, currIndex, array) => {
             const id = this._animationId+"-secondOp-"+(array.length - currIndex);
             secondOpSpans.unshift("#" + id);
@@ -60,7 +58,6 @@ export default class LongSubtractAnimator {
 
         const heightMultiplier = 1.4;
         const letterSpacing = 10;
-        const letterSpacingFix = (firstOpText.length - secondOpText.length) * letterSpacing;
 
         const leftLine = 0;
 
@@ -73,12 +70,8 @@ export default class LongSubtractAnimator {
         equalsDiv.css("opacity", 0);
         this._toRemove.push(equalsDiv);
 
-        const leftSide = new RenderedObject(this._animationId + "-leftside",
-            0,
-            0,
-            "small",
-            "<span id='leftMinus'>-</span>",
-            false
+        const leftSide = new RenderedObject(this._animationId + "-leftside", minus.width(), rightBox.height() * heightMultiplier * 2, "small",
+            "<span id='leftMinus'>-</span>", false
         );
 
         leftSide.createElements(this._container);
@@ -89,7 +82,7 @@ export default class LongSubtractAnimator {
         sideMinusLeft.css("visibility", "hidden");
 
         const side = new RenderedObject(this._animationId + "-side",
-            leftLine + minus.width() + (leftBox.width() - leftBox.outerWidth(true)) + biggerOpLength * (numWidth + letterSpacing),
+            leftLine + minus.width() + (biggerOpLength + 1) * (numWidth + letterSpacing),
             rightBox.height() * .75,
             "small",
             "<span id='op'><span id='carryOp'></span>" +
@@ -116,7 +109,7 @@ export default class LongSubtractAnimator {
 
         this._timeline.to(leftBox, 1, {
             "left": leftLine + minus.width() + (leftBox.width() - leftBox.outerWidth(true)) + numWidth / 2 +
-            (Math.max(0, secondOpText.length - firstOpText.length) * (numWidth + letterSpacing)),
+            (Math.max(0, secondOpText.length - firstOpText.length) * (numWidth + letterSpacing))
         });
         this._timeline.to(rightBox, 1, {
             "left": leftLine - (rightBox.outerWidth(true)- rightBox.width()) + minus.width() + numWidth / 2 +
@@ -129,7 +122,7 @@ export default class LongSubtractAnimator {
         this._timeline.to(minus, 1, {
             "position": "absolute",
             "left": minusLeft,
-            "top": rightBox.height() * heightMultiplier,
+            "top": rightBox.height() * heightMultiplier
         }, "-=1");
 
         //Animate padding (a bit choppy unfortunately, not sure if autoRound makes a difference).
@@ -137,9 +130,11 @@ export default class LongSubtractAnimator {
 
         this._timeline.to("." + this._animationId + "-operand", 0.5, {"padding-right": letterSpacing}, "-=0.2");
         //Fade in big equals
+        //noinspection JSUnresolvedVariable
         this._timeline.to(equalsDiv, 1, {opacity: 1, ease: Power1.easeInOut}, "-=.75");
 
-        let lastCarried;
+        let isNegative = false;
+
         // TODO: Maybe remove
         let topBox = leftBox,
             botBox = rightBox;
@@ -150,11 +145,11 @@ export default class LongSubtractAnimator {
             topBox = rightBox;
             botBox = leftBox;
 
+            isNegative = true;
+
             //Minus if flip
             this._timeline.to(sideMinusLeft, 1, {
                 "position": "absolute",
-                "left": minusLeft,
-                "top": "-12px",
                 "autoAlpha": 1
             });
 
@@ -166,7 +161,6 @@ export default class LongSubtractAnimator {
                 "top": 0
             }, "-=1");
         }
-        console.log(`top: ${topBox} bot: ${botBox}`);
 
         const topOpText = topBox.find(".number-text").text();
         const botOpText = botBox.find(".number-text").text();
@@ -176,29 +170,20 @@ export default class LongSubtractAnimator {
         const topOpReversed = topOpArray.slice().reverse();
         const botOpReversed = botOpArray.slice().reverse();
 
-        const subSets = topBox > botBox ?
-            topOpReversed.map((currentValue, index) => {
-                const array = new Array();
-                if (botOpReversed[index] !== null) array.push(botOpReversed[index]);
-                array.push(currentValue);
-                return array;
-            })
-            :
-            botOpReversed.map((currentValue, index) => {
-                const array = new Array();
-                array.push(currentValue);
-                if (topOpReversed[index] !== null) array.push(topOpReversed[index]);
-                return array;
-            });
+        const subSets = topOpReversed.map((currentValue, index) => {
+            const array = [];
+            array.push(currentValue);
+            if (botOpReversed[index] != null) array.push(botOpReversed[index]);
+            return array;
+        });
 
         console.log(subSets);
 
-        for (let i = 0; i < subSets.length; i++) {
-            const subSet = subSets[i];
+        let currentTopLayer = subSets.map(() => { return 0; });
 
-            if (subSet.length === 1) {
-                const boxTop = firstOpText.length > secondOpText.length ? rightBox.height() * heightMultiplier : 0;
-                const top = lastCarried ? rightBox.height() * -heightMultiplier : boxTop;
+        subSets.map((subSet, i) => {
+            if (subSet.length === 1) { // Move the number down as the answer if it is the only number
+                const top = firstOpText.length > secondOpText.length ? rightBox.height() * heightMultiplier : 0;
                 // const toCopy = lastCarried.containerDiv || ;
                 const copy = new RenderedNumber(this._animationId + "-side-answerLast-" + i,
                     leftLine + minus.width() + numWidth / 2 + (biggerOpLength - i - 1) *  (numWidth + letterSpacing),
@@ -207,39 +192,112 @@ export default class LongSubtractAnimator {
                 );
                 copy.createElements(this._container).css({
                     "opacity": 0,
-                    "color": lastCarried ? carryColor : "black",
+                    "color": "blue"
                 });
+
+                //noinspection JSUnresolvedVariable
                 this._timeline.to(copy.containerDiv, 1, {
                     opacity: 1,
                     color: "black",
                     top: rightBox.height() * heightMultiplier * 2,
                     ease:Power1.easeOut});
                 this._toRemove.push(copy);
-                continue;
+                return;
             }
 
-            console.log(subSet);
-            if (subSet[1] < subSet[0]) {
-                // Add 10 to the top number and subtract 1 from the number left of it
-                subSet[1] += 10;
+            if (subSet[0] < subSet[1]) {
+                subSet[0] += 10;
+
+                // TODO: Actually name
+                const tempNameEh = index => {
+                    const xPos = leftLine + minus.width() + numWidth / 2 + (biggerOpLength - index - 1) * (numWidth + letterSpacing);
+                    const yPosBot = -(rightBox.height() * currentTopLayer[index]);
+
+                    // TODO: Change cross out mark
+                    const crossOut = new RenderedNumber(`${this.animationId}-crossOut`,
+                        xPos,
+                        yPosBot,
+                        "█", false
+                    );
+                    crossOut.createElements(this._container).css({"font-size": "10px"});
+                    this._toRemove.push(crossOut.containerDiv);
+
+                    currentTopLayer[index] += 1;
+
+                    // TODO: Change color
+                    const top = new RenderedNumber(`${this._animationId}-top-${index}`,
+                        xPos,
+                        yPosBot - rightBox.height(), subSets[index][0], false
+                    );
+                    top.createElements(this._container);
+                    top.contentDiv.css({"font-size": "2em", "color": carryColor});
+                    this._toRemove.push(top.containerDiv);
+
+                    this._timeline.fromTo(crossOut.containerDiv, 0.5, {"autoAlpha": 0}, {"autoAlpha": 0.5});
+                    this._timeline.fromTo(top.containerDiv, 0.5, {"autoAlpha": 0}, {"autoAlpha": 1});
+                };
+
+                tempNameEh(i);
 
                 for (let j = i + 1; j < subSets.length; j++) {
-                    if (subSets[j][1] === 0) subSets[j][1] = 9;
-                    else {
-                        subSets[j][1] -= 1;
-                        continue;
+                    if (subSets[j][0] === 0) {
+                        subSets[j][0] = 9;
+                        tempNameEh(j);
+                    } else {
+                        subSets[j][0] -= 1;
+                        tempNameEh(j);
+                        break;
                     }
                 }
-
-                // TODO: Add 10 animation
-                // TODO: Subtract 1 animation
             }
 
-            console.log(`${parseInt(subSet[1])} - ${parseInt(subSet[0])} = ${parseInt(subSet[1]) - parseInt(subSet[0])}`);
-            this._timeline.set(sideLeft, {"text": String(subSet[1])});
-            this._timeline.set(sideRight, {"text": String(subSet[0])});
+            const difference = subSets[i].reduce((a, b) => a - b);
 
+            console.log(`${parseInt(subSet[0])} - ${parseInt(subSet[1])} = ${difference}`);
+            this._timeline.set(sideLeft, {"text": String(subSet[0])});
+            this._timeline.set(sideRight, {"text": String(subSet[1])});
 
+            let answer = new RenderedNumber(`${this._animationId}-answer-${i}`,
+                side.containerDiv.position().left + side.containerDiv.width() + numWidth * ((String(subSet[0]).split("").length === 2) ? 3 : 2),
+                side.containerDiv.height() - numWidth / 4, difference, false
+            );
+            answer.createElements(this._container);
+            answer.contentDiv.css({"font-size": "2em"});
+            this._toRemove.push(answer.containerDiv);
+
+            this._timeline.fromTo(`#${this._animationId}-side #op`, 1, {autoAlpha: 0}, {autoAlpha: 1});
+            this._timeline.to(`#${this._animationId}-side #minus`, 1, {color: "#0074D9"}, "-=0.5"); // TODO: Maybe change color
+            this._timeline.fromTo("#" + this._animationId + "-side #equals", 1, {autoAlpha: 0}, {autoAlpha: 1}, "-=0.3");
+            this._timeline.fromTo(answer.containerDiv, 1, {autoAlpha: 0}, {autoAlpha: 1});
+
+            this._timeline.to(answer.containerDiv, 1, {
+                left: leftLine + minus.width() + numWidth / 2 + (biggerOpLength - i - 1) *  (numWidth + letterSpacing),
+                top: rightBox.height() * heightMultiplier * 2,
+                "font-size": numWidth
+            });
+
+            this._timeline.to(`#${this._animationId}-side #op`, 1, {autoAlpha: 0});
+            this._timeline.to(`#${this._animationId}-side #equals`, 1, {autoAlpha: 0}, "-=1");
+        });
+
+        // TODO: Move minus down
+        if (isNegative) this._timeline.to(sideMinusLeft, 1.0, {top: 0, color: "black"});
+    }
+
+    go() {
+        this._equals.value = "";
+        this._timeline.timeScale(1);
+        this._timeline.play(0);
+    }
+
+    goAway() {
+        if (this._drawn) {
+            this._timeline.reverse();
+            this._timeline.timeScale(16);
         }
+    }
+
+    removeElements() {
+        this._toRemove.forEach(element => $(element).remove());
     }
 }
