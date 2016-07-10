@@ -45,7 +45,7 @@ export default class LongSubtractAnimator {
         }, "");
 
         let secondOpSpans = [];
-        const newRightHtml = secondOpArray.reduce( (prev, curr, currIndex, array) => {
+        const newRightHtml = secondOpArray.reduce((prev, curr, currIndex, array) => {
             const id = this._animationId+"-secondOp-"+(array.length - currIndex);
             secondOpSpans.unshift("#" + id);
             return prev + "<span class='"+this._animationId + "-operand' id='"+id +"'>" + curr + "</span>";
@@ -62,7 +62,7 @@ export default class LongSubtractAnimator {
         const leftLine = 0;
 
         const minus = this._container.find(".operation");
-        //If AB + CD = XYZ, we need to move the minus and equals over to account for the new digit.
+        //If AB + CD = XYZ, we need to move the  minus and equals over to account for the new digit.
         const minusLeft = leftLine - (String(firstOp + secondOp).length - biggerOpLength) * (numWidth + letterSpacing);
 
         const equals = new RenderedEquals(this._animationId+"-equals", minusLeft, rightBox.height() * heightMultiplier * 2);
@@ -70,7 +70,7 @@ export default class LongSubtractAnimator {
         equalsDiv.css("opacity", 0);
         this._toRemove.push(equalsDiv);
 
-        const leftSide = new RenderedObject(this._animationId + "-leftside", minus.width(), rightBox.height() * heightMultiplier * 2, "small",
+        const leftSide = new RenderedObject(this._animationId + "-leftside", 0, 0, "small",
             "<span id='leftMinus'>-</span>", false
         );
 
@@ -140,7 +140,6 @@ export default class LongSubtractAnimator {
             botBox = rightBox;
 
         //Flip if needed
-        console.log(`first: ${firstOp} second: ${secondOp}`);
         if (firstOp < secondOp) {
             topBox = rightBox;
             botBox = leftBox;
@@ -177,8 +176,6 @@ export default class LongSubtractAnimator {
             return array;
         });
 
-        console.log(subSets);
-
         let currentTopLayer = subSets.map(() => { return 0; });
 
         subSets.map((subSet, i) => {
@@ -208,23 +205,23 @@ export default class LongSubtractAnimator {
             if (subSet[0] < subSet[1]) {
                 subSet[0] += 10;
 
-                // TODO: Actually name
-                const tempNameEh = index => {
-                    const xPos = leftLine + minus.width() + numWidth / 2 + (biggerOpLength - index - 1) * (numWidth + letterSpacing);
+                const crossOutAndAddTop = index => {
+                    const xPos = leftLine + minus.width() + numWidth / 2 + (biggerOpLength - index - 1) *
+                        (numWidth + letterSpacing);
                     const yPosBot = -(rightBox.height() * currentTopLayer[index]);
 
                     // TODO: Change cross out mark
+                    //noinspection JSUnresolvedVariable
                     const crossOut = new RenderedNumber(`${this.animationId}-crossOut`,
-                        xPos,
+                        xPos + numWidth / 4,
                         yPosBot,
-                        "█", false
+                        "/", false
                     );
-                    crossOut.createElements(this._container).css({"font-size": "10px"});
+                    crossOut.createElements(this._container).css({"font-weight": "bold"});
                     this._toRemove.push(crossOut.containerDiv);
 
                     currentTopLayer[index] += 1;
 
-                    // TODO: Change color
                     const top = new RenderedNumber(`${this._animationId}-top-${index}`,
                         xPos,
                         yPosBot - rightBox.height(), subSets[index][0], false
@@ -233,19 +230,19 @@ export default class LongSubtractAnimator {
                     top.contentDiv.css({"font-size": "2em", "color": carryColor});
                     this._toRemove.push(top.containerDiv);
 
-                    this._timeline.fromTo(crossOut.containerDiv, 0.5, {"autoAlpha": 0}, {"autoAlpha": 0.5});
+                    this._timeline.fromTo(crossOut.containerDiv, 0.5, {"autoAlpha": 0}, {"autoAlpha": 1});
                     this._timeline.fromTo(top.containerDiv, 0.5, {"autoAlpha": 0}, {"autoAlpha": 1});
                 };
 
-                tempNameEh(i);
+                crossOutAndAddTop(i);
 
                 for (let j = i + 1; j < subSets.length; j++) {
                     if (subSets[j][0] === 0) {
                         subSets[j][0] = 9;
-                        tempNameEh(j);
+                        crossOutAndAddTop(j);
                     } else {
                         subSets[j][0] -= 1;
-                        tempNameEh(j);
+                        crossOutAndAddTop(j);
                         break;
                     }
                 }
@@ -253,7 +250,6 @@ export default class LongSubtractAnimator {
 
             const difference = subSets[i].reduce((a, b) => a - b);
 
-            console.log(`${parseInt(subSet[0])} - ${parseInt(subSet[1])} = ${difference}`);
             this._timeline.set(sideLeft, {"text": String(subSet[0])});
             this._timeline.set(sideRight, {"text": String(subSet[1])});
 
@@ -281,7 +277,11 @@ export default class LongSubtractAnimator {
         });
 
         // TODO: Move minus down
-        if (isNegative) this._timeline.to(sideMinusLeft, 1.0, {top: 0, color: "black"});
+        if (isNegative) this._timeline.to(sideMinusLeft, 1.0, {
+            color: "black",
+            "left": minus.width() - 5,
+            "top": rightBox.height() * heightMultiplier * 2 - equals.containerDiv.height() / 2
+        });
     }
 
     go() {
