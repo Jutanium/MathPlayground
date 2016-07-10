@@ -2,9 +2,9 @@ import { TweenMax, TimelineMax } from "gsap";
 import { Snap } from "snap.svg";
 import { RenderedEquals } from "app/js/renderedobjects";
 import Utils from "app/js/animatorutils";
-export default class ShortMultiplyAnimator {
 
-    constructor (containerElement) {
+export default class ShortMultiplyAnimator {
+    constructor(containerElement) {
         const elem = containerElement;
         this._container = elem;
         this._leftBox = elem.children(".snapbox-left");
@@ -14,8 +14,7 @@ export default class ShortMultiplyAnimator {
     }
 
     drawGo() {
-        if (this._drawn)
-        {
+        if (this._drawn) {
             this.go();
             return;
         }
@@ -28,7 +27,10 @@ export default class ShortMultiplyAnimator {
         const zero = firstOp === 0 || secondOp === 0;
         const canvas = Snap(svgWidth, svgHeight);
         canvas.node.id = svgId;
-        $(canvas.node).css({"margin-left": "-" + (svgWidth / 2 - this._container.width() * .6) + "px", "margin-top": "0.5em"});
+        $(canvas.node).css({
+            "margin-left": "-" + (svgWidth / 2 - this._container.width() * .6) + "px",
+            "margin-top": "0.5em"
+        });
         this._container.append(canvas.node);
 
         const squares = new Array(firstOp);
@@ -55,16 +57,19 @@ export default class ShortMultiplyAnimator {
 
         //Move the boxes
         if (!zero) {
+            //noinspection JSUnresolvedVariable
             this._timeline.to(this._leftBox, 1, {
                 "margin-left": -actualWidth / 2 - this._leftBox.width() / 2,
                 "margin-top": actualHeight / 2 + this._leftBox.height() / 2,
                 ease: Power1.easeInOut
             });
+            //noinspection JSUnresolvedVariable
             this._timeline.to(this._rightBox, 1, {
                 "margin-left": 0,
                 "margin-top": actualHeight + this._rightBox.height() * 1.5,
                 ease: Power1.easeInOut
             }, "-=1");
+            //noinspection JSUnresolvedVariable
             this._timeline.to(operator, 1, {
                 "margin-left": -actualWidth / 2 - operator.width() / 2,
                 "margin-top": actualHeight + operator.width(),
@@ -73,8 +78,10 @@ export default class ShortMultiplyAnimator {
 
             //Fade in the squares
             for (let y = squares.length - 1; y >= 0; y--) {
+                //noinspection JSUnresolvedVariable
                 this._timeline.from(squares[y][0], 0.5, {delay: 0.5, opacity: 0, ease: Power4.easeNone});
                 for (let x = 1; x < secondOp; x++) {
+                    //noinspection JSUnresolvedVariable
                     this._timeline.from(squares[y][x], 0.5, {opacity: 0, ease: Power4.easeNone}, "-=0.5");
                 }
             }
@@ -89,13 +96,14 @@ export default class ShortMultiplyAnimator {
             equalsY = actualHeight / 2 + operator.width() / 2;
         }
 
-        const equals = new RenderedEquals(svgId+"-equals", equalsX, equalsY); //actualWidth / 2 + operator.width(), actualHeight / 2 + operator.width() * .75);
+        const equals = new RenderedEquals(svgId + "-equals", equalsX, equalsY); //actualWidth / 2 + operator.width(), actualHeight / 2 + operator.width() * .75);
         this._equals = equals;
         const equalsDiv = equals.createElements(this._container);
         equalsDiv.css("opacity", 0);
         if (zero) {
-            this._timeline.call( () => equals.value = 0);
+            this._timeline.call(() => equals.value = 0);
         }
+        //noinspection JSUnresolvedVariable
         this._timeline.to(equalsDiv, 1, {opacity: 1, ease: Power1.easeInOut});
 
         this._timeline.addLabel("beforeCount");
@@ -104,9 +112,11 @@ export default class ShortMultiplyAnimator {
             for (let x = 0; x < secondOp; x++) {
                 const rect = $(squares[y][x]).is("rect") ? $(squares[y][x]) : $(squares[y][x]).find("rect");
                 this._timeline.set(rect, {delay: (x == 0 ? 0.5 : 0), "stroke-width": 2});
-                this._timeline.to(rect, 0.1, {stroke: "orange", onStart: () => {
-                    equals.tickBy(1);
-                }});
+                this._timeline.to(rect, 0.1, {
+                    stroke: "orange", onStart: () => {
+                        equals.tickBy(1);
+                    }
+                });
             }
         }
     }

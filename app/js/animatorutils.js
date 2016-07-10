@@ -1,15 +1,18 @@
 import { TweenMax, TimelineMax } from "gsap";
 
 export default class Utils {
-
-    static get numWidth() { return 24; }
+    static get numWidth() {
+        return 24;
+    }
 
     static addClass(element, newClass, duration = 0.6) {
-        TweenMax.to(element, duration, {className: "+=" + newClass, ease:Power1.easeNone});
+        //noinspection JSUnresolvedVariable
+        TweenMax.to(element, duration, {className: "+=" + newClass, ease: Power1.easeNone});
     }
 
     static removeClass(element, newClass, duration = 0.6) {
-        TweenMax.to(element, duration, {className: "-=" + newClass, ease:Power1.easeNone});
+        //noinspection JSUnresolvedVariable
+        TweenMax.to(element, duration, {className: "-=" + newClass, ease: Power1.easeNone});
     }
 
     static drawSquare(snap, x, y, width, drawPath = this.drawPlus) {
@@ -20,20 +23,23 @@ export default class Utils {
                 strokeWidth: 1,
                 shapeRendering: "crispEdges"
             });
+
         if (width > 15) {
             const sign = drawPath(snap, x, y, width);
 
             return snap.g().add(square, sign);
         }
+
         return square;
     }
 
-    static toggleInsides (square) {
+    static toggleInsides(square) {
         const path = $(square).find("path");
-        if (path.css("opacity") == 0)
-            path.css("opacity", 1);
+
+        if (path.css("opacity") === 0) path.css("opacity", 1);
         else path.css("opacity", 0);
     }
+
     static drawPlus(snap, x, y, width) {
         return snap.path(
             "M".concat((x + width / 2) + " " + (y + width / 4))
@@ -56,13 +62,5 @@ export default class Utils {
             strokeWidth: 1,
             shapeRendering: "crispEdges"
         });
-    }
-
-    static deleteSquare(id) {
-        $(id).remove();
-    }
-
-    static highlightSquare(squareGroup) {
-        
     }
 }
