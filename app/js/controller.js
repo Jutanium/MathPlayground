@@ -1,12 +1,12 @@
-import { RenderedNumber, RenderedAdd, RenderedSubtract, RenderedMultiply, RenderedDivide} from "app/js/renderedobjects";
+import {RenderedNumber, RenderedAdd, RenderedSubtract, RenderedMultiply, RenderedDivide} from "app/js/renderedobjects";
 import AddShort from "app/js/animations/addshort";
 import AddLong from "app/js/animations/addlong";
 import MultiplyShort from "app/js/animations/multiplyshort";
 import SubtractShort from "app/js/animations/subtractshort";
 import SubtractLong from "app/js/animations/subtractlong";
+
 export default class Controller {
-    
-    constructor (parentDiv) {
+    constructor(parentDiv) {
         this._parentDiv = parentDiv;
         this._idCounter = 0;
         this._objects = new Map();
@@ -14,6 +14,7 @@ export default class Controller {
 
     createOperator(ObjClass, parameters) {
         let x, y, attachLeft, attachRight;
+
         if (parameters) {
             x = parameters.x;
             y = parameters.y;
@@ -23,9 +24,11 @@ export default class Controller {
 
         if (!x && !y) {
             const pos = this._getRandomPos();
+
             x = pos.x;
             y = pos.y;
         }
+
         const object = new ObjClass(this._idCounter++, x, y);
         object.createElements(this._parentDiv);
 
@@ -37,6 +40,7 @@ export default class Controller {
         }
 
         this._objects.set(object.id, object);
+
         return object;
     }
 

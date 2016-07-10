@@ -8,7 +8,7 @@ import { RenderedObject, RenderedNumber, RenderedEquals } from "app/js/renderedo
 import Utils from "app/js/animatorutils";
 
 export default class LongSubtractAnimator {
-    constructor (containerElement) {
+    constructor(containerElement) {
         this._container = containerElement;
         this._timeline = new TimelineMax();
         this._animationId = this._container.attr("id") + "-animation";
@@ -16,8 +16,7 @@ export default class LongSubtractAnimator {
     }
 
     drawGo() {
-        if (this._drawn)
-        {
+        if (this._drawn) {
             this.go();
             return;
         }
@@ -35,20 +34,20 @@ export default class LongSubtractAnimator {
         const biggerOpLength = Math.max(firstOpText.length, secondOpText.length);
 
         const firstOpArray = firstOpText.split("").map((c) => parseInt(c));
-        const secondOpArray= secondOpText.split("").map((c) => parseInt(c));
+        const secondOpArray = secondOpText.split("").map((c) => parseInt(c));
 
         let firstOpSpans = [];
-        const newLeftHtml = firstOpArray.reduce( (prev, curr, currIndex, array) => {
-            const id = this._animationId+"-firstOp-"+(array.length - currIndex);
+        const newLeftHtml = firstOpArray.reduce((prev, curr, currIndex, array) => {
+            const id = this._animationId + "-firstOp-" + (array.length - currIndex);
             firstOpSpans.unshift("#" + id);
-            return prev + "<span class='"+this._animationId + "-operand' id='" + id + "'>" + curr + "</span>";
+            return prev + "<span class='" + this._animationId + "-operand' id='" + id + "'>" + curr + "</span>";
         }, "");
 
         let secondOpSpans = [];
         const newRightHtml = secondOpArray.reduce((prev, curr, currIndex, array) => {
-            const id = this._animationId+"-secondOp-"+(array.length - currIndex);
+            const id = this._animationId + "-secondOp-" + (array.length - currIndex);
             secondOpSpans.unshift("#" + id);
-            return prev + "<span class='"+this._animationId + "-operand' id='"+id +"'>" + curr + "</span>";
+            return prev + "<span class='" + this._animationId + "-operand' id='" + id + "'>" + curr + "</span>";
         }, "");
 
         leftBox.find(".number-text").html(newLeftHtml);
@@ -65,7 +64,7 @@ export default class LongSubtractAnimator {
         //If AB + CD = XYZ, we need to move the  minus and equals over to account for the new digit.
         const minusLeft = leftLine - (String(firstOp + secondOp).length - biggerOpLength) * (numWidth + letterSpacing);
 
-        const equals = new RenderedEquals(this._animationId+"-equals", minusLeft, rightBox.height() * heightMultiplier * 2);
+        const equals = new RenderedEquals(this._animationId + "-equals", minusLeft, rightBox.height() * heightMultiplier * 2);
         const equalsDiv = equals.createElements(this._container);
         equalsDiv.css("opacity", 0);
         this._toRemove.push(equalsDiv);
@@ -112,7 +111,7 @@ export default class LongSubtractAnimator {
             (Math.max(0, secondOpText.length - firstOpText.length) * (numWidth + letterSpacing))
         });
         this._timeline.to(rightBox, 1, {
-            "left": leftLine - (rightBox.outerWidth(true)- rightBox.width()) + minus.width() + numWidth / 2 +
+            "left": leftLine - (rightBox.outerWidth(true) - rightBox.width()) + minus.width() + numWidth / 2 +
             (Math.max(0, firstOpText.length - secondOpText.length) * (numWidth + letterSpacing)),
             "top": rightBox.height() * heightMultiplier
         }, "-=1");
@@ -135,12 +134,12 @@ export default class LongSubtractAnimator {
 
         let isNegative = false;
 
-        // TODO: Maybe remove
-        let topBox = leftBox,
-            botBox = rightBox;
+        //noinspection JSSuspiciousNameCombination
+        let topBox = leftBox, botBox = rightBox;
 
         //Flip if needed
         if (firstOp < secondOp) {
+            //noinspection JSSuspiciousNameCombination
             topBox = rightBox;
             botBox = leftBox;
 
@@ -165,7 +164,7 @@ export default class LongSubtractAnimator {
         const botOpText = botBox.find(".number-text").text();
 
         const topOpArray = topOpText.split("").map((c) => parseInt(c));
-        const botOpArray= botOpText.split("").map((c) => parseInt(c));
+        const botOpArray = botOpText.split("").map((c) => parseInt(c));
         const topOpReversed = topOpArray.slice().reverse();
         const botOpReversed = botOpArray.slice().reverse();
 
@@ -176,14 +175,16 @@ export default class LongSubtractAnimator {
             return array;
         });
 
-        let currentTopLayer = subSets.map(() => { return 0; });
+        let currentTopLayer = subSets.map(() => {
+            return 0;
+        });
 
         subSets.map((subSet, i) => {
             if (subSet.length === 1) { // Move the number down as the answer if it is the only number
                 const top = firstOpText.length > secondOpText.length ? rightBox.height() * heightMultiplier : 0;
                 // const toCopy = lastCarried.containerDiv || ;
                 const copy = new RenderedNumber(this._animationId + "-side-answerLast-" + i,
-                    leftLine + minus.width() + numWidth / 2 + (biggerOpLength - i - 1) *  (numWidth + letterSpacing),
+                    leftLine + minus.width() + numWidth / 2 + (biggerOpLength - i - 1) * (numWidth + letterSpacing),
                     top,
                     subSet[0], false
                 );
@@ -197,7 +198,8 @@ export default class LongSubtractAnimator {
                     opacity: 1,
                     color: "black",
                     top: rightBox.height() * heightMultiplier * 2,
-                    ease:Power1.easeOut});
+                    ease: Power1.easeOut
+                });
                 this._toRemove.push(copy);
                 return;
             }
@@ -210,7 +212,6 @@ export default class LongSubtractAnimator {
                         (numWidth + letterSpacing);
                     const yPosBot = -(rightBox.height() * currentTopLayer[index]);
 
-                    // TODO: Change cross out mark
                     //noinspection JSUnresolvedVariable
                     const crossOut = new RenderedNumber(`${this.animationId}-crossOut`,
                         xPos + numWidth / 4,
@@ -262,12 +263,12 @@ export default class LongSubtractAnimator {
             this._toRemove.push(answer.containerDiv);
 
             this._timeline.fromTo(`#${this._animationId}-side #op`, 1, {autoAlpha: 0}, {autoAlpha: 1});
-            this._timeline.to(`#${this._animationId}-side #minus`, 1, {color: "#0074D9"}, "-=0.5"); // TODO: Maybe change color
+            this._timeline.to(`#${this._animationId}-side #minus`, 1, {color: "#0074D9"}, "-=0.5");
             this._timeline.fromTo("#" + this._animationId + "-side #equals", 1, {autoAlpha: 0}, {autoAlpha: 1}, "-=0.3");
             this._timeline.fromTo(answer.containerDiv, 1, {autoAlpha: 0}, {autoAlpha: 1});
 
             this._timeline.to(answer.containerDiv, 1, {
-                left: leftLine + minus.width() + numWidth / 2 + (biggerOpLength - i - 1) *  (numWidth + letterSpacing),
+                left: leftLine + minus.width() + numWidth / 2 + (biggerOpLength - i - 1) * (numWidth + letterSpacing),
                 top: rightBox.height() * heightMultiplier * 2,
                 "font-size": numWidth
             });
@@ -276,7 +277,6 @@ export default class LongSubtractAnimator {
             this._timeline.to(`#${this._animationId}-side #equals`, 1, {autoAlpha: 0}, "-=1");
         });
 
-        // TODO: Move minus down
         if (isNegative) this._timeline.to(sideMinusLeft, 1.0, {
             color: "black",
             "left": minus.width() - 5,

@@ -8,7 +8,7 @@ import { RenderedObject, RenderedNumber, RenderedEquals } from "app/js/renderedo
 import Utils from "app/js/animatorutils";
 
 export default class ShortSubtractAnimator {
-    constructor (containerElement) {
+    constructor(containerElement) {
         const elem = containerElement;
         this._container = elem;
         this._leftBox = elem.children(".snapbox-left");
@@ -35,7 +35,10 @@ export default class ShortSubtractAnimator {
 
         const canvas = Snap(svgWidth, svgHeight);
         canvas.node.id = svgId;
-        $(canvas.node).css({"margin-left": "-" + (svgWidth / 2 - this._container.width() / 2) + "px", "margin-top": "0.5em"});
+        $(canvas.node).css({
+            "margin-left": "-" + (svgWidth / 2 - this._container.width() / 2) + "px",
+            "margin-top": "0.5em"
+        });
         this._container.append(canvas.node);
 
         const leftLine = svgWidth / 2 - 25;
@@ -79,13 +82,22 @@ export default class ShortSubtractAnimator {
 
         //Move the boxes
         if (!allZero) {
-            this._timeline.to(this._leftBox, 1, {"margin-left": -leftLine / 2 - (numWidth * 3) / 2, ease: Power1.easeInOut}, "-=1");
-            this._timeline.to(this._rightBox, 1, {"margin-left": (svgWidth - rightLine) / 2 + (numWidth * 3 - this._rightBox.width()) * .5, ease: Power1.easeInOut}, "-=1");
+            //noinspection JSUnresolvedVariable
+            this._timeline.to(this._leftBox, 1, {
+                "margin-left": -leftLine / 2 - (numWidth * 3) / 2,
+                ease: Power1.easeInOut
+            }, "-=1");
+            //noinspection JSUnresolvedVariable
+            this._timeline.to(this._rightBox, 1, {
+                "margin-left": (svgWidth - rightLine) / 2 + (numWidth * 3 - this._rightBox.width()) * .5,
+                ease: Power1.easeInOut
+            }, "-=1");
         }
 
         //Drop the squares
         const dropOverlap = Math.max(firstOp, secondOp) <= 9 ? "-=0.35" : "-=0.45";
         for (let i = 0; i < leftSquares.length; i++) {
+            //noinspection JSUnresolvedVariable
             this._timeline.from(leftSquares[i], 0.5, {
                 y: "-=200",
                 ease: Power1.easeOut
@@ -93,6 +105,7 @@ export default class ShortSubtractAnimator {
         }
 
         if (rightSquares.length > 0) {
+            //noinspection JSUnresolvedVariable
             this._timeline.from(rightSquares[0], 0.5, {
                 y: "-=200",
                 delay: 0.1,
@@ -101,17 +114,17 @@ export default class ShortSubtractAnimator {
         }
 
         for (let i = 1; i < rightSquares.length; i++) {
+            //noinspection JSUnresolvedVariable
             this._timeline.from(rightSquares[i], 0.5, {
                 y: "-=200",
-                ease: Power1.easeOut,
+                ease: Power1.easeOut
             }, dropOverlap);
         }
 
         if (allZero) {
-            this._timeline.call( () => equals.value = 0);
+            this._timeline.call(() => equals.value = 0);
         }
 
-        // TODO: See if better way to wait
         this._timeline.to(leftSquares[0], 1.0, {});
 
         //Merge the squares
@@ -119,6 +132,7 @@ export default class ShortSubtractAnimator {
         const moveSquares = svgWidth / 2 - leftTotalSquareWidth / 2;
 
         for (let i = 0; i < leftSquares.length; i++) {
+            //noinspection JSUnresolvedVariable
             this._timeline.to(leftSquares[i], 0.5, {
                 x: moveSquares,
                 ease: Power1.easeOut
@@ -126,6 +140,7 @@ export default class ShortSubtractAnimator {
         }
 
         for (let i = 0; i < rightSquares.length; i++) {
+            //noinspection JSUnresolvedVariable
             this._timeline.to(rightSquares[i], 0.5, {
                 x: -moveSquares,
                 ease: Power1.easeOut
@@ -135,7 +150,6 @@ export default class ShortSubtractAnimator {
         const max = Math.max(leftSquares.length, rightSquares.length);
         const min = Math.min(leftSquares.length, rightSquares.length);
 
-        // TODO: See if better way to wait
         this._timeline.to(leftSquares[0], 1.0, {});
 
         //Fade combined squares
@@ -152,6 +166,7 @@ export default class ShortSubtractAnimator {
             }, "-=" + fadeSpeed);
         }
 
+        //noinspection JSUnresolvedVariable
         this._timeline.to(equalsDiv, 1, {opacity: 1, ease: Power1.easeIn});
 
         //Count unfaded squares
@@ -165,9 +180,11 @@ export default class ShortSubtractAnimator {
             const remainingSquares = (leftSquares.length > min) ? leftSquares : rightSquares;
             const rect = $(remainingSquares[i]).is("rect") ? $(remainingSquares[i]) : $(remainingSquares[i]).find("rect");
             this._timeline.set(rect, {"stroke-width": 2});
-            this._timeline.to(rect, countDuration, {"stroke": "orange", onStart: () => {
-                equals.tickBy((leftSquares.length > min) ? 1 : -1);
-            }});
+            this._timeline.to(rect, countDuration, {
+                "stroke": "orange", onStart: () => {
+                    equals.tickBy((leftSquares.length > min) ? 1 : -1);
+                }
+            });
         }
     }
 
