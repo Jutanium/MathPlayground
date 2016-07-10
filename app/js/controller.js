@@ -3,6 +3,7 @@ import AddShort from "app/js/animations/addshort";
 import AddLong from "app/js/animations/addlong";
 import MultiplyShort from "app/js/animations/multiplyshort";
 import SubtractShort from "app/js/animations/subtractshort";
+import SubtractLong from "app/js/animations/subtractlong";
 export default class Controller {
     
     constructor (parentDiv) {
@@ -46,6 +47,7 @@ export default class Controller {
         const firstOp = container.children(".snapbox-left").find(".number-text").text();
         const secondOp = container.children(".snapbox-right").find(".number-text").text();
 
+        // TODO: Create better algorithm to decide between long and short animation
         if (firstOp > 20 && secondOp > 20)
             return new AddLong(container);
         return new AddShort(container);
@@ -62,6 +64,12 @@ export default class Controller {
         return this.createOperator(RenderedSubtract, parameters);
     }
     static getSubtractAnimation(container) {
+        const firstOp = container.children(".snapbox-left").find(".number-text").text();
+        const secondOp = container.children(".snapbox-right").find(".number-text").text();
+
+        // TODO: Create better algorithm to decide between long and short animation
+        if (firstOp > 20 && secondOp > 20)
+            return new SubtractLong(container);
         return new SubtractShort(container);
     }
 
