@@ -72,7 +72,7 @@ export default class Controller {
         const secondOp = container.children(".snapbox-right").find(".number-text").text();
 
         // TODO: Create better algorithm to decide between long and short animation
-        if (firstOp > 20 && secondOp > 20)
+        if (firstOp > 20 || secondOp > 20)
             return new SubtractLong(container);
         return new SubtractShort(container);
     }

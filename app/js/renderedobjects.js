@@ -3,7 +3,6 @@ import AnimatorUtils from "app/js/animatorutils";
 // /TODO: Maybe switch from classes to a factory pattern?
 class RenderedObject {
     //A draggable element
-    // TODO: Record types
     constructor (id, x, y, type, contents, draggable = true) {
         this._id = id;
         this._x = x;

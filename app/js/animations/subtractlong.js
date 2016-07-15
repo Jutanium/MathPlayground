@@ -33,21 +33,21 @@ export default class LongSubtractAnimator {
 
         const biggerOpLength = Math.max(firstOpText.length, secondOpText.length);
 
-        const firstOpArray = firstOpText.split("").map((c) => parseInt(c));
-        const secondOpArray = secondOpText.split("").map((c) => parseInt(c));
+        const firstOpArray = firstOpText.split("").map(c => parseInt(c));
+        const secondOpArray = secondOpText.split("").map(c => parseInt(c));
 
         let firstOpSpans = [];
         const newLeftHtml = firstOpArray.reduce((prev, curr, currIndex, array) => {
             const id = this._animationId + "-firstOp-" + (array.length - currIndex);
             firstOpSpans.unshift("#" + id);
-            return prev + "<span class='" + this._animationId + "-operand' id='" + id + "'>" + curr + "</span>";
+            return `${prev}<span class='${this._animationId}-operand' id='${id}'>${curr}</span>`;
         }, "");
 
         let secondOpSpans = [];
         const newRightHtml = secondOpArray.reduce((prev, curr, currIndex, array) => {
             const id = this._animationId + "-secondOp-" + (array.length - currIndex);
             secondOpSpans.unshift("#" + id);
-            return prev + "<span class='" + this._animationId + "-operand' id='" + id + "'>" + curr + "</span>";
+            return `${prev}<span class='${this._animationId}-operand' id='${id}'>${curr}</span>`;
         }, "");
 
         leftBox.find(".number-text").html(newLeftHtml);
@@ -61,30 +61,31 @@ export default class LongSubtractAnimator {
         const leftLine = 0;
 
         const minus = this._container.find(".operation");
-        //If AB + CD = XYZ, we need to move the  minus and equals over to account for the new digit.
-        const minusLeft = leftLine - (String(firstOp + secondOp).length - biggerOpLength) * (numWidth + letterSpacing);
+        const minusLeft = leftLine;
 
         const equals = new RenderedEquals(this._animationId + "-equals", minusLeft, rightBox.height() * heightMultiplier * 2);
         const equalsDiv = equals.createElements(this._container);
         equalsDiv.css("opacity", 0);
         this._toRemove.push(equalsDiv);
 
-        const leftSide = new RenderedObject(this._animationId + "-leftside", 0, 0, "small",
+       /* const leftSide = new RenderedObject(this._animationId + "-leftside", 0, 0, "small",
             "<span id='leftMinus'>-</span>", false
         );
 
         leftSide.createElements(this._container);
 
         const sideMinusLeft = leftSide.containerDiv.find("#leftMinus");
-        sideMinusLeft.css("color", "blue");
-        sideMinusLeft.css("font-size", "3em");
-        sideMinusLeft.css("visibility", "hidden");
+        sideMinusLeft.css({
+                "color": "blue",
+                "font-size": "3em",
+                "visibility": "hidden",
+            });*/
 
         const side = new RenderedObject(this._animationId + "-side",
             leftLine + minus.width() + (biggerOpLength + 1) * (numWidth + letterSpacing),
             rightBox.height() * .75,
             "small",
-            "<span id='op'><span id='carryOp'></span>" +
+            /*"<span id='op'><span id='carryOp'></span>" +*/
             "<span id='leftOp'></span><span id='minus'>-</span><span id='rightOp'>" +
             "</span></span><span id='equals'>=</span>",
             false
@@ -121,7 +122,7 @@ export default class LongSubtractAnimator {
         this._timeline.to(minus, 1, {
             "position": "absolute",
             "left": minusLeft,
-            "top": rightBox.height() * heightMultiplier
+            "top": rightBox.height() * heightMultiplier,
         }, "-=1");
 
         //Animate padding (a bit choppy unfortunately, not sure if autoRound makes a difference).
@@ -134,12 +135,10 @@ export default class LongSubtractAnimator {
 
         let isNegative = false;
 
-        //noinspection JSSuspiciousNameCombination
         let topBox = leftBox, botBox = rightBox;
 
         //Flip if needed
         if (firstOp < secondOp) {
-            //noinspection JSSuspiciousNameCombination
             topBox = rightBox;
             botBox = leftBox;
 
@@ -175,6 +174,7 @@ export default class LongSubtractAnimator {
             return array;
         });
 
+        //Array of subSets' length filled with 0
         let currentTopLayer = subSets.map(() => {
             return 0;
         });
@@ -193,7 +193,6 @@ export default class LongSubtractAnimator {
                     "color": "blue"
                 });
 
-                //noinspection JSUnresolvedVariable
                 this._timeline.to(copy.containerDiv, 1, {
                     opacity: 1,
                     color: "black",
@@ -212,7 +211,6 @@ export default class LongSubtractAnimator {
                         (numWidth + letterSpacing);
                     const yPosBot = -(rightBox.height() * currentTopLayer[index]);
 
-                    //noinspection JSUnresolvedVariable
                     const crossOut = new RenderedNumber(`${this.animationId}-crossOut`,
                         xPos + numWidth / 4,
                         yPosBot,

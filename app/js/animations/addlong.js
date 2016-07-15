@@ -32,8 +32,8 @@ export default class LongAddAnimator {
 
         const biggerOpLength = Math.max(firstOpText.length, secondOpText.length);
 
-        const firstOpArray = firstOpText.split("").map((c) => parseInt(c));
-        const secondOpArray = secondOpText.split("").map((c) => parseInt(c));
+        const firstOpArray = firstOpText.split("").map(c => parseInt(c));
+        const secondOpArray = secondOpText.split("").map(c => parseInt(c));
         const firstOpReversed = firstOpArray.slice().reverse();
         const secondOpReversed = secondOpArray.slice().reverse();
 
@@ -41,14 +41,14 @@ export default class LongAddAnimator {
         const newLeftHtml = firstOpArray.reduce((prev, curr, currIndex, array) => {
             const id = `${this._animationId}-firstOp-${(array.length - currIndex)}`;
             firstOpSpans.unshift("#" + id);
-            return prev + "<span class='" + this._animationId + "-operand' id='" + id + "'>" + curr + "</span>";
+            return `${prev}<span class='${this._animationId}-operand' id='${id}'>${curr}</span>`;
         }, "");
 
         let secondOpSpans = [];
         const newRightHtml = secondOpArray.reduce((prev, curr, currIndex, array) => {
-            const id = this._animationId + "-secondOp-" + (array.length - currIndex);
+            const id = `${this._animationId}-secondOp-${(array.length - currIndex)}`;
             secondOpSpans.unshift("#" + id);
-            return prev + "<span class='" + this._animationId + "-operand' id='" + id + "'>" + curr + "</span>";
+            return `${prev}<span class='${this._animationId}-operand' id='${id}'>${curr}</span>`;
         }, "");
 
         const addSets = firstOp > secondOp ?
