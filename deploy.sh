@@ -116,8 +116,8 @@ if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
   exitWithMessageOnError "npm failed"
   cd - > /dev/null
 fi
-  eval "node_modules/.bin/jspm" install
-  exitWithMessageOnError "jspm failed"
+eval "node_modules/.bin/jspm" install
+exitWithMessageOnError "jspm failed"
 
 ##################################################################################################################################
 
