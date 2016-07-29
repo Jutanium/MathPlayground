@@ -1,4 +1,4 @@
-# MathPlayground
-The future of math education
+# Math Playground
+The future of math education. Learn through problem-specific animations.
 
-Temp
+Name is temporary! (mathplayground.com is a thing)
