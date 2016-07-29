@@ -76,7 +76,7 @@ export default class ShortAddAnimator {
         const equals = new RenderedEquals(svgId + "-equals", equalsX, equalsY);
         this._equals = equals;
         const equalsDiv = equals.createElements(this._container);
-        equalsDiv.css("opacity", 0);
+        equalsDiv.css({"opacity": 0});
 
         //Move the boxes
         if (!allZero) {

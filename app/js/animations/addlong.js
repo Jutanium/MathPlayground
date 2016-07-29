@@ -1,6 +1,3 @@
-/**
- * Created by Dan Jutan on 6/22/2016.
- */
 import { TweenMax, TimelineMax } from "gsap";
 import { Snap } from "snap.svg";
 import { RenderedObject, RenderedNumber, RenderedEquals } from "app/js/renderedobjects";
@@ -20,7 +17,6 @@ export default class LongAddAnimator {
             return;
         }
         this._drawn = true;
-        const carryColor = "#FFC300";
 
         const leftBox = this._container.children(".snapbox-left");
         const rightBox = this._container.children(".snapbox-right");
@@ -107,10 +103,13 @@ export default class LongAddAnimator {
         });
         this._toRemove.push(side.containerDiv);
 
+        const sideOp = side.containerDiv.find("#op");
         const sideCarry = side.containerDiv.find("#carryOp");
         const sideLeft = side.containerDiv.find("#leftOp");
         const sideRight = side.containerDiv.find("#rightOp");
         const sidePlus = side.containerDiv.find("#plus");
+        const sideEquals = side.containerDiv.find("#equals");
+
         sideCarry.css("color", "#FFC300");
         sideLeft.css("color", "red");
         sideRight.css("color", "red");
@@ -144,6 +143,8 @@ export default class LongAddAnimator {
         //noinspection JSUnresolvedVariable
         this._timeline.to(equalsDiv, 1, {opacity: 1, ease: Power1.easeInOut}, "-=.75");
 
+        let answerNumbers = [];
+
         let lastCarried;
 
         for (let i = 0; i < addSets.length; i++) {
@@ -172,12 +173,23 @@ export default class LongAddAnimator {
                 continue;
             }
 
-            this._timeline.set(sideLeft, {"text": String(addSet[0])});
-            this._timeline.set(sideRight, {"text": String(addSet[1])});
-            if (addSet[2]) this._timeline.set(sideCarry, {"text": String(addSet[2]) + "+"});
-            else this._timeline.set(sideCarry, {"text": ""});
+            let showPlus = true;
+            if (lastCarried) {
+                this._timeline.set(sideCarry, {"text": String(addSet[addSet.length - 1]) + "+"});
+                this._timeline.set(sideLeft, {"text": String(addSet[addSet.length - 2])});
+                if (addSet.length === 3)
+                    this._timeline.set(sideRight, {"text": String(addSet[addSet.length - 3])});
+                else if (addSet.length === 2)
+                    showPlus = false;
+            }
+            else {
+                this._timeline.set(sideLeft, {"text": String(addSet[addSet.length - 1])});
+                this._timeline.set(sideRight, {"text": String(addSet[addSet.length - 2])});
+            }
 
-            const sum = (addSets[i].reduce((a, b) => a + b)).toString().split("");
+            console.log(addSet);
+
+            const sum = (addSet.reduce((a, b) => a + b)).toString().split("");
 
             let answerLeft, answerRight;
 
@@ -195,6 +207,7 @@ export default class LongAddAnimator {
                     answerLeft.containerDiv.position().top, sum[1], false);
                 answerRight.createElements(this._container);
                 answerRight.contentDiv.css({"font-size": "2em"});
+                answerRight.addClass(Utils.answerClass());
                 this._toRemove.push(answerRight.containerDiv);
 
                 if (i + 1 === addSets.length) {
@@ -204,15 +217,20 @@ export default class LongAddAnimator {
                     addSets[i + 1].push(parseInt(sum[0]));
                 }
             }
-
+            else
+                answerLeft.addClass(Utils.answerClass());
             this._timeline.to(firstOpSpans[i] + "," + secondOpSpans[i], 0.5, {color: "red"});
 
+            this._timeline.fromTo([sideLeft, sideRight, sideCarry], 1, {opacity: 0}, {opacity: 1});
+            if (showPlus)
+                this._timeline.fromTo(sidePlus, 1, {opacity: 0, color: "black"}, {opacity: 1, color: "#0074D9"}, "-=1");
 
-            this._timeline.fromTo("#" + this._animationId + "-side #op", 1, {opacity: 0}, {opacity: 1});
-            this._timeline.to("#" + this._animationId + "-side #plus", 1, {color: "#0074D9"}, "-=0.5");
-            this._timeline.fromTo("#" + this._animationId + "-side #equals", 1, {opacity: 0}, {opacity: 1}, "-=0.3");
+            this._timeline.fromTo(sideEquals, 1, {opacity: 0}, {opacity: 1}, "-=0.3");
+
             this._timeline.fromTo(answerLeft.containerDiv, 1, {opacity: 0}, {opacity: 1}, "-=1");
-            if (answerRight) this._timeline.fromTo(answerRight.containerDiv, 1, {opacity: 0}, {opacity: 1}, "-=1");
+
+            if (answerRight)
+                this._timeline.fromTo(answerRight.containerDiv, 1, {opacity: 0}, {opacity: 1}, "-=1");
 
             const moveDown = answerRight ? answerRight : answerLeft;
 
@@ -227,14 +245,14 @@ export default class LongAddAnimator {
                     left: leftLine + plus.width() + numWidth / 2 + (biggerOpLength - i - 2) * (numWidth + letterSpacing),
                     top: rightBox.height() * -heightMultiplier,
                     "font-size": numWidth,
-                    color: carryColor
+                    className: "+=" + Utils.carryClass
                 }, "-=1");
-                lastCarried = answerLeft;
+                lastCarried = true;
             }
-            else lastCarried = null;
+            else lastCarried = false;
 
-            this._timeline.to("#" + this._animationId + "-side #op", 1, {opacity: 0});
-            this._timeline.to("#" + this._animationId + "-side #equals", 1, {opacity: 0}, "-=1");
+            this._timeline.to([sideCarry, sideLeft, sideRight, sidePlus, sideEquals], 1, {opacity: 0});
+            this._timeline.set([sideCarry, sideLeft, sideRight], {text: ""});
             this._timeline.to(firstOpSpans[i] + "," + secondOpSpans[i], 1, {color: "black"}, "-=1");
 
             // this._timeline.fromTo(answerLeft.containerDiv, 1, {opacity: 1}, {opacity: 0}, "-=1");
@@ -254,9 +272,7 @@ export default class LongAddAnimator {
 
     goAway() {
         if (this._drawn) {
-
             this._timeline.reverse();
-
             this._timeline.timeScale(16);
         }
     }

@@ -19,7 +19,14 @@ $(document).ready()
         }
     });
 
-    controller.createAdd({attachLeft: controller.createNumber(167), attachRight: controller.createNumber(26)});
+    controller.createSubtract({attachLeft: controller.createNumber(123), attachRight: controller.createNumber(45)});
+
+    $("#newDiv").on("click", function() {
+        alert("hi!");
+        $(this).css({"color": "red", "font-style": "italic"});
+        $(this).text("I am a potato");
+    });
+
 }
 function onBoxEdit() {
 

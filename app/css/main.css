@@ -91,3 +91,11 @@ div.snapbox-right {
 #snap-test {
     border: 1px solid red;
 }
+
+.answer {
+    color: #2cc31c;
+}
+
+.carry {
+    color: #FFC300;
+}

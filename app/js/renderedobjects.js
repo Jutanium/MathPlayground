@@ -1,6 +1,5 @@
 import AnimatorUtils from "app/js/animatorutils";
 
-// /TODO: Maybe switch from classes to a factory pattern?
 class RenderedObject {
     //A draggable element
     constructor (id, x, y, type, contents, draggable = true) {
@@ -262,7 +261,7 @@ class RenderedNumber extends SnapObject {
 
 class RenderedOperation extends HasSnapboxes { //Abstract
     constructor (id, x, y, operation, contents, animatorClass) {
-        super (id, x, y, "operation", contents, "number");
+        super (id, x, y, "operation", contents/*, "number"*/);
 
         super.onBothSnapped = this.onBothSnapped;
         super.onUnsnapped = this.onUnsnapped;
@@ -344,6 +343,7 @@ class RenderedDivide extends RenderedOperation {
         super ("divide-"+name, x, y, "divide", "&divide;");
     }
 }
+import Utils from "app/js/animatorutils";
 class RenderedEquals extends RenderedObject {
     constructor (id, x, y) {
         super (id, x, y, "number", "=", false);
@@ -354,12 +354,12 @@ class RenderedEquals extends RenderedObject {
             this._value = 0;
         }
         this._value += by;
-        this.contents = "=" + "&nbsp;" + this._value;
+        this.contents = `=&nbsp;<span class="${Utils.answerClass}">${this._value}</span>`;
     }
 
     set value (value) {
         this._value = value;
-        this.contents = "=" + "&nbsp;" + value;
+        this.contents = `=&nbsp;<span class="${Utils.answerClass}">${value}</span>`;
     }
 }
 export { RenderedObject, RenderedEquals, RenderedNumber, RenderedOperation, RenderedAdd, RenderedSubtract, RenderedMultiply, RenderedDivide };
