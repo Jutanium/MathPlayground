@@ -8,6 +8,8 @@
 # Helpers
 # -------
 
+echo "I wonder if I will see this..."
+
 exitWithMessageOnError () {
   if [ ! $? -eq 0 ]; then
     echo "An error has occurred during web site deployment."
