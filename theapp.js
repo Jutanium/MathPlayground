@@ -1235,13 +1235,11 @@ $__System.register("2", ["34", "35", "36", "37", "38", "39"], function (_export)
 
                                 var copy = new RenderedNumber(this._animationId + "-side-answerLast-" + i, leftLine + plus.width() + numWidth / 2 + (biggerOpLength - i - 1) * (numWidth + letterSpacing), _top, addSet[0], false);
                                 copy.createElements(this._container).css({
-                                    "opacity": 0,
-                                    "color": "black"
-                                });
+                                    "opacity": 0
+                                }).addClass(Utils.answerClass);
                                 //noinspection JSUnresolvedVariable
                                 this._timeline.to(copy.containerDiv, 1, {
                                     opacity: 1,
-                                    color: "black",
                                     top: rightBox.height() * heightMultiplier * 2,
                                     ease: Power1.easeOut
                                 });
@@ -1278,7 +1276,7 @@ $__System.register("2", ["34", "35", "36", "37", "38", "39"], function (_export)
                                 answerRight = new RenderedNumber(this._animationId + "-side-answerRight-" + i, answerLeft.containerDiv.position().left + answerLeft.containerDiv.width() / 2, answerLeft.containerDiv.position().top, sum[1], false);
                                 answerRight.createElements(this._container);
                                 answerRight.contentDiv.css({ "font-size": "2em" });
-                                answerRight.addClass(Utils.answerClass());
+                                answerRight.containerDiv.addClass(Utils.answerClass);
                                 this._toRemove.push(answerRight.containerDiv);
 
                                 if (i + 1 === addSets.length) {
@@ -1286,7 +1284,7 @@ $__System.register("2", ["34", "35", "36", "37", "38", "39"], function (_export)
                                 } else {
                                     addSets[i + 1].push(parseInt(sum[0]));
                                 }
-                            } else answerLeft.addClass(Utils.answerClass());
+                            } else answerLeft.containerDiv.addClass(Utils.answerClass);
                             this._timeline.to(firstOpSpans[i] + "," + secondOpSpans[i], 0.5, { color: "red" });
 
                             this._timeline.fromTo([sideLeft, sideRight, sideCarry], 1, { opacity: 0 }, { opacity: 1 });
