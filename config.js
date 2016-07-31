@@ -1,5 +1,5 @@
 System.config({
-  baseURL: "/MathPlayground",
+  baseURL: "/",
   defaultJSExtensions: true,
   transpiler: "babel",
   babelOptions: {
