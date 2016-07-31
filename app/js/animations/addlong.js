@@ -160,12 +160,10 @@ export default class LongAddAnimator {
                 );
                 copy.createElements(this._container).css({
                     "opacity": 0,
-                    "color": "black"
-                });
+                }).addClass(Utils.answerClass);
                 //noinspection JSUnresolvedVariable
                 this._timeline.to(copy.containerDiv, 1, {
                     opacity: 1,
-                    color: "black",
                     top: rightBox.height() * heightMultiplier * 2,
                     ease: Power1.easeOut
                 });
@@ -207,7 +205,7 @@ export default class LongAddAnimator {
                     answerLeft.containerDiv.position().top, sum[1], false);
                 answerRight.createElements(this._container);
                 answerRight.contentDiv.css({"font-size": "2em"});
-                answerRight.addClass(Utils.answerClass());
+                answerRight.containerDiv.addClass(Utils.answerClass);
                 this._toRemove.push(answerRight.containerDiv);
 
                 if (i + 1 === addSets.length) {
@@ -218,7 +216,7 @@ export default class LongAddAnimator {
                 }
             }
             else
-                answerLeft.addClass(Utils.answerClass());
+                answerLeft.containerDiv.addClass(Utils.answerClass);
             this._timeline.to(firstOpSpans[i] + "," + secondOpSpans[i], 0.5, {color: "red"});
 
             this._timeline.fromTo([sideLeft, sideRight, sideCarry], 1, {opacity: 0}, {opacity: 1});
