@@ -22,12 +22,6 @@
   "npm:inherits@2.0.1": {
     "util": "github:jspm/nodelibs-util@^0.1.0"
   },
-  "npm:core-js@1.2.6": {
-    "systemjs-json": "github:systemjs/plugin-json@^0.1.0",
-    "process": "github:jspm/nodelibs-process@^0.1.0",
-    "fs": "github:jspm/nodelibs-fs@^0.1.0",
-    "path": "github:jspm/nodelibs-path@^0.1.0"
-  },
   "github:jspm/nodelibs-util@0.1.0": {
     "util": "npm:util@^0.10.3"
   },
@@ -54,17 +48,6 @@
   "npm:base64-js@0.0.8": {},
   "npm:ieee754@1.1.6": {},
   "github:jspm/nodelibs-child_process@0.1.0": {},
-  "npm:gsap@1.18.5": {
-    "process": "github:jspm/nodelibs-process@^0.1.0"
-  },
-  "npm:process@0.11.5": {
-    "assert": "github:jspm/nodelibs-assert@^0.1.0",
-    "vm": "github:jspm/nodelibs-vm@^0.1.0",
-    "fs": "github:jspm/nodelibs-fs@^0.1.0"
-  },
-  "npm:jquery@1.12.4": {
-    "process": "github:jspm/nodelibs-process@^0.1.0"
-  },
   "github:jspm/nodelibs-vm@0.1.0": {
     "vm-browserify": "npm:vm-browserify@0.0.4"
   },
@@ -72,9 +55,20 @@
   "npm:vm-browserify@0.0.4": {
     "indexof": "npm:indexof@0.0.1"
   },
-  "npm:mathquill@0.10.1-b": {
-    "jquery": "npm:jquery@^1.12.3",
+  "github:adobe-webplatform/Snap.svg@0.4.1": {},
+  "npm:jquery@2.2.4": {},
+  "npm:process@0.11.6": {
+    "assert": "github:jspm/nodelibs-assert@^0.1.0",
+    "vm": "github:jspm/nodelibs-vm@^0.1.0",
+    "fs": "github:jspm/nodelibs-fs@^0.1.0"
+  },
+  "npm:gsap@1.19.0": {
     "process": "github:jspm/nodelibs-process@^0.1.0"
   },
-  "github:adobe-webplatform/Snap.svg@0.4.1": {}
+  "npm:core-js@1.2.7": {
+    "systemjs-json": "github:systemjs/plugin-json@^0.1.0",
+    "process": "github:jspm/nodelibs-process@^0.1.0",
+    "fs": "github:jspm/nodelibs-fs@^0.1.0",
+    "path": "github:jspm/nodelibs-path@^0.1.0"
+  }
 }

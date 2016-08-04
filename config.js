@@ -9,7 +9,7 @@ System.config({
     ]
   },
   paths: {
-     "mathquill": "app/js/lib/mathquill.min.js",
+    "mathquill": "app/js/lib/mathquill.min.js",
     "github:*": "jspm_packages/github/*",
     "npm:*": "jspm_packages/npm/*"
   },
