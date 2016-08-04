@@ -1,5 +1,5 @@
-jspm_packages/
+/jspm_packages
 .idea/watcherTasks.xml
 .idea/workspace.xml
 iisnode.yml
-node_modules/
+/node_modules

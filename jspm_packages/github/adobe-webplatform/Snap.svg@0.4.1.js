@@ -1,1 +1,0 @@
-module.exports = require("github:adobe-webplatform/Snap.svg@0.4.1/dist/snap.svg.js");
