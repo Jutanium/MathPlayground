@@ -4,7 +4,6 @@ import Controller from "app/js/controller";
 import Parser from "app/js/parser";
 import { TweenMax, TimelineMax } from "gsap";
 import { Snap } from "snap.svg";
-
 const MQ = MathQuill.getInterface(2);
 let magicBox;
 const playgroundDiv = $('#playground');
@@ -20,13 +19,6 @@ $(document).ready()
     });
 
     controller.createSubtract({attachLeft: controller.createNumber(123), attachRight: controller.createNumber(45)});
-
-    $("#newDiv").on("click", function() {
-        alert("hi!");
-        $(this).css({"color": "red", "font-style": "italic"});
-        $(this).text("I am a potato");
-    });
-
 }
 function onBoxEdit() {
 

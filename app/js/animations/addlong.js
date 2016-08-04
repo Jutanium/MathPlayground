@@ -117,7 +117,7 @@ export default class LongAddAnimator {
 
         //Timeline time!
         //THESE NEXT TWO POSITIONS TOOK DAYS TO FIGURE OUT they are responsible for moving things over depending
-        //on which number has more digits and by how much. Margins fuck shit up, which is why I have expressions like
+        //on which number has more digits and by how much. Margins fluck slit up, which is why I have expressions like
         //box.width() - box.outerWidth(true), which returns the margin
         this._timeline.to(leftBox, 1, {
             "left": leftLine + plus.width() + (leftBox.width() - leftBox.outerWidth(true)) + numWidth / 2 +
@@ -177,8 +177,10 @@ export default class LongAddAnimator {
                 this._timeline.set(sideLeft, {"text": String(addSet[addSet.length - 2])});
                 if (addSet.length === 3)
                     this._timeline.set(sideRight, {"text": String(addSet[addSet.length - 3])});
-                else if (addSet.length === 2)
+                else if (addSet.length === 2) {
                     showPlus = false;
+                    this._timeline.set([sidePlus, sideRight], {"display": "none"});
+                }
             }
             else {
                 this._timeline.set(sideLeft, {"text": String(addSet[addSet.length - 1])});
@@ -220,9 +222,11 @@ export default class LongAddAnimator {
             this._timeline.to(firstOpSpans[i] + "," + secondOpSpans[i], 0.5, {color: "red"});
 
             this._timeline.fromTo([sideLeft, sideRight, sideCarry], 1, {opacity: 0}, {opacity: 1});
-            if (showPlus)
+            if (showPlus) {
+                this._timeline.set(sidePlus, {display: ""});
                 this._timeline.fromTo(sidePlus, 1, {opacity: 0, color: "black"}, {opacity: 1, color: "#0074D9"}, "-=1");
-
+            }
+            else this._timeline.set(sidePlus, {display: "none"});
             this._timeline.fromTo(sideEquals, 1, {opacity: 0}, {opacity: 1}, "-=0.3");
 
             this._timeline.fromTo(answerLeft.containerDiv, 1, {opacity: 0}, {opacity: 1}, "-=1");
