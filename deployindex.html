@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Math Playground</title>
+    <link rel="stylesheet" href="app/css/mathquill.css"/>
+    <link rel="stylesheet" href="app/css/main.css">
+</head>
+<body>
+<!-- I don't know how to properly import this stuff using JSPM, so until I figure out how to do that here they are.
+MathQuill depends on jQuery so I can't import that using jspm. -->
+<script src="app/js/lib/jquery-2.2.4.min.js"></script>
+<script src="app/js/lib/TextPlugin.min.js"></script>
+<script src="app/js/lib/jquery-ui.js"></script> <!--TODO: Download only the parts of jQuery UI that I need, maybe use jspm. Also remember I edited stuff in jquery-ui -->
+<script src="app/js/lib/mathquill.min.js"></script>
+
+<script src="jspm_packages/system.js"></script>
+<script src="config.js"></script>
+
+<div id="magic-box-div">
+    <span id="magic-box"></span>
+</div>
+
+<div id="playground">
+
+</div>
+
+<script src="theapp.js"></script>
+
+</body>
+</html>

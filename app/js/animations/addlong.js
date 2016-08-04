@@ -199,6 +199,7 @@ export default class LongAddAnimator {
                 side.containerDiv.height() - numWidth / 4, sum[0], false);
             answerLeft.createElements(this._container);
             answerLeft.contentDiv.css({"font-size": "2em"});
+            answerLeft.containerDiv.addClass(Utils.answerClass);
             this._toRemove.push(answerLeft.containerDiv);
 
             if (sum.length == 2) {
