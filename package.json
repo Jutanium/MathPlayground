@@ -9,7 +9,7 @@
     "jspm": "^0.16.35"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "bundle": "jspm bundle-sfx app/js/main.js bundledapp.js"
   },
   "author": "",
   "license": "ISC",

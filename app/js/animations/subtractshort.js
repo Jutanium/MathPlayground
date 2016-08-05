@@ -1,7 +1,3 @@
-/**
- * Created by Matthew Sklar on 7/07/2016.
- */
-
 import { TweenMax, TimelineMax } from "gsap";
 import { Snap } from "snap.svg";
 import { RenderedObject, RenderedNumber, RenderedEquals } from "app/js/renderedobjects";
@@ -82,7 +78,6 @@ export default class ShortSubtractAnimator {
 
         //Move the boxes
         if (!allZero) {
-            //noinspection JSUnresolvedVariable
             this._timeline.to(this._leftBox, 1, {
                 "margin-left": -leftLine / 2 - (numWidth * 3) / 2,
                 ease: Power1.easeInOut
@@ -97,7 +92,6 @@ export default class ShortSubtractAnimator {
         //Drop the squares
         const dropOverlap = Math.max(firstOp, secondOp) <= 9 ? "-=0.35" : "-=0.45";
         for (let i = 0; i < leftSquares.length; i++) {
-            //noinspection JSUnresolvedVariable
             this._timeline.from(leftSquares[i], 0.5, {
                 y: "-=200",
                 ease: Power1.easeOut
@@ -105,7 +99,6 @@ export default class ShortSubtractAnimator {
         }
 
         if (rightSquares.length > 0) {
-            //noinspection JSUnresolvedVariable
             this._timeline.from(rightSquares[0], 0.5, {
                 y: "-=200",
                 delay: 0.1,
@@ -114,7 +107,6 @@ export default class ShortSubtractAnimator {
         }
 
         for (let i = 1; i < rightSquares.length; i++) {
-            //noinspection JSUnresolvedVariable
             this._timeline.from(rightSquares[i], 0.5, {
                 y: "-=200",
                 ease: Power1.easeOut
@@ -132,7 +124,6 @@ export default class ShortSubtractAnimator {
         const moveSquares = svgWidth / 2 - leftTotalSquareWidth / 2;
 
         for (let i = 0; i < leftSquares.length; i++) {
-            //noinspection JSUnresolvedVariable
             this._timeline.to(leftSquares[i], 0.5, {
                 x: moveSquares,
                 ease: Power1.easeOut
@@ -140,7 +131,6 @@ export default class ShortSubtractAnimator {
         }
 
         for (let i = 0; i < rightSquares.length; i++) {
-            //noinspection JSUnresolvedVariable
             this._timeline.to(rightSquares[i], 0.5, {
                 x: -moveSquares,
                 ease: Power1.easeOut
