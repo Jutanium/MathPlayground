@@ -34,6 +34,10 @@ export default class Utils {
         return square;
     }
 
+    static insidesOn(square) {
+        const path = $(square).find("path");
+        path.css("opacity", 1);
+    }
     static toggleInsides(square) {
         const path = $(square).find("path");
 

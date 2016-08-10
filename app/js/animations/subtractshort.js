@@ -23,6 +23,7 @@ export default class ShortSubtractAnimator {
         const firstOp = parseInt(this._leftBox.find(".number-text").text());
         const secondOp = parseInt(this._rightBox.find(".number-text").text());
         const allZero = firstOp === 0 && secondOp === 0;
+        console.log(allZero);
         const svgWidth = 300;
         const svgHeight = 150;
         const svgId = this._svgId;
@@ -92,6 +93,7 @@ export default class ShortSubtractAnimator {
         //Drop the squares
         const dropOverlap = Math.max(firstOp, secondOp) <= 9 ? "-=0.35" : "-=0.45";
         for (let i = 0; i < leftSquares.length; i++) {
+            this._timeline.call(() => { Utils.insidesOn(leftSquares[i]); }); //Ensure that the signs are on the squares
             this._timeline.from(leftSquares[i], 0.5, {
                 y: "-=200",
                 ease: Power1.easeOut
@@ -99,6 +101,7 @@ export default class ShortSubtractAnimator {
         }
 
         if (rightSquares.length > 0) {
+            this._timeline.call(() => { Utils.insidesOn(rightSquares[0]); }); //Ensure that the signs are on the squares
             this._timeline.from(rightSquares[0], 0.5, {
                 y: "-=200",
                 delay: 0.1,
@@ -107,6 +110,7 @@ export default class ShortSubtractAnimator {
         }
 
         for (let i = 1; i < rightSquares.length; i++) {
+            this._timeline.call(() => { Utils.insidesOn(rightSquares[i]); }); //Ensure that the signs are on the squares
             this._timeline.from(rightSquares[i], 0.5, {
                 y: "-=200",
                 ease: Power1.easeOut
@@ -114,16 +118,20 @@ export default class ShortSubtractAnimator {
         }
 
         if (allZero) {
-            this._timeline.call(() => equals.value = 0);
+            this._timeline.call(() => {equals.value = 0});
         }
-
-        this._timeline.to(leftSquares[0], 1.0, {});
 
         //Merge the squares
         const leftTotalSquareWidth = squaresPerRow * (squareWidth + squareMargins);
         const moveSquares = svgWidth / 2 - leftTotalSquareWidth / 2;
 
-        for (let i = 0; i < leftSquares.length; i++) {
+        if (leftSquares.length > 0) {
+            this._timeline.to(leftSquares[0], 0.5, {
+                x: moveSquares,
+                ease: Power1.easeOut
+            }, "+=1");
+        }
+        for (let i = 1; i < leftSquares.length; i++) {
             this._timeline.to(leftSquares[i], 0.5, {
                 x: moveSquares,
                 ease: Power1.easeOut
@@ -140,31 +148,30 @@ export default class ShortSubtractAnimator {
         const max = Math.max(leftSquares.length, rightSquares.length);
         const min = Math.min(leftSquares.length, rightSquares.length);
 
-        this._timeline.to(leftSquares[0], 1.0, {});
-
         //Fade combined squares
+        this._timeline.addLabel("fading", "+=1");
         const fadeSpeed = .7;
         for (let i = 0; i < min; i++) {
             this._timeline.call(() => Utils.toggleInsides(leftSquares[i]));
             this._timeline.to(leftSquares[i], fadeSpeed, {
                 autoAlpha: .05
-            }, "-=" + fadeSpeed);
+            }, "fading-=" + fadeSpeed);
 
             this._timeline.call(() => Utils.toggleInsides(rightSquares[i]));
             this._timeline.to(rightSquares[i], fadeSpeed, {
                 autoAlpha: .05
-            }, "-=" + fadeSpeed);
+            }, "fading-=" + fadeSpeed);
         }
 
-        //noinspection JSUnresolvedVariable
         this._timeline.to(equalsDiv, 1, {opacity: 1, ease: Power1.easeIn});
 
         //Count unfaded squares
         this._timeline.addLabel("beforeCount");
         const countDuration = 3.6 / Math.max(9, Math.max(firstOp, secondOp));
 
-        // FIXME: 0 is under = instead of to the left of it on Windows Chrome
-        equals.value = 0;
+        if (max-min === 0) {
+            this._timeline.call(() => {equals.value = 0});
+        }
 
         for (let i = min; i < max; i++) {
             const remainingSquares = (leftSquares.length > min) ? leftSquares : rightSquares;

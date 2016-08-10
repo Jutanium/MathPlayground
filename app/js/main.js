@@ -9,8 +9,7 @@ let magicBox;
 const playgroundDiv = $('#playground');
 const controller = new Controller(playgroundDiv);
 const parser = new Parser(controller);
-$(document).ready()
-{
+$(document).ready(function() {
     magicBox = MQ.MathField(document.getElementById('magic-box'), {
         handlers: {
             edit: onBoxEdit,
@@ -19,7 +18,8 @@ $(document).ready()
     });
 
     controller.createSubtract({attachLeft: controller.createNumber(123), attachRight: controller.createNumber(45)});
-}
+});
+
 function onBoxEdit() {
 
 }
