@@ -1,4 +1,4 @@
-import { TweenMax, TimelineMax } from "gsap";
+import { Power1, TweenMax, TimelineMax } from "gsap";
 import { Snap } from "snap.svg";
 import { RenderedEquals } from "app/js/renderedobjects";
 import Utils from "app/js/animatorutils";
@@ -18,18 +18,27 @@ export default class ShortMultiplyAnimator {
             this.go();
             return;
         }
+
         this._drawn = true;
+
         const firstOp = parseInt(this._leftBox.find(".number-text").text());
         const secondOp = parseInt(this._rightBox.find(".number-text").text());
+
         const svgWidth = 300;
         const svgHeight = 300;
         const svgId = this._svgId;
+
         const zero = firstOp === 0 || secondOp === 0;
+
         const canvas = Snap(svgWidth, svgHeight);
+
+        const numWidth = Utils.numWidth;
         canvas.node.id = svgId;
         $(canvas.node).css({
-            "margin-left": "-" + (svgWidth / 2 - this._container.width() * .6) + "px",
-            "margin-top": "0.5em"
+            position: "absolute",
+            "z-index": "-1",
+            top: "50px",
+            left: `-${(svgWidth / 2)}px`,
         });
         this._container.append(canvas.node);
 
@@ -52,36 +61,32 @@ export default class ShortMultiplyAnimator {
 
         const actualWidth = (squareWidth + squareMargin) * secondOp;
         const actualHeight = (squareWidth + squareMargin) * firstOp;
+        console.log(actualWidth, actualHeight);
 
         const operator = this._container.find(".operation-text");
 
         //Move the boxes
         if (!zero) {
-            //noinspection JSUnresolvedVariable
             this._timeline.to(this._leftBox, 1, {
-                "margin-left": -actualWidth / 2 - this._leftBox.width() / 2,
-                "margin-top": actualHeight / 2 + this._leftBox.height() / 2,
+                "left": -actualWidth / 2 - numWidth * 2,
+                "top": actualHeight / 2 + numWidth * 2,
                 ease: Power1.easeInOut
             });
-            //noinspection JSUnresolvedVariable
             this._timeline.to(this._rightBox, 1, {
-                "margin-left": 0,
-                "margin-top": actualHeight + this._rightBox.height() * 1.5,
+                "left": actualWidth / 2,
+                "top": actualHeight + numWidth * 3,
                 ease: Power1.easeInOut
             }, "-=1");
-            //noinspection JSUnresolvedVariable
             this._timeline.to(operator, 1, {
-                "margin-left": -actualWidth / 2 - operator.width() / 2,
-                "margin-top": actualHeight + operator.width(),
+                "margin-left": -actualWidth / 2 - numWidth * 4, //Operator needs to stay position: relative so the left box doesn't collapse. Hence we use margin-left and margin-top instead of left and top
+                "margin-top": actualHeight + numWidth * 2,
                 ease: Power1.easeInOut
             }, "-=1");
 
             //Fade in the squares
             for (let y = squares.length - 1; y >= 0; y--) {
-                //noinspection JSUnresolvedVariable
                 this._timeline.from(squares[y][0], 0.5, {delay: 0.5, opacity: 0, ease: Power4.easeNone});
                 for (let x = 1; x < secondOp; x++) {
-                    //noinspection JSUnresolvedVariable
                     this._timeline.from(squares[y][x], 0.5, {opacity: 0, ease: Power4.easeNone}, "-=0.5");
                 }
             }
@@ -92,8 +97,8 @@ export default class ShortMultiplyAnimator {
         let equalsY = 0;
         console.log(zero);
         if (!zero) {
-            equalsX = actualWidth / 2 + operator.width();
-            equalsY = actualHeight / 2 + operator.width() / 2;
+            equalsX = actualWidth / 2 + numWidth;
+            equalsY = actualHeight / 2 +  numWidth;
         }
 
         const equals = new RenderedEquals(svgId + "-equals", equalsX, equalsY); //actualWidth / 2 + operator.width(), actualHeight / 2 + operator.width() * .75);

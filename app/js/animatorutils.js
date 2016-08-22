@@ -3,8 +3,10 @@ import { TweenMax, TimelineMax } from "gsap";
 export default class Utils {
 
     static get numWidth() { return 24; }
+
     static get answerClass () { return "answer"; }
     static get carryClass() { return "carry"; }
+    static get negativeClass() { return "negative"; }
 
     static addClass(element, newClass, duration = 0.6) {
         //noinspection JSUnresolvedVariable

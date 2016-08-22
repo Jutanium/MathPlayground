@@ -17,7 +17,9 @@ $(document).ready(function() {
         }
     });
 
+    controller.createMultiply({attachLeft: controller.createNumber(4), attachRight: controller.createNumber(4)});
     controller.createSubtract({attachLeft: controller.createNumber(123), attachRight: controller.createNumber(45)});
+    controller.createAdd({attachLeft: controller.createNumber(49), attachRight: controller.createNumber(173)});
 });
 
 function onBoxEdit() {

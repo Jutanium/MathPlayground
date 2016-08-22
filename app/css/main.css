@@ -1,4 +1,3 @@
-/*Not sure if it's wrong use ems for everything, but it seems to work well.*/
 
 /*Top strip*/
 div#magic-box-div {
@@ -12,7 +11,7 @@ span#magic-box {
     font-size: 3em;
     text-align:center;
 }
-
+/*
 div.ui-draggable {
     cursor: pointer;
 
@@ -34,7 +33,6 @@ div.number-container, div.operation-container {
 div.operation{
     width: 2em;
     height: 2em;
-    /*border: 1px solid black;*/
 }
 
 div.number {
@@ -57,12 +55,11 @@ div.snapped.divide{
     color: #FFD700;
 }
 
-/*The text inside the draggable divs*/
 div.operation-text, div.number-text {
     display: inline-block;
     font-family: "Times New Roman";
     font-size: 3em;
-    margin-top: -0.24em; /*Oddly specific values? idk but they work*/
+    margin-top: -0.24em;
     margin-left: 0.04em;
 }
 
@@ -78,7 +75,7 @@ div.snapbox-left  {
 div.snapbox-right {
     margin-left: 3em;
 }
-
+*/
 #playground {
     position: relative;
     margin-top: 5px;
@@ -92,10 +89,3 @@ div.snapbox-right {
     border: 1px solid red;
 }
 
-.answer {
-    color: #2cc31c;
-}
-
-.carry {
-    color: #FFC300;
-}

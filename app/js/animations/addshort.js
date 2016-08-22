@@ -1,4 +1,4 @@
-import { TweenMax, TimelineMax } from "gsap";
+import { Power1, TweenMax, TimelineMax } from "gsap";
 import { Snap } from "snap.svg";
 import { RenderedEquals } from "app/js/renderedobjects";
 import Utils from "app/js/animatorutils";
@@ -23,22 +23,26 @@ export default class ShortAddAnimator {
         const secondOp = parseInt(this._rightBox.find(".number-text").text());
         const allZero = firstOp === 0 && secondOp === 0;
         const svgWidth = 300;
-        const svgHeight = 150;
+        const svgHeight = svgWidth / 2;
         const svgId = this._svgId;
 
         const numWidth = Utils.numWidth;
+
+        const plus = this._container.find(".operation-text");
 
         const canvas = Snap(svgWidth, svgHeight);
         canvas.node.id = svgId;
         //console.log("-" + (svgWidth / 2 - this._container.width() / 2) + "px");
         $(canvas.node).css({
-            "margin-left": "-" + (svgWidth / 2 - this._container.width() / 2) + "px",
-            "margin-top": "0.5em"
+            position: "absolute",
+            top: "50px",
+            left: "-" + (svgWidth / 2 - numWidth * 2.5) + "px"
         });
         this._container.append(canvas.node);
 
-        const leftLine = svgWidth / 2 - 25;
-        const rightLine = svgWidth / 2 + 25;
+        const lineGap = 25;
+        const leftLine = svgWidth / 2 - lineGap;
+        const rightLine = svgWidth / 2 + lineGap;
 
         let squaresPerRow = 3;
         while (Math.max(firstOp, secondOp) > squaresPerRow * squaresPerRow) {
@@ -65,31 +69,28 @@ export default class ShortAddAnimator {
             rightSquares[i] = "#" + (square.node.id = svgId + "-right-" + i);
         }
 
-        const plus = this._container.find(".operation-text");
+
 
         let equalsX = this._rightBox.position().left + this._rightBox.outerWidth(true) + plus.width() / 2;
-        let equalsY = 0;
+        let equalsY = numWidth / 2;
         if (!allZero) {
-            equalsX = svgWidth / 2 + plus.width();
-            equalsY = svgHeight / 2 + plus.width() / 2;
+            equalsX = svgWidth / 2 + lineGap * 3;
+            equalsY = svgHeight / 2 + plus.width() * 3/4;
         }
-        const equals = new RenderedEquals(svgId + "-equals", equalsX, equalsY);
+        const equals = new RenderedEquals(`${svgId}-equals`, equalsX, equalsY);
         this._equals = equals;
         const equalsDiv = equals.createElements(this._container);
         equalsDiv.css({"opacity": 0});
 
         //Move the boxes
         if (!allZero) {
-            //noinspection JSUnresolvedVariable
-            this._timeline.to(plus, 1, {"margin-top": svgHeight / 2, ease: Power1.easeInOut});
-            //noinspection JSUnresolvedVariable
+            this._timeline.to(plus, 1, {"position": "relative", "top": svgHeight / 2 + plus.width() / 3, ease: Power1.easeInOut});
             this._timeline.to(this._leftBox, 1, {
-                "margin-left": -leftLine / 2 - (numWidth * 3) / 2,
+                "left": -leftLine / 3 + numWidth / 4,
                 ease: Power1.easeInOut
             }, "-=1");
-            //noinspection JSUnresolvedVariable
             this._timeline.to(this._rightBox, 1, {
-                "margin-left": (svgWidth - rightLine) / 2 + (numWidth * 3 - this._rightBox.width()) * .5,
+                "left": rightLine / 3 - numWidth / 4,
                 ease: Power1.easeInOut
             }, "-=1");
         }
@@ -97,7 +98,6 @@ export default class ShortAddAnimator {
         //Drop the squares
         const dropOverlap = Math.max(firstOp, secondOp) <= 9 ? "-=0.35" : "-=0.45";
         for (let i = 0; i < leftSquares.length; i++) {
-            //noinspection JSUnresolvedVariable
             this._timeline.from(leftSquares[i], 0.5, {
                 y: "-=200",
                 ease: Power1.easeOut
@@ -105,7 +105,6 @@ export default class ShortAddAnimator {
         }
 
         if (rightSquares.length > 0) {
-            //noinspection JSUnresolvedVariable
             this._timeline.from(rightSquares[0], 0.5, {
                 y: "-=200",
                 delay: 0.1,
@@ -114,7 +113,6 @@ export default class ShortAddAnimator {
         }
 
         for (let i = 1; i < rightSquares.length; i++) {
-            //noinspection JSUnresolvedVariable
             this._timeline.from(rightSquares[i], 0.5, {
                 y: "-=200",
                 ease: Power1.easeOut
@@ -124,7 +122,6 @@ export default class ShortAddAnimator {
         if (allZero) {
             this._timeline.call(() => equals.value = 0);
         }
-        //noinspection JSUnresolvedVariable
         this._timeline.to(equalsDiv, 1, {opacity: 1, ease: Power1.easeIn});
 
         //Count the squares

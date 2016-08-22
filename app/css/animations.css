@@ -1,0 +1,12 @@
+.answer {
+    color: #2cc31c;
+    position: absolute;
+}
+
+.carry {
+    color: #FFC300;
+}
+
+.negative {
+    color: #0074D9;
+}

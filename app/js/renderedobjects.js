@@ -13,39 +13,34 @@ class RenderedObject {
     get id () { return this._id; }
     get type () { return this._type; }
     get contentDiv () { return this._contentDiv; } //div, contains just the content
-    get containerDiv () { return this._containerDiv; } //div, also includes any snapboxes and snapped elements
+    get containerDiv () { return this._containerDiv; } //div, also includes other stuff: snapboxes and snapped elements for example
     set contents (contents) {
         this._contentDiv.html(contents);
     }
     //Creates the DOM elements and children to the parent parameter. Only call this once!
     createElements(parent) {
-        const container = $("<div></div>", {
-            "id": this._id,
-            "class": this._type + "-container",
-            "style": "left: " + this._x + "px; top: " + this._y + "px",
-        });
+        const container = $("<div></div>")
+            .attr("id", this._id)
+            .addClass(this._type + "-container")
+            .css({left: this._x, top: this._y});
 
-        const contentDraggable = $("<div></div>", {
-            "class":  this._type,
-        });
 
-        const content = $("<div></div>", {
-            "class": this._type + "-text",
-        }).html(this._contents);
+        const content = $("<div></div>")
+            .addClass(this._type + "-text")
+            .html(this._contents);
 
-        content.appendTo(contentDraggable);
-        contentDraggable.appendTo(container);
+        content.appendTo(container);
         container.appendTo(parent);
 
         if (this._draggable) container.draggable();
 
-        this._contentDiv = content
+        this._contentDiv = content;
         this._containerDiv = container;
         return container;
     }
 }
 
-class SnapObject extends RenderedObject { 
+class SnapObject extends RenderedObject {
     //Abstract. A RenderedObject that snaps to snapboxes
     constructor (id, x, y, type, contents, snapTo, snapboxes, draggable) {
         super (id, x, y, type, contents, snapboxes, draggable);
@@ -87,12 +82,15 @@ class SnapObject extends RenderedObject {
             return element.snapping ? element.item : null;
         });
 
+
         //If it isn't snapping to anything, make sure it is the child of the playground div
         if (snappedTo.length == 0) {
             if (lastSnapped) {
                 const top = dragger.offset().top;
                 const left = dragger.offset().left;
                 dragger.detach().appendTo($("#playground"));
+                dragger.css({position: 'absolute'})
+                dragger.css("width", "auto");
                 dragger.offset({top: top, left: left});
                 $(lastSnapped).trigger("unsnapped");
                 this._lastSnapped = null;
@@ -119,7 +117,7 @@ class SnapObject extends RenderedObject {
             else if (snappedTo.length == 1)
                 snapped = snappedTo[0];
             dragger.detach().appendTo(snapped);
-            dragger.css({"left": 0, "top": 0});
+            dragger.css({position: "relative", "left": 0, "top": 0});
             $(snapped).trigger("snapped", dragger);
             if (lastSnapped != null && !$(lastSnapped).is($(snapped)))
                 $(lastSnapped).trigger("unsnapped");
@@ -178,75 +176,77 @@ class HasSnapboxes extends SnapObject { //Abstract.
     }
 
     //Because big numbers caused problems on the left
-    fixLeftBoxIssue(numberContainer) {
+    /*fixLeftBoxIssue(numberContainer) {
         const textElement = numberContainer.find(".number-text");
         const defaultWidth = AnimatorUtils.numWidth;
 
         this._leftSnapbox.css("margin-left", "-=" + (textElement.width() - defaultWidth) * .9); //TODO: (low priority) find out from where this magic number derives
-    }
+    }*/
     //Override
     createElements(parent) {
         const element = super.createElements(parent);
         const _this = this;
 
-        this._leftSnapbox = $("<div></div>", {
-            class: this.type + "snapbox snapbox snapbox-left"
-        }).on("dragStart", function(event, dragger) {
-            if (!_this.snapped.left || $(_this.snapped.left).is(dragger))
-            {
-                $(this).css({"border": "1px dotted black", "margin-left": "", "left": "", "width": ""});
-            }
-        }).on("dragStop", function(event, dragger) {
-            if (_this.snapped.left) $(this).css("border", "none");
-        }).on("snapped", function (event, dragger) {
-            _this._leftSnapped = dragger;
-            if ($(dragger).hasClass("number-container"))
-            {
-                console.log("fired");
-                _this.fixLeftBoxIssue($(dragger));
-                $(this).css("width", $(dragger).find(".number-text").width());
-            }
-            if ($(_this.snapped.right).is(dragger))
-                _this._rightSnapped = null;
-            if(_this.snapped.right)
-                if (_this._onBothSnapped != null) _this._onBothSnapped();
-            $(this).removeClass(_this.type + "snapbox");
-            console.log("left snapped", $(_this.snapped.left).attr("id"), $(_this.snapped.right).attr("id"));
-        }).on("unsnapped", function (event) {
-            console.log("leftUnsnapped");
-            if (_this.snapped.left && _this.snapped.right)
-                if (_this._onUnsnapped != null) _this._onUnsnapped();
-            _this._leftSnapped = null;
-            $(this).addClass(_this.type + "snapbox");
-        })
-            .on("click", function (event) { console.log($(this).css("left"), $(this).css("margin-left")) })
+        this._leftSnapbox = $("<div></div>")
+            .addClass(this.type + "snapbox snapbox snapbox-left border")
+            .on("dragStart", function(event, dragger) {
+                if (!_this.snapped.left || $(_this.snapped.left).is(dragger))
+                {
+                    $(this).addClass("border");
+                }
+            }).on("dragStop", function(event, dragger) {
+                if (_this.snapped.left) $(this).removeClass("border");
+            }).on("snapped", function (event, dragger) {
+                _this._leftSnapped = dragger;
+                /*if ($(dragger).hasClass("number-container"))
+                {
+                    console.log("fired");
+                    //_this.fixLeftBoxIssue($(dragger));
+                    //$(this).css("width", $(dragger).find(".number-text").width());
+                }*/
+                if ($(_this.snapped.right).is(dragger))
+                    _this._rightSnapped = null;
+                if(_this.snapped.right)
+                    if (_this._onBothSnapped != null) _this._onBothSnapped();
+                $(this).removeClass(_this.type + "snapbox");
+                console.log("left snapped", $(_this.snapped.left).attr("id"), $(_this.snapped.right).attr("id"));
+            }).on("unsnapped", function (event) {
+                console.log("leftUnsnapped");
+                if (_this.snapped.left && _this.snapped.right)
+                    if (_this._onUnsnapped != null) _this._onUnsnapped();
+                _this._leftSnapped = null;
+                $(this).addClass(_this.type + "snapbox");
+            })
             .prependTo(element);
 
-        this._rightSnapbox = $("<div></div>", {
-            class: this.type + "snapbox snapbox snapbox-right"
-        }).on("dragStart", function(event, dragger) {
-            if (!_this.snapped.right || $(_this.snapped.right).is(dragger))
-                $(this).css({"border": "1px dotted black", "left": "", "width": ""});
-        }).on("dragStop", function(event) {
-            if (_this.snapped.right)
-                $(this).css("border", "none");
-        }).on("snapped", function (event, dragger) {
-            _this._rightSnapped = dragger;
-            if ($(dragger).hasClass("number-container")) {
-                $(this).css("width", $(dragger).find(".number-text").width());
-            }
-            if ($(_this.snapped.left).is(dragger))
-                _this._leftSnapped = null;
-            if(_this.snapped.left)
-                if (_this._onBothSnapped != null) _this._onBothSnapped();
-            $(this).removeClass(_this.type + "snapbox");
-        }).on("unsnapped", function (event) {
-            if (_this.snapped.left && _this.snapped.right)
-                if (_this._onUnsnapped != null) _this._onUnsnapped();
-            _this._rightSnapped = null;
-            $(this).addClass(_this.type + "snapbox");
-        }).prependTo(element);
-        return element;
+        this._rightSnapbox = $("<div></div>")
+            .addClass(this.type + "snapbox snapbox snapbox-right border")
+            .on("dragStart", function(event, dragger) {
+                if (!_this.snapped.right || $(_this.snapped.right).is(dragger))
+                    $(this).addClass("border");
+            })
+            .on("dragStop", function(event) {
+                if (_this.snapped.right)
+                    $(this).removeClass("border");
+            })
+            .on("snapped", function (event, dragger) {
+                _this._rightSnapped = dragger;
+                /*if ($(dragger).hasClass("number-container")) {
+                    $(this).css("width", $(dragger).find(".number-text").width());
+                }*/
+                if ($(_this.snapped.left).is(dragger))
+                    _this._leftSnapped = null;
+                if(_this.snapped.left)
+                    if (_this._onBothSnapped != null) _this._onBothSnapped();
+                $(this).removeClass(_this.type + "snapbox");
+            })
+            .on("unsnapped", function (event) {
+                if (_this.snapped.left && _this.snapped.right)
+                    if (_this._onUnsnapped != null) _this._onUnsnapped();
+                _this._rightSnapped = null;
+                $(this).addClass(_this.type + "snapbox");
+            }).appendTo(element);
+            return element;
     }
 }
 
@@ -346,7 +346,7 @@ class RenderedDivide extends RenderedOperation {
 import Utils from "app/js/animatorutils";
 class RenderedEquals extends RenderedObject {
     constructor (id, x, y) {
-        super (id, x, y, "number", "=", false);
+        super (id, x, y, "equals number", "=", false);
     }
 
     tickBy (by = 1) {

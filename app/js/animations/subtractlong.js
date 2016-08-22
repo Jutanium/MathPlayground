@@ -16,10 +16,10 @@ export default class LongSubtractAnimator {
             this.go();
             return;
         }
+
         this._drawn = true;
 
-        //TODO: Maybe toss this into css
-        const negativeColor = "#0074D9";
+        const negativeClass = Utils.negativeClass;
 
         const leftBox = this._container.children(".snapbox-left");
         const rightBox = this._container.children(".snapbox-right");
@@ -73,7 +73,7 @@ export default class LongSubtractAnimator {
 
         const leftLine = 0;
 
-        const minus = this._container.find(".operation");
+        const minus = this._container.find(".operation-text");
         const minusLeft = leftLine;
 
         //Starting from right; i.e. column 0 is ones column
@@ -103,8 +103,7 @@ export default class LongSubtractAnimator {
 
             negativeSign.contentDiv.css({
                 "font-size": "3em",
-                "color": negativeColor,
-            });
+            }).addClass(negativeClass);
         }
         const side = new RenderedObject(this._animationId + "-side",
             leftPosOfColumn(-1),
@@ -142,15 +141,16 @@ export default class LongSubtractAnimator {
         });
 
         //Timeline time!
-
         this._timeline.to(leftBox, 1, {
-            "left": leftLine + minus.width() + (leftBox.width() - leftBox.outerWidth(true)) + numWidth / 2 +
-            (Math.max(0, rightBoxText.length - leftBoxText.length) * (numWidth + letterSpacing))
+            "position": "absolute",
+            "left": leftLine + minus.width() + (leftBox.width() - leftBox.outerWidth(true)) + numWidth +
+            (Math.max(0, rightBoxText.length - leftBoxText.length) * (numWidth + letterSpacing)),
         });
         this._timeline.to(rightBox, 1, {
+            "position": "absolute",
             "left": leftLine - (rightBox.outerWidth(true) - rightBox.width()) + minus.width() + numWidth / 2 +
             (Math.max(0, leftBoxText.length - rightBoxText.length) * (numWidth + letterSpacing)),
-            "top": rightBox.height() * heightMultiplier
+            "top": numWidth * 3
         }, "-=1");
 
         //Animate padding (a bit choppy unfortunately, not sure if autoRound makes a difference).
@@ -171,10 +171,10 @@ export default class LongSubtractAnimator {
             console.log("negative");
             //Flip Operators
             this._timeline.to(botBox, 1, {
-                "top": rightBox.height() * heightMultiplier
+                "top": numWidth * 3
             });
             this._timeline.to(topBox, 1, {
-                "top": 0
+                "top": numWidth
             }, "-=1");
 
             this._timeline.to(negativeSign.containerDiv, 1, {
@@ -194,7 +194,7 @@ export default class LongSubtractAnimator {
                 1,
                 false
             );
-            one.createElements(this._container);
+            one.createElements(this._container).css("position", "absolute");
             one.contentDiv.css({
                 "font-size": "2em",
             });
@@ -257,25 +257,25 @@ export default class LongSubtractAnimator {
                     //Because .width() above does not account for runtime changes, we manually have to check for
                     //whether a carry happened or not
                     + numWidth * ((String(subtractSet[0]).split("").length === 2) ? 2 : 1),
-                side.containerDiv.height() - numWidth / 4,
+                side.containerDiv.height() - numWidth / 2,
                 difference,
                 false
             );
             answer.createElements(this._container);
             answer.contentDiv.css({"font-size": "2em"});
-            answer.contentDiv.addClass(Utils.answerClass);
+            answer.containerDiv.addClass(Utils.answerClass);
 
             answerNums.push(answer);
             this._toRemove.push(answer.containerDiv);
 
             this._timeline.fromTo([sideLeft, sideRight], 1.5, {opacity: 0}, {opacity: 1}, "+=0.5");
-            this._timeline.fromTo(sideMinus, 1.5, {opacity: 0}, {opacity: 1, color: negativeColor}, "-=1.5");
+            this._timeline.fromTo(sideMinus, 1.5, {opacity: 0}, {opacity: 1, className: `+=${negativeClass}`}, "-=1.5");
             this._timeline.fromTo(sideEquals, 1, {opacity: 0}, {opacity: 1}, "-=0.3");
             this._timeline.fromTo(answer.containerDiv, 1, {opacity: 0}, {opacity: 1});
 
             this._timeline.to(answer.containerDiv, 1, {
                 left: leftPosOfColumn(i),
-                top: rightBox.height() * heightMultiplier * 2,
+                top: rightBox.height() * heightMultiplier + numWidth * 2,
                 "font-size": numWidth
             });
 

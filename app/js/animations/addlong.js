@@ -1,4 +1,4 @@
-import { TweenMax, TimelineMax } from "gsap";
+import { Power1, TweenMax, TimelineMax } from "gsap";
 import { Snap } from "snap.svg";
 import { RenderedObject, RenderedNumber, RenderedEquals } from "app/js/renderedobjects";
 import Utils from "app/js/animatorutils";
@@ -75,7 +75,7 @@ export default class LongAddAnimator {
 
         const leftLine = 0;
 
-        const plus = this._container.find(".operation");
+        const plus = this._container.find(".operation-text");
         //If AB + CD = XYZ, we need to move the plus and equals over to account for the new digit.
         const plusLeft = leftLine - (String(firstOp + secondOp).length - biggerOpLength) * (numWidth + letterSpacing);
 
@@ -120,9 +120,10 @@ export default class LongAddAnimator {
         //on which number has more digits and by how much. Margins fluck slit up, which is why I have expressions like
         //box.width() - box.outerWidth(true), which returns the margin
         this._timeline.to(leftBox, 1, {
-            "left": leftLine + plus.width() + (leftBox.width() - leftBox.outerWidth(true)) + numWidth / 2 +
+            "position": "absolute",
+            "left": leftLine + plus.width() + (leftBox.width() - leftBox.outerWidth(true)) + numWidth +
             (Math.max(0, secondOpText.length - firstOpText.length) * (numWidth + letterSpacing)),
-            "top": rightBox.height() * heightMultiplier
+            "top": numWidth * 3,
         });
         this._timeline.to(rightBox, 1, {
             "left": leftLine - (rightBox.outerWidth(true) - rightBox.width()) + plus.width() + numWidth / 2 +
@@ -140,7 +141,6 @@ export default class LongAddAnimator {
 
         this._timeline.to("." + this._animationId + "-operand", 0.5, {"padding-right": letterSpacing}, "-=0.2");
         //Fade in big equals
-        //noinspection JSUnresolvedVariable
         this._timeline.to(equalsDiv, 1, {opacity: 1, ease: Power1.easeInOut}, "-=.75");
 
         let answerNumbers = [];
@@ -161,7 +161,6 @@ export default class LongAddAnimator {
                 copy.createElements(this._container).css({
                     "opacity": 0,
                 }).addClass(Utils.answerClass);
-                //noinspection JSUnresolvedVariable
                 this._timeline.to(copy.containerDiv, 1, {
                     opacity: 1,
                     top: rightBox.height() * heightMultiplier * 2,
@@ -196,7 +195,7 @@ export default class LongAddAnimator {
             console.log(`sum: ${sum[0]}`);
             answerLeft = new RenderedNumber(this._animationId + "-side-answerLeft-" + i,
                 side.containerDiv.position().left + side.containerDiv.width() + (addSet[2] ? numWidth * 4.5 : numWidth * 2),
-                side.containerDiv.height() - numWidth / 4, sum[0], false);
+                side.containerDiv.height() - numWidth / 2, sum[0], false);
             answerLeft.createElements(this._container);
             answerLeft.contentDiv.css({"font-size": "2em"});
             answerLeft.containerDiv.addClass(Utils.answerClass);
@@ -204,7 +203,7 @@ export default class LongAddAnimator {
 
             if (sum.length == 2) {
                 answerRight = new RenderedNumber(this._animationId + "-side-answerRight-" + i,
-                    answerLeft.containerDiv.position().left + answerLeft.containerDiv.width() / 2,
+                    answerLeft.containerDiv.position().left + answerLeft.containerDiv.width(),
                     answerLeft.containerDiv.position().top, sum[1], false);
                 answerRight.createElements(this._container);
                 answerRight.contentDiv.css({"font-size": "2em"});
@@ -228,6 +227,7 @@ export default class LongAddAnimator {
                 this._timeline.fromTo(sidePlus, 1, {opacity: 0, color: "black"}, {opacity: 1, color: "#0074D9"}, "-=1");
             }
             else this._timeline.set(sidePlus, {display: "none"});
+
             this._timeline.fromTo(sideEquals, 1, {opacity: 0}, {opacity: 1}, "-=0.3");
 
             this._timeline.fromTo(answerLeft.containerDiv, 1, {opacity: 0}, {opacity: 1}, "-=1");
@@ -239,14 +239,14 @@ export default class LongAddAnimator {
 
             this._timeline.to(moveDown.containerDiv, 1, {
                 left: leftLine + plus.width() + numWidth / 2 + (biggerOpLength - i - 1) * (numWidth + letterSpacing),
-                top: rightBox.height() * heightMultiplier * 2,
+                top: rightBox.height() * heightMultiplier + numWidth * 2,
                 "font-size": numWidth
             });
 
-            if (answerRight) {
+            if (answerRight) { //Move up
                 this._timeline.to(answerLeft.containerDiv, 1, {
                     left: leftLine + plus.width() + numWidth / 2 + (biggerOpLength - i - 2) * (numWidth + letterSpacing),
-                    top: rightBox.height() * -heightMultiplier,
+                    top: rightBox.height() * -heightMultiplier + numWidth / 2,
                     "font-size": numWidth,
                     className: "+=" + Utils.carryClass
                 }, "-=1");
