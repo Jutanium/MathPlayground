@@ -70,4 +70,16 @@ export default class Utils {
             shapeRendering: "crispEdges"
         });
     }
+
+    static individualNumberHtml(opArray, animation) {
+        let opSpans = [];
+
+        const newHtml = opArray.reduce((prev, curr, currIndex, array) => {
+            const id = animation._animationId + "-topOp-" + (array.length - currIndex);
+            opSpans.unshift("#" + id);
+            return `${prev}<span class='${animation._animationId}-operand' id='${id}'>${curr}</span>`;
+        }, "");
+
+        return [opSpans, newHtml];
+    }
 }

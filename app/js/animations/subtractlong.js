@@ -43,20 +43,14 @@ export default class LongSubtractAnimator {
         const topOpReversed = topOpArray.slice().reverse();
         const botOpReversed = botOpArray.slice().reverse();
 
-        let topOpSpans = [];
-        const newTopHtml = topOpArray.reduce((prev, curr, currIndex, array) => {
-            const id = this._animationId + "-topOp-" + (array.length - currIndex);
-            topOpSpans.unshift("#" + id);
-            return `${prev}<span class='${this._animationId}-operand' id='${id}'>${curr}</span>`;
-        }, "");
+        const topOpTuple = Utils.individualNumberHtml(topOpArray, this);
+        const topOpSpans = topOpTuple[0];
+        const newTopHtml = topOpTuple[1];
         topBox.find(".number-text").html(newTopHtml);
 
-        let botOpSpans = [];
-        const newBotHtml = botOpArray.reduce((prev, curr, currIndex, array) => {
-            const id = this._animationId + "-bottomOp-" + (array.length - currIndex);
-            botOpSpans.unshift("#" + id);
-            return `${prev}<span class='${this._animationId}-operand' id='${id}'>${curr}</span>`;
-        }, "");
+        const botOpTuple = Utils.individualNumberHtml(botOpArray, this);
+        const botOpSpans = botOpTuple[0];
+        const newBotHtml = botOpTuple[1];
         botBox.find(".number-text").html(newBotHtml);
 
         const subtractSets = topOpReversed.map((currentValue, index) => {
@@ -190,7 +184,7 @@ export default class LongSubtractAnimator {
             const one = new RenderedNumber(
                 `${this._animationId}-newOne-${column}`,
                 leftPosOfColumn(column) - numWidth / 2,
-                2, //Trust me it looks better
+                2, //Trust me it looks better I dont believe you
                 1,
                 false
             );
