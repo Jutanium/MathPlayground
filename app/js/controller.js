@@ -2,6 +2,7 @@ import {RenderedNumber, RenderedAdd, RenderedSubtract, RenderedMultiply, Rendere
 import AddShort from "app/js/animations/addshort";
 import AddLong from "app/js/animations/addlong";
 import MultiplyShort from "app/js/animations/multiplyshort";
+import MultiplyLong from "app/js/animations/multiplylong";
 import SubtractShort from "app/js/animations/subtractshort";
 import SubtractLong from "app/js/animations/subtractlong";
 
@@ -61,6 +62,13 @@ export default class Controller {
         return this.createOperator(RenderedMultiply, parameters);
     }
     static getMultiplyAnimation(container) {
+        const firstOp = container.children(".snapbox-left").find(".number-text").text();
+        const secondOp = container.children(".snapbox-right").find(".number-text").text();
+
+        if (firstOp > 10 && secondOp > 10) {
+            return new MultiplyLong(container);
+        }
+
         return new MultiplyShort(container);
     }
 
