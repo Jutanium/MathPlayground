@@ -115,13 +115,11 @@ export default class LongAddAnimator {
         //box.width() - box.outerWidth(true), which returns the margin
         this._timeline.to(leftBox, 1, {
             "position": "absolute",
-            "left": leftLine + plus.width() + (leftBox.width() - leftBox.outerWidth(true)) + numWidth +
-            (Math.max(0, secondOpText.length - firstOpText.length) * (numWidth + letterSpacing)),
+            "left": Utils.positionTopBox(leftLine, plus, leftBox, numWidth, secondOpText, firstOpText, letterSpacing),
             "top": numWidth * 3,
         });
         this._timeline.to(rightBox, 1, {
-            "left": leftLine - (rightBox.outerWidth(true) - rightBox.width()) + plus.width() + numWidth / 2 +
-            (Math.max(0, firstOpText.length - secondOpText.length) * (numWidth + letterSpacing))
+            "left": Utils.positionBotBox(leftLine, plus, rightBox, numWidth, secondOpText, firstOpText, letterSpacing),
         }, "-=1");
         //Move plus down next to big box
         this._timeline.to(plus, 1, {

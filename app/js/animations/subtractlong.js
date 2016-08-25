@@ -137,13 +137,11 @@ export default class LongSubtractAnimator {
         //Timeline time!
         this._timeline.to(leftBox, 1, {
             "position": "absolute",
-            "left": leftLine + minus.width() + (leftBox.width() - leftBox.outerWidth(true)) + numWidth +
-            (Math.max(0, rightBoxText.length - leftBoxText.length) * (numWidth + letterSpacing)),
+            "left": Utils.positionTopBox(leftLine, minus, leftBox, numWidth, rightBoxText, leftBoxText, letterSpacing)
         });
         this._timeline.to(rightBox, 1, {
             "position": "absolute",
-            "left": leftLine - (rightBox.outerWidth(true) - rightBox.width()) + minus.width() + numWidth / 2 +
-            (Math.max(0, leftBoxText.length - rightBoxText.length) * (numWidth + letterSpacing)),
+            "left": Utils.positionBotBox(leftLine, minus, rightBox, numWidth, rightBoxText, leftBoxText, letterSpacing),
             "top": numWidth * 3
         }, "-=1");
 
