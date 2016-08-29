@@ -108,7 +108,7 @@ export default class Controller {
     _getRandomPos() {
         //TODO: Make objects not spawn on top of each other?
         return {
-            x: Math.floor(Math.random() * this._parentDiv.width() / 3) + this._parentDiv.width() / 3,
+            x: Math.floor(Math.random() * this._parentDiv.width() / 3),
             y: Math.floor(Math.random() * this._parentDiv.height() * 0.2)
         };
     }

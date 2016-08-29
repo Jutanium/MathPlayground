@@ -243,7 +243,7 @@ export default class LongSubtractAnimator {
 
             this._timeline.set(sideLeft, {"text": String(subtractSet[0])});
             this._timeline.set(sideRight, {"text": String(subtractSet[1])});
-
+    
             let answer = new RenderedNumber(`${this._animationId}-answer-${i}`,
                 side.containerDiv.position().left + side.containerDiv.width() + letterSpacing
                     //Because .width() above does not account for runtime changes, we manually have to check for
