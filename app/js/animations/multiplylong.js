@@ -9,6 +9,7 @@ export default class LongMultiplyAnimator {
 
         this._container = elem;
         this._timeline = new TimelineMax();
+        this._animationId = this._container.attr("id") + "-animation";
         this._svgId = this._container.attr("id") + "-animation";
         this._toRemove = [];
     }
@@ -39,12 +40,12 @@ export default class LongMultiplyAnimator {
         let topBox = leftBox, botBox = rightBox;
 
         // Box text
-        const leftBoxText = leftBox.find(".number-text").text();
-        const rightBoxText = rightBox.find(".number-text").text();
+        const topOpText = topBox.find(".number-text").text();
+        const botOpText = botBox.find(".number-text").text();
 
         // Operation arrays
-        const topOpArray = leftBoxText.split("").map(c => parseInt(c));
-        const botOpArray = rightBoxText.split("").map(c => parseInt(c));
+        const topOpArray = topOpText.split("").map(c => parseInt(c));
+        const botOpArray = botOpText.split("").map(c => parseInt(c));
 
         const topOpReversed = topOpArray.slice().reverse();
         const botOpReversed = botOpArray.slice().reverse();
@@ -52,7 +53,7 @@ export default class LongMultiplyAnimator {
         // Detect if answer is positive or negative
         let isNegative = false;
 
-        if (leftBoxText / Math.abs(leftBoxText) != rightBoxText / Math.abs(rightBoxText)) isNegative = true;
+        if (topOpText / Math.abs(topOpText) != botOpText / Math.abs(botOpText)) isNegative = true;
 
         // Set up HTML for individual numbers
         const topOpTuple = Utils.individualNumberHtml(topOpArray, this);
@@ -149,13 +150,13 @@ export default class LongMultiplyAnimator {
         // Fade in top box
         this._timeline.to(leftBox, 1, {
             "position": "absolute",
-            "left": Utils.positionTopBox(leftLine, times, leftBox, numWidth, rightBoxText, leftBoxText, letterSpacing),
+            "left": Utils.positionTopBox(leftLine, times, leftBox, numWidth, botOpText, topOpText, letterSpacing),
         }, "-=1");
 
         // Fade in bot box
         this._timeline.to(rightBox, 1, {
             "position": "absolute",
-            "left": Utils.positionBotBox(leftLine, times, rightBox, numWidth, rightBoxText, leftBoxText, letterSpacing),
+            "left": Utils.positionBotBox(leftLine, times, rightBox, numWidth, botOpText, topOpText, letterSpacing),
             "top": numWidth * 3
         }, "-=1");
 
@@ -177,18 +178,22 @@ export default class LongMultiplyAnimator {
         let additionNums = [];
 
         // TODO: Fix left
-        const moveProduct = (answer, topPos) => {
+        const moveProduct = (answer, topPos, fontSize = numWidth) => {
             this._timeline.to(answer, 1, {
                 left: 100,
                 top: topPos,
-                "font-size": numWidth
+                "font-size": fontSize
             });
         }
 
         botOpReversed.forEach((botValue, botIndex) => {
             botValue *= Math.pow(10, botIndex);
 
+            this._timeline.to(botOpSpans[botIndex], .5, { color: "green" });
+
             topOpReversed.forEach((topValue, topIndex) => {
+                this._timeline.to(topOpSpans[topIndex], .5, { color: "red" });
+
                 topValue *= Math.pow(10, topIndex);
 
                 i++;
@@ -243,19 +248,30 @@ export default class LongMultiplyAnimator {
 
                     this._toRemove.push(subAnswerDiv);
 
+                    // Show sum
                     this._timeline.set(subAnswerDiv, { opacity: 1 });
 
                     // Animation wait
-                    this._timeline.to(subAnswerDiv, 1, {});
+                    this._timeline.to(subAnswerDiv, 1, { });
 
+                    // Replace top sub addition with sum
                     moveProduct(subAnswerDiv, 10 + rightBox.height() * heightCoefficient + numWidth * 2);
 
+                    // Remove previous addition
                     this._timeline.to([topAnswer, answerDiv], 1, { opacity: 0 }, "-=1");
 
-                    topAnswer = subAnswerDiv;
+                    this._timeline.add(() => {
+                        topAnswer.remove();
+                        answerDiv.remove();
+
+                        topAnswer = subAnswerDiv;
+                    });
+
+                    this._timeline.to(topOpSpans[topIndex], .5, { color: "black" });
                 }
 
                 this._timeline.to([sideLeft, sideRight, sideProduct, sideEquals], 1, {opacity: 0});
+                this._timeline.to(botOpSpans[botIndex], .5, { color: "black" });
             });
         });
 
