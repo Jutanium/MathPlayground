@@ -94,7 +94,7 @@ export default class LongMultiplyAnimator {
         // Render sub equal sign
         const subEquals = new RenderedObject(this._animationId + "-subEquals",
             0,
-            rightBox.height() * heightCoefficient * 4, // TODO: Do
+            rightBox.height() * heightCoefficient * 4,
             "",
             "<span id='subEquals'><hr></span>",
             true);
@@ -200,6 +200,7 @@ export default class LongMultiplyAnimator {
 
                 topValue *= Math.pow(10, topIndex);
 
+                // Product of current side multiplication
                 const product = topValue * botValue;
 
                 additionNums.push(product);
@@ -227,6 +228,7 @@ export default class LongMultiplyAnimator {
                 this._timeline.fromTo(sideEquals, 1, {opacity: 0}, {opacity: 1}, "-=0.3");
                 this._timeline.fromTo(answer.containerDiv, 1, {opacity: 0}, {opacity: 1});
 
+                // Move product to top of sub-addition equation
                 moveProduct(answerDiv, 10 + rightBox.height() * heightCoefficient + numWidth * 2 * (additionNums.length));
 
                 if (additionNums.length === 1) topAnswer = answerDiv;
@@ -257,7 +259,6 @@ export default class LongMultiplyAnimator {
                     this._timeline.to(subAnswerDiv, 1, { });
 
                     // Replace top sub addition with sum
-                    //moveProduct(subAnswerDiv, 10 + rightBox.height() * heightCoefficient + numWidth * 2);
                     this._timeline.to(subAnswerDiv, 1, {
                         left: 90,
                         top: 10 + rightBox.height() * heightCoefficient + numWidth * 2,
