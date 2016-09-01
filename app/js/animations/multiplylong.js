@@ -176,12 +176,12 @@ export default class LongMultiplyAnimator {
 
         let additionNums = [];
 
-        // TODO: Fix left
-        const moveProduct = (answer, topPos, fontSize = numWidth) => {
+        // TODO: Fix left align
+        const moveProduct = (answer, topPos) => {
             this._timeline.to(answer, 1, {
                 left: 90,
                 top: topPos,
-                "font-size": fontSize,
+                "font-size": numWidth,
                 "letter-spacing": `${letterSpacing}px`
             });
         }
@@ -257,11 +257,17 @@ export default class LongMultiplyAnimator {
                     this._timeline.to(subAnswerDiv, 1, { });
 
                     // Replace top sub addition with sum
-                    moveProduct(subAnswerDiv, 10 + rightBox.height() * heightCoefficient + numWidth * 2);
+                    //moveProduct(subAnswerDiv, 10 + rightBox.height() * heightCoefficient + numWidth * 2);
+                    this._timeline.to(subAnswerDiv, 1, {
+                        left: 90,
+                        top: 10 + rightBox.height() * heightCoefficient + numWidth * 2,
+                        "letter-spacing": `${letterSpacing}px`
+                    });
 
                     // Remove previous addition
                     this._timeline.to([topAnswer, answerDiv], 1, { opacity: 0 }, "-=1");
 
+                    // Garbage collection
                     this._timeline.add(() => {
                         topAnswer.remove();
                         answerDiv.remove();
