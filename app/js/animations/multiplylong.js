@@ -62,7 +62,7 @@ export default class LongMultiplyAnimator {
 
         topBox.find(".number-text").html(newTopHtml);
 
-        const botOpTuple = Utils.individualNumberHtml(botOpArray, this);
+        const botOpTuple = Utils.individualNumberHtml(botOpArray, this, "botOp");
         const botOpSpans = botOpTuple[0];
         const newBotHtml = botOpTuple[1];
 
@@ -119,7 +119,6 @@ export default class LongMultiplyAnimator {
             "font-size": "2em",
             "display": "inline-block",
             "position": "absolute",
-            //"letter-spacing": "10px"
         });
 
         this._toRemove.push(sideDiv);
@@ -190,14 +189,16 @@ export default class LongMultiplyAnimator {
         botOpReversed.forEach((botValue, botIndex) => {
             botValue *= Math.pow(10, botIndex);
 
-            this._timeline.to(botOpSpans[botIndex], .5, { color: "green" });
+            // Highlight bot value
+            this._timeline.to(botOpSpans[botIndex], .5, { color: "red" });
 
             topOpReversed.forEach((topValue, topIndex) => {
-                this._timeline.to(topOpSpans[topIndex], .5, { color: "red" });
+                i++;
+
+                // Highlight top value
+                this._timeline.to(topOpSpans[topIndex], .5, { color: "red" }, "-=.5");
 
                 topValue *= Math.pow(10, topIndex);
-
-                i++;
 
                 const product = topValue * botValue;
 
@@ -244,7 +245,7 @@ export default class LongMultiplyAnimator {
                     );
 
                     const subAnswerDiv = subAnswer.createElements(this._container);
-                    subAnswerDiv.css({ "opacity": 0, "letter-spacing": `${letterSpacing}px` });
+                    subAnswerDiv.css({"opacity": 0, "letter-spacing": `${letterSpacing}px`});
                     subAnswerDiv.addClass(Utils.answerClass);
 
                     this._toRemove.push(subAnswerDiv);
@@ -267,13 +268,16 @@ export default class LongMultiplyAnimator {
 
                         topAnswer = subAnswerDiv;
                     });
-
-                    this._timeline.to(topOpSpans[topIndex], .5, { color: "black" });
                 }
 
                 this._timeline.to([sideLeft, sideRight, sideProduct, sideEquals], 1, {opacity: 0});
-                this._timeline.to(botOpSpans[botIndex], .5, { color: "black" });
+
+                // Un-highlight top value
+                this._timeline.to(topOpSpans[topIndex], .5, { color: "black" });
             });
+
+            // Un-highlight bot value
+            this._timeline.to(botOpSpans[botIndex], .5, { color: "black" });
         });
 
         console.log(sum);

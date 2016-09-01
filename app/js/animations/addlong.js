@@ -37,7 +37,7 @@ export default class LongAddAnimator {
         const firstOpSpans = topOpTuple[0];
         const newLeftHtml = topOpTuple[1];
 
-        const botOpTuple = Utils.individualNumberHtml(secondOpArray, this);
+        const botOpTuple = Utils.individualNumberHtml(secondOpArray, this, "botOp");
         const secondOpSpans = botOpTuple[0];
         const newRightHtml = botOpTuple[1];
 

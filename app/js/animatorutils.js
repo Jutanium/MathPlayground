@@ -71,12 +71,12 @@ export default class Utils {
         });
     }
 
-    static individualNumberHtml(opArray, animation) {
+    static individualNumberHtml(opArray, animation, op = "topOp") {
         let opSpans = [];
 
         const newHtml = opArray.reduce((prev, curr, currIndex, array) => {
-            const id = animation._animationId + "-topOp-" + (array.length - currIndex);
-            opSpans.unshift("#" + id);
+            const id = animation._animationId + op + (array.length - currIndex);
+            opSpans.unshift(`#${id}`);
             return `${prev}<span class='${animation._animationId}-operand' id='${id}'>${curr}</span>`;
         }, "");
 
