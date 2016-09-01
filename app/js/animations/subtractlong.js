@@ -53,6 +53,9 @@ export default class LongSubtractAnimator {
         const newBotHtml = botOpTuple[1];
         botBox.find(".number-text").html(newBotHtml);
 
+        console.log("bot", botOpSpans);
+        console.log("top", topOpSpans)
+
         const subtractSets = topOpReversed.map((currentValue, index) => {
             const array = [];
             array.push(currentValue);

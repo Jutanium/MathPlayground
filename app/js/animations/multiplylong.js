@@ -180,9 +180,10 @@ export default class LongMultiplyAnimator {
         // TODO: Fix left
         const moveProduct = (answer, topPos, fontSize = numWidth) => {
             this._timeline.to(answer, 1, {
-                left: 100,
+                left: 90,
                 top: topPos,
-                "font-size": fontSize
+                "font-size": fontSize,
+                "letter-spacing": `${letterSpacing}px`
             });
         }
 
@@ -243,7 +244,7 @@ export default class LongMultiplyAnimator {
                     );
 
                     const subAnswerDiv = subAnswer.createElements(this._container);
-                    subAnswerDiv.css("opacity", 0);
+                    subAnswerDiv.css({ "opacity": 0, "letter-spacing": `${letterSpacing}px` });
                     subAnswerDiv.addClass(Utils.answerClass);
 
                     this._toRemove.push(subAnswerDiv);
