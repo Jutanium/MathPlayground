@@ -76,7 +76,7 @@ export default class LongMultiplyAnimator {
          * Get the left position for elements of the side equation
          */
         const leftPosOfColumn = (column) => {
-            times.width() + numWidth / 2 + (topOpArray.length - 1 - column) * (numWidth + letterSpacing);
+            return times.width() + numWidth / 2 + (topOpArray.length - 1 - column) * (numWidth + letterSpacing);
         }
 
         // FIXME: Should not have to be draggable to be positionable
