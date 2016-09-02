@@ -68,6 +68,10 @@ export default class LongMultiplyAnimator {
 
         botBox.find(".number-text").html(newBotHtml);
 
+        // Width of the box
+        const width = times.width() + numWidth / 2 + Math.max(topOpSpans.length, botOpSpans.length)
+            * (letterSpacing + numWidth);
+
         /*
          * Get the left position for elements of the side equation
          */
@@ -176,16 +180,6 @@ export default class LongMultiplyAnimator {
 
         let additionNums = [];
 
-        // TODO: Fix left align
-        const moveProduct = (answer, topPos) => {
-            this._timeline.to(answer, 1, {
-                left: 90,
-                top: topPos,
-                "font-size": numWidth,
-                "letter-spacing": `${letterSpacing}px`
-            });
-        }
-
         botOpReversed.forEach((botValue, botIndex) => {
             botValue *= Math.pow(10, botIndex);
 
@@ -229,7 +223,12 @@ export default class LongMultiplyAnimator {
                 this._timeline.fromTo(answer.containerDiv, 1, {opacity: 0}, {opacity: 1});
 
                 // Move product to top of sub-addition equation
-                moveProduct(answerDiv, 10 + rightBox.height() * heightCoefficient + numWidth * 2 * (additionNums.length));
+                this._timeline.to(answerDiv, 1, {
+                    left: width - (product.toString().length * (letterSpacing + numWidth)),
+                    top: 10 + rightBox.height() * heightCoefficient + numWidth * 2 * (additionNums.length),
+                    "font-size": numWidth,
+                    "letter-spacing": `${letterSpacing}px`
+                });
 
                 if (additionNums.length === 1) topAnswer = answerDiv;
 
@@ -240,7 +239,7 @@ export default class LongMultiplyAnimator {
                     this._timeline.to(subEqualsDiv, .5, { opacity: 1 });
 
                     const subAnswer = new RenderedNumber(`${this._animationId}-answer-${i}`,
-                        100,
+                        width - (additionNums[0].toString().length * (letterSpacing + numWidth)),
                         10 + rightBox.height() * heightCoefficient + numWidth * 6,
                         additionNums[0],
                         false
@@ -260,7 +259,7 @@ export default class LongMultiplyAnimator {
 
                     // Replace top sub addition with sum
                     this._timeline.to(subAnswerDiv, 1, {
-                        left: 90,
+                        left: width - (additionNums[0].toString().length * (letterSpacing + numWidth)),
                         top: 10 + rightBox.height() * heightCoefficient + numWidth * 2,
                         "letter-spacing": `${letterSpacing}px`
                     });
