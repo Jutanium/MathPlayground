@@ -31,6 +31,9 @@ export default class LongMultiplyAnimator {
         const heightCoefficient = 1.4;
         const letterSpacing = 18;
         const leftLine = 0;
+
+        const subEquationColor = "yellow";
+
         const times = this._container.find(".operation-text");
 
         // Boxes
@@ -226,14 +229,15 @@ export default class LongMultiplyAnimator {
                 this._timeline.fromTo([sideLeft, sideRight], 1.5, {opacity: 0}, {opacity: 1}, "+=0.5");
                 this._timeline.fromTo(sideProduct, 1.5, {opacity: 0}, {opacity: 1, className: `+=${negativeClass}`}, "-=1.5");
                 this._timeline.fromTo(sideEquals, 1, {opacity: 0}, {opacity: 1}, "-=0.3");
-                this._timeline.fromTo(answer.containerDiv, 1, {opacity: 0}, {opacity: 1});
+                this._timeline.fromTo(answerDiv, 1, {opacity: 0}, {opacity: 1});
 
                 // Move product to top of sub-addition equation
                 this._timeline.to(answerDiv, 1, {
                     left: width - (product.toString().length * (letterSpacing + numWidth)),
                     top: 10 + rightBox.height() * heightCoefficient + numWidth * 2 * (additionNums.length),
                     "font-size": numWidth,
-                    "letter-spacing": `${letterSpacing}px`
+                    "letter-spacing": `${letterSpacing}px`,
+                    "color": subEquationColor
                 });
 
                 if (additionNums.length === 1) topAnswer = answerDiv;
@@ -252,13 +256,17 @@ export default class LongMultiplyAnimator {
                     );
 
                     const subAnswerDiv = subAnswer.createElements(this._container);
-                    subAnswerDiv.css({"opacity": 0, "letter-spacing": `${letterSpacing}px`});
+                    subAnswerDiv.css({
+                        "opacity": 0,
+                        "letter-spacing": `${letterSpacing}px`,
+                        "color": subEquationColor
+                    });
                     subAnswerDiv.addClass(Utils.answerClass);
 
                     this._toRemove.push(subAnswerDiv);
 
                     // Show sum
-                    this._timeline.set(subAnswerDiv, { opacity: 1 });
+                    this._timeline.to(subAnswerDiv, .5, { opacity: 1 });
 
                     // Animation wait
                     this._timeline.to(subAnswerDiv, 1, { });
@@ -273,15 +281,13 @@ export default class LongMultiplyAnimator {
                     // Remove previous addition
                     this._timeline.to([topAnswer, answerDiv], 1, { opacity: 0 }, "-=1");
 
-                    // Garbage collection
-                    this._timeline.add(() => {
-                        topAnswer.remove();
-                        answerDiv.remove();
+                    topAnswer = subAnswerDiv;
 
-                        topAnswer = subAnswerDiv;
-                    });
+                    // Garbage collection
+                    this._timeline.add(() => answerDiv.remove());
                 }
 
+                // Hide side equation
                 this._timeline.to([sideLeft, sideRight, sideProduct, sideEquals], 1, {opacity: 0});
 
                 // Un-highlight top value
@@ -290,6 +296,21 @@ export default class LongMultiplyAnimator {
 
             // Un-highlight bot value
             this._timeline.to(botOpSpans[botIndex], .5, { color: "black" });
+        });
+
+        // Turn answer green
+        this._timeline.to(topAnswer, 1, { "color": "green" }, "-=3");
+
+        // Hide sub equal sign
+        this._timeline.to(subEqualsDiv, .5, { "opacity": 0 }, "-=3");
+
+        // Garbage Collection
+        this._timeline.add(() => {
+            sideLeft.remove();
+            sideRight.remove();
+            sideProduct.remove();
+            sideEquals.remove();
+            subEqualsDiv.remove();
         });
 
         console.log(sum);
