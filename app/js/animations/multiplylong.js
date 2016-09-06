@@ -116,7 +116,7 @@ export default class LongMultiplyAnimator {
 
         // Render side equation
         const side = new RenderedObject(this._animationId + "-side",
-            leftPosOfColumn(-1),
+            width,
             rightBox.height() * .75,
             "small",
             "<span id='leftOp'></span><span id='times'>*</span><span id='rightOp'></span></span>"+
