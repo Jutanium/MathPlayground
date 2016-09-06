@@ -69,7 +69,7 @@ export default class LongMultiplyAnimator {
         botBox.find(".number-text").html(newBotHtml);
 
         // Width of the box
-        const width = times.width() + numWidth / 2 + Math.max(topOpSpans.length, botOpSpans.length)
+        const width = times.width() + numWidth / 2 + Math.max(topOpArray.length, botOpArray.length)
             * (letterSpacing + numWidth);
 
         /*
@@ -79,18 +79,20 @@ export default class LongMultiplyAnimator {
             return times.width() + numWidth / 2 + (topOpArray.length - 1 - column) * (numWidth + letterSpacing);
         }
 
-        // FIXME: Should not have to be draggable to be positionable
         // Render equal sign
-        //const equals = new RenderedEquals(this._animationId + "-equals", 0, rightBox.height() * heightCoefficient * 2);
         const equals = new RenderedObject(this._animationId + "-equals",
             0,
             rightBox.height() * heightCoefficient * 2,
             "",
             "<span id='equals'><hr></span>",
-            true);
+            false);
         const equalsDiv = equals.createElements(this._container);
 
-        equalsDiv.css("opacity", 0).css("width", "100%");
+        equalsDiv.css({
+            "position": "absolute",
+            "opacity": 0,
+            "width": width
+        });
 
         this._equals = equals;
         this._toRemove.push(equalsDiv);
@@ -101,10 +103,14 @@ export default class LongMultiplyAnimator {
             rightBox.height() * heightCoefficient * 4,
             "",
             "<span id='subEquals'><hr></span>",
-            true);
+            false);
         const subEqualsDiv = subEquals.createElements(this._container);
 
-        subEqualsDiv.css("opacity", 0).css("width", "100%");
+        subEqualsDiv.css({
+            "position": "absolute",
+            "opacity": 0,
+            "width": width
+        });
 
         this._toRemove.push(subEqualsDiv);
 
