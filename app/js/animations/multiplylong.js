@@ -284,7 +284,6 @@ export default class LongMultiplyAnimator {
                     topAnswer = subAnswerDiv;
 
                     // Garbage collection
-                    this._timeline.add(() => answerDiv.remove());
                 }
 
                 // Hide side equation
@@ -303,15 +302,6 @@ export default class LongMultiplyAnimator {
 
         // Hide sub equal sign
         this._timeline.to(subEqualsDiv, .5, { "opacity": 0 }, "-=3");
-
-        // Garbage Collection
-        this._timeline.add(() => {
-            sideLeft.remove();
-            sideRight.remove();
-            sideProduct.remove();
-            sideEquals.remove();
-            subEqualsDiv.remove();
-        });
 
         console.log(sum);
 
