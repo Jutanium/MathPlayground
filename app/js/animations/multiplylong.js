@@ -73,7 +73,6 @@ export default class LongMultiplyAnimator {
 
         // Product of the equation
         const product = topOpText * botOpText;
-        console.log(product)
 
         // Width of the box
         const topWidth = times.width() + numWidth / 2 + Math.max(topOpArray.length, botOpArray.length)
@@ -319,8 +318,6 @@ export default class LongMultiplyAnimator {
 
         // Hide sub equal sign and plus
         this._timeline.to([subEqualsDiv, subPlusDiv], .5, { "opacity": 0 }, "-=3");
-
-        console.log(sum);
 
         $("." + this._animationId + "-operand").css("autoRound", false);
     }
