@@ -32,7 +32,7 @@ export default class LongMultiplyAnimator {
         const letterSpacing = 18;
         const leftLine = 0;
 
-        const subEquationColor = "yellow";
+        const subEquationColor = "blue";
 
         const times = this._container.find(".operation-text");
 
@@ -71,9 +71,17 @@ export default class LongMultiplyAnimator {
 
         botBox.find(".number-text").html(newBotHtml);
 
+        // Product of the equation
+        const product = topOpText * botOpText;
+        console.log(product)
+
         // Width of the box
-        const width = times.width() + numWidth / 2 + Math.max(topOpArray.length, botOpArray.length)
+        const topWidth = times.width() + numWidth / 2 + Math.max(topOpArray.length, botOpArray.length)
             * (letterSpacing + numWidth);
+
+        const botWidth = times.width() + numWidth / 2 + product.toString().split("").length * (letterSpacing + numWidth);
+
+        const subLeftLine = topWidth - botWidth;
 
         // Render equal sign
         const equals = new RenderedObject(this._animationId + "-equals",
@@ -87,7 +95,7 @@ export default class LongMultiplyAnimator {
         equalsDiv.css({
             "position": "absolute",
             "opacity": 0,
-            "width": width
+            "width": topWidth
         });
 
         this._equals = equals;
@@ -95,8 +103,8 @@ export default class LongMultiplyAnimator {
 
         // Render sub equal sign
         const subEquals = new RenderedObject(this._animationId + "-subEquals",
-            0,
-            rightBox.height() * heightCoefficient * 4,
+            subLeftLine,
+            equalsDiv.height() + rightBox.height() * heightCoefficient * 4,
             "",
             "<span id='subEquals'><hr></span>",
             false);
@@ -105,26 +113,34 @@ export default class LongMultiplyAnimator {
         subEqualsDiv.css({
             "position": "absolute",
             "opacity": 0,
-            "width": width
+            "width": botWidth
         });
 
         this._toRemove.push(subEqualsDiv);
 
         // Render sub plus
         const subPlus = new RenderedObject(`${this._animationId}-subPlus`,
-            0,
-            rightBox.height() * heightCoefficient * 8,
+            subLeftLine,
+            equalsDiv.height() / 2 + 3 * (rightBox.height() * heightCoefficient),
             "",
             "<span>+</span>",
             false
         );
         const subPlusDiv = subPlus.createElements(this._container);
 
+        subPlusDiv.css({
+            "position": "absolute",
+            "font-size": "3em",
+            "color": "#0074D9",
+            "font-weight": "bold",
+            "opacity": 0
+        })
+
         this._toRemove.push(subPlusDiv);
 
         // Render side equation
         const side = new RenderedObject(this._animationId + "-side",
-            width,
+            topWidth,
             rightBox.height() * .75,
             "small",
             "<span id='leftOp'></span><span id='times'>*</span><span id='rightOp'></span></span>"+
@@ -160,9 +176,9 @@ export default class LongMultiplyAnimator {
             "padding-right": letterSpacing,
         });
 
-        // Timeline
-        // Fade is equals line
-        this._timeline.to(equalsDiv, 1, { opacity: 1, ease: Power1.easeInOut });
+        /* Timeline */
+        // Fade is equal line, sub equal line, and plus
+        this._timeline.to([equalsDiv, subEqualsDiv, subPlusDiv], 1, { opacity: 1, ease: Power1.easeInOut });
 
         // Fade in top box
         this._timeline.to(leftBox, 1, {
@@ -238,8 +254,8 @@ export default class LongMultiplyAnimator {
 
                 // Move product to top of sub-addition equation
                 this._timeline.to(answerDiv, 1, {
-                    left: width - (product.toString().length * (letterSpacing + numWidth)),
-                    top: 10 + rightBox.height() * heightCoefficient + numWidth * 2 * (additionNums.length),
+                    left: topWidth - (product.toString().length * (letterSpacing + numWidth)),
+                    top: equalsDiv.height() + (2 + (additionNums.length - 1)) * (rightBox.height() * heightCoefficient),
                     "font-size": numWidth,
                     "letter-spacing": `${letterSpacing}px`,
                     "color": subEquationColor
@@ -251,11 +267,9 @@ export default class LongMultiplyAnimator {
                     additionNums[0] = additionNums[0] + additionNums[1];
                     additionNums.splice(1, 1);
 
-                    this._timeline.to(subEqualsDiv, .5, { opacity: 1 });
-
                     const subAnswer = new RenderedNumber(`${this._animationId}-answer-${i}`,
-                        width - (additionNums[0].toString().length * (letterSpacing + numWidth)),
-                        10 + rightBox.height() * heightCoefficient + numWidth * 6,
+                        topWidth - (additionNums[0].toString().length * (letterSpacing + numWidth)),
+                        2 * equalsDiv.height() + rightBox.height() * heightCoefficient * 4,
                         additionNums[0],
                         false
                     );
@@ -271,15 +285,15 @@ export default class LongMultiplyAnimator {
                     this._toRemove.push(subAnswerDiv);
 
                     // Show sum
-                    this._timeline.to(subAnswerDiv, .5, { opacity: 1 });
+                    this._timeline.to(subAnswerDiv, .5, { opacity: 1, ease: Power1.easeInOut });
 
                     // Animation wait
                     this._timeline.to(subAnswerDiv, 1, { });
 
                     // Replace top sub addition with sum
                     this._timeline.to(subAnswerDiv, 1, {
-                        left: width - (additionNums[0].toString().length * (letterSpacing + numWidth)),
-                        top: 10 + rightBox.height() * heightCoefficient + numWidth * 2,
+                        left: topWidth - (additionNums[0].toString().length * (letterSpacing + numWidth)),
+                        top: equalsDiv.height() + rightBox.height() * heightCoefficient + numWidth * 2,
                         "letter-spacing": `${letterSpacing}px`
                     });
 
@@ -297,14 +311,14 @@ export default class LongMultiplyAnimator {
             });
 
             // Un-highlight bot value
-            this._timeline.to(botOpSpans[botIndex], .5, { color: "black" });
+            this._timeline.to(botOpSpans[botIndex], .5, { color: "black" }, "-=.5");
         });
 
         // Turn answer green
         this._timeline.to(topAnswer, 1, { "color": "green" }, "-=3");
 
-        // Hide sub equal sign
-        this._timeline.to(subEqualsDiv, .5, { "opacity": 0 }, "-=3");
+        // Hide sub equal sign and plus
+        this._timeline.to([subEqualsDiv, subPlusDiv], .5, { "opacity": 0 }, "-=3");
 
         console.log(sum);
 
