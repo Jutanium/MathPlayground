@@ -75,13 +75,6 @@ export default class LongMultiplyAnimator {
         const width = times.width() + numWidth / 2 + Math.max(topOpArray.length, botOpArray.length)
             * (letterSpacing + numWidth);
 
-        /*
-         * Get the left position for elements of the side equation
-         */
-        const leftPosOfColumn = (column) => {
-            return times.width() + numWidth / 2 + (topOpArray.length - 1 - column) * (numWidth + letterSpacing);
-        }
-
         // Render equal sign
         const equals = new RenderedObject(this._animationId + "-equals",
             0,
@@ -116,6 +109,18 @@ export default class LongMultiplyAnimator {
         });
 
         this._toRemove.push(subEqualsDiv);
+
+        // Render sub plus
+        const subPlus = new RenderedObject(`${this._animationId}-subPlus`,
+            0,
+            rightBox.height() * heightCoefficient * 8,
+            "",
+            "<span>+</span>",
+            false
+        );
+        const subPlusDiv = subPlus.createElements(this._container);
+
+        this._toRemove.push(subPlusDiv);
 
         // Render side equation
         const side = new RenderedObject(this._animationId + "-side",
@@ -282,8 +287,6 @@ export default class LongMultiplyAnimator {
                     this._timeline.to([topAnswer, answerDiv], 1, { opacity: 0 }, "-=1");
 
                     topAnswer = subAnswerDiv;
-
-                    // Garbage collection
                 }
 
                 // Hide side equation
