@@ -78,7 +78,7 @@ export default class LongMultiplyAnimator {
         const topWidth = times.width() + numWidth / 2 + Math.max(topOpArray.length, botOpArray.length)
             * (letterSpacing + numWidth);
 
-        const botWidth = times.width() + numWidth / 2 + product.toString().split("").length * (letterSpacing + numWidth);
+        const botWidth = times.width() + numWidth / 2 + String(product).split("").length * (letterSpacing + numWidth);
 
         const subLeftLine = topWidth - botWidth;
 
@@ -152,24 +152,24 @@ export default class LongMultiplyAnimator {
 
         sideDiv.css({
             "font-size": "2em",
-            "display": "inline-block",
-            "position": "absolute",
+            display: "inline-block",
+            position: "absolute",
         });
 
         this._toRemove.push(sideDiv);
 
         // Side components
-        const sideLeft = side.containerDiv.find("#leftOp");
-        const sideRight = side.containerDiv.find("#rightOp");
-        const sideProduct = side.containerDiv.find("#times");
-        const sideEquals = side.containerDiv.find("#equals");
+        const sideLeft = sideDiv.find("#leftOp");
+        const sideRight = sideDiv.find("#rightOp");
+        const sideProduct = sideDiv.find("#times");
+        const sideEquals = sideDiv.find("#equals");
 
         sideLeft.css({
-            "color": "red",
+            color: "red",
             "padding-right": letterSpacing,
         });
         sideRight.css({
-            "color": "red",
+            color: "red",
             "padding-right": letterSpacing,
         });
         sideProduct.css({
@@ -181,39 +181,39 @@ export default class LongMultiplyAnimator {
 
         /* Timeline */
         // Fade is equal line, sub equal line, and plus
-        this._timeline.to([equalsDiv, subEqualsDiv, subPlusDiv], .5, {
+        this._timeline.to(equalsDiv, 1, {
             opacity: 1,
             ease: fade,
         });
 
         // Fade in top box
-        this._timeline.to(leftBox, .5, {
+        this._timeline.to(leftBox, 1, {
             position: "absolute",
             left: Utils.positionTopBox(leftLine, times, leftBox, numWidth, botOpText, topOpText, letterSpacing),
             ease: fade,
-        }, "-=.5");
+        }, "-=1");
 
         // Fade in bot box
-        this._timeline.to(rightBox, .5, {
+        this._timeline.to(rightBox, 1, {
             position: "absolute",
             left: Utils.positionBotBox(leftLine, times, rightBox, numWidth, botOpText, topOpText, letterSpacing),
             top: numWidth * 3,
             ease: fade,
-        }, "-=.5");
+        }, "-=1");
 
         // Fade in times
-        this._timeline.to(times, .5, {
+        this._timeline.to(times, 1, {
             position: "absolute",
             left: 0,
             top: rightBox.height() * heightCoefficient,
             ease: fade,
-        }, "-=.5");
+        }, "-=1");
 
         // Add padding between numbers
-        this._timeline.to("." + this._animationId + "-operand", .5, {
+        this._timeline.to("." + this._animationId + "-operand", 1, {
             "padding-right": letterSpacing,
             ease: fade
-        }, "-=0.5");
+        }, "-=1");
 
         // Create sub-equations
         let sum = 0;
@@ -250,41 +250,44 @@ export default class LongMultiplyAnimator {
                 this._timeline.set(sideLeft, { text: String(topValue) });
                 this._timeline.set(sideRight, { text: String(botValue) });
 
+                const digits = String(product).split("").length;
+
                 const answer = new RenderedNumber(`${this._animationId}-answer-${i}`,
-                    side.containerDiv.position().left + side.containerDiv.width() + letterSpacing
-                    + numWidth * ((String(topValue).split("").length === 2) ? 2 : 1),
-                    side.containerDiv.height() - numWidth / 2,
+                    sideDiv.position().left + sideDiv.width() + letterSpacing + 16 * digits,
+                    sideDiv.height() - numWidth / 2,
                     product,
                     false
                 );
+
                 let answerDiv = answer.createElements(this._container);
                 answer.contentDiv.css("font-size", "2em");
-                answer.containerDiv.addClass(Utils.answerClass);
+                answerDiv.addClass(Utils.answerClass);
 
                 this._toRemove.push(answerDiv);
 
                 sum += product;
 
-                this._timeline.fromTo([sideLeft, sideRight], 1, { opacity: 0 }, {
+                // Side Equation
+                this._timeline.fromTo([sideLeft, sideRight], .5, { opacity: 0 }, {
                     opacity: 1,
                     ease: fade,
                 }, "+=.5");
-                this._timeline.fromTo(sideProduct, 1, { opacity: 0 }, {
+                this._timeline.fromTo(sideProduct, .5, { opacity: 0 }, {
                     opacity: 1,
                     className: `+=${negativeClass}`,
                     ease: fade,
-                }, "-=1");
-                this._timeline.fromTo(sideEquals, 1, { opacity: 0 }, {
+                }, "-=.5");
+                this._timeline.fromTo(sideEquals, .5, { opacity: 0 }, {
                     opacity: 1,
                     ease: fade,
                 });
-                this._timeline.fromTo(answerDiv, 1, { opacity: 0 }, {
+                this._timeline.fromTo(answerDiv, .5, { opacity: 0 }, {
                     opacity: 1,
                     ease: fade,
                 });
 
                 // Move product to top of sub-addition equation
-                this._timeline.to(answerDiv, .5, {
+                this._timeline.to(answerDiv, 1, {
                     left: topWidth - (product.toString().length * (letterSpacing + numWidth)),
                     top: equalsDiv.height() + (2 + (additionNums.length - 1)) * (rightBox.height() * heightCoefficient),
                     "font-size": numWidth,
@@ -296,6 +299,11 @@ export default class LongMultiplyAnimator {
                 if (additionNums.length === 1) topAnswer = answerDiv;
 
                 if (additionNums.length === 2) {
+                    this._timeline.to([subEqualsDiv, subPlusDiv], 1, {
+                        opacity: 1,
+                        ease: fade,
+                    }, "-=1");
+
                     additionNums[0] = additionNums[0] + additionNums[1];
                     additionNums.splice(1, 1);
 
@@ -317,24 +325,29 @@ export default class LongMultiplyAnimator {
                     this._toRemove.push(subAnswerDiv);
 
                     // Show sum
-                    this._timeline.to(subAnswerDiv, .5, {
+                    this._timeline.to(subAnswerDiv, 1, {
                         opacity: 1,
                         ease: fade,
-                    });
+                    }, "+=.5");
 
                     // Replace top sub addition with sum
-                    this._timeline.to(subAnswerDiv, .5, {
+                    this._timeline.to(subAnswerDiv, 1, {
                         left: topWidth - (additionNums[0].toString().length * (letterSpacing + numWidth)),
                         top: equalsDiv.height() + rightBox.height() * heightCoefficient + numWidth * 2,
                         "letter-spacing": `${letterSpacing}px`,
                         ease: fade,
-                    }, "+=.5");
+                    });
 
                     // Remove previous addition
-                    this._timeline.to([topAnswer, answerDiv], .5, {
+                    this._timeline.to([topAnswer, answerDiv], 1, {
                         opacity: 0,
                         ease: fade,
-                    }, "-=.5");
+                    }, "-=1");
+
+                    this._timeline.to([subEqualsDiv, subPlusDiv], 1, {
+                        opacity: 0,
+                        ease: fade,
+                    }, "-=1");
 
                     topAnswer = subAnswerDiv;
                 }
