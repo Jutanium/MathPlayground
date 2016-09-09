@@ -1,4 +1,4 @@
-import { Power1, Power2, Power3, Power4, Back, TweenMax, TimelineMax } from "gsap";
+import { Power3, TweenMax, TimelineMax } from "gsap";
 import { Snap } from "snap.svg";
 import { RenderedEquals, RenderedObject, RenderedNumber } from "app/js/renderedobjects";
 import Utils from "app/js/animatorutils";
@@ -56,7 +56,7 @@ export default class LongMultiplyAnimator {
         // Detect if answer is positive or negative
         let isNegative = false;
 
-        if (topOpText / Math.abs(topOpText) != botOpText / Math.abs(botOpText)) isNegative = true;
+        if (botOpText * topOpText < 0) isNegative = true;
 
         // Set up HTML for individual numbers
         const topOpTuple = Utils.individualNumberHtml(topOpArray, this);
@@ -231,6 +231,16 @@ export default class LongMultiplyAnimator {
                 ease: fade,
             });
 
+            // Fade unused bot values
+            botOpReversed.forEach((value, i) => {
+                if (i > botIndex) {
+                    this._timeline.to(botOpSpans[i], .5, {
+                        opacity: .3,
+                        ease: fade,
+                    }, "-=.5")
+                }
+            })
+
             topOpReversed.forEach((topValue, topIndex) => {
                 i++;
 
@@ -239,6 +249,16 @@ export default class LongMultiplyAnimator {
                     color: "red",
                     ease: fade,
                 }, "-=.5");
+
+                // Fade unused top values
+                topOpReversed.forEach((value, i) => {
+                    if (i > topIndex) {
+                        this._timeline.to(topOpSpans[i], .5, {
+                            opacity: .3,
+                            ease: fade,
+                        }, "-=.5")
+                    }
+                })
 
                 topValue *= Math.pow(10, topIndex);
 
@@ -363,6 +383,16 @@ export default class LongMultiplyAnimator {
                     color: "black",
                     ease: fade,
                 }, "-=.5");
+
+                // Un-fade unused top values
+                topOpReversed.forEach((value, i) => {
+                    if (i > topIndex) {
+                        this._timeline.to(topOpSpans[i], .5, {
+                            opacity: 1,
+                            ease: fade,
+                        }, "-=.5")
+                    }
+                })
             });
 
             // Un-highlight bot value
@@ -370,6 +400,16 @@ export default class LongMultiplyAnimator {
                 color: "black",
                 ease: fade,
             }, "-=.5");
+
+            // Un-fade unused bot values
+            botOpReversed.forEach((value, i) => {
+                if (i > botIndex) {
+                    this._timeline.to(botOpSpans[i], .5, {
+                        opacity: 1,
+                        ease: fade,
+                    }, "-=.5")
+                }
+            })
         });
 
         // Turn answer green
