@@ -144,7 +144,7 @@ export default class LongMultiplyAnimator {
             topWidth,
             rightBox.height() * .75,
             "small",
-            "<span id='leftOp'></span><span id='times'>*</span><span id='rightOp'></span></span>"+
+            "<span id='leftOp'></span><span id='times'>&times</span><span id='rightOp'></span></span>"+
             "<span id='equals'>=</span>",
             false
         );
