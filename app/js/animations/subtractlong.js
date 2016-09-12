@@ -1,4 +1,4 @@
-import { TweenMax, TimelineMax } from "gsap";
+import { Power1, TweenMax, TimelineMax } from "gsap";
 import { Snap } from "snap.svg";
 import { RenderedObject, RenderedNumber, RenderedEquals } from "app/js/renderedobjects";
 import Utils from "app/js/animatorutils";
