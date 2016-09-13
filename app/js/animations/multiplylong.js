@@ -231,7 +231,7 @@ export default class LongMultiplyAnimator {
                     this._timeline.to(botOpSpans[i], .75, {
                         opacity: fadeOpacity,
                         ease: fade,
-                    }, "-=.75")
+                    }, "-=.75");
                 }
             });
 
@@ -372,7 +372,7 @@ export default class LongMultiplyAnimator {
                         this._timeline.to(topOpSpans[i], .75, {
                             opacity: 1,
                             ease: fade,
-                        }, "-=.75")
+                        }, "-=.75");
                     }
                 })
             });
