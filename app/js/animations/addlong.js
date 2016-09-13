@@ -33,19 +33,13 @@ export default class LongAddAnimator {
         const firstOpReversed = firstOpArray.slice().reverse();
         const secondOpReversed = secondOpArray.slice().reverse();
 
-        let firstOpSpans = [];
-        const newLeftHtml = firstOpArray.reduce((prev, curr, currIndex, array) => {
-            const id = `${this._animationId}-firstOp-${(array.length - currIndex)}`;
-            firstOpSpans.unshift("#" + id);
-            return `${prev}<span class='${this._animationId}-operand' id='${id}'>${curr}</span>`;
-        }, "");
+        const topOpTuple = Utils.individualNumberHtml(firstOpArray, this);
+        const firstOpSpans = topOpTuple[0];
+        const newLeftHtml = topOpTuple[1];
 
-        let secondOpSpans = [];
-        const newRightHtml = secondOpArray.reduce((prev, curr, currIndex, array) => {
-            const id = `${this._animationId}-secondOp-${(array.length - currIndex)}`;
-            secondOpSpans.unshift("#" + id);
-            return `${prev}<span class='${this._animationId}-operand' id='${id}'>${curr}</span>`;
-        }, "");
+        const botOpTuple = Utils.individualNumberHtml(secondOpArray, this, "botOp");
+        const secondOpSpans = botOpTuple[0];
+        const newRightHtml = botOpTuple[1];
 
         const addSets = firstOp > secondOp ?
                 firstOpReversed.map((currentValue, index) => {
@@ -121,13 +115,11 @@ export default class LongAddAnimator {
         //box.width() - box.outerWidth(true), which returns the margin
         this._timeline.to(leftBox, 1, {
             "position": "absolute",
-            "left": leftLine + plus.width() + (leftBox.width() - leftBox.outerWidth(true)) + numWidth +
-            (Math.max(0, secondOpText.length - firstOpText.length) * (numWidth + letterSpacing)),
+            "left": Utils.positionTopBox(leftLine, plus, leftBox, numWidth, secondOpText, firstOpText, letterSpacing),
             "top": numWidth * 3,
         });
         this._timeline.to(rightBox, 1, {
-            "left": leftLine - (rightBox.outerWidth(true) - rightBox.width()) + plus.width() + numWidth / 2 +
-            (Math.max(0, firstOpText.length - secondOpText.length) * (numWidth + letterSpacing))
+            "left": Utils.positionBotBox(leftLine, plus, rightBox, numWidth, secondOpText, firstOpText, letterSpacing),
         }, "-=1");
         //Move plus down next to big box
         this._timeline.to(plus, 1, {

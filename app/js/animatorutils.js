@@ -70,4 +70,26 @@ export default class Utils {
             shapeRendering: "crispEdges"
         });
     }
+
+    static individualNumberHtml(opArray, animation, op = "topOp") {
+        let opSpans = [];
+
+        const newHtml = opArray.reduce((prev, curr, currIndex, array) => {
+            const id = animation._animationId + op + (array.length - currIndex);
+            opSpans.unshift(`#${id}`);
+            return `${prev}<span class='${animation._animationId}-operand' id='${id}'>${curr}</span>`;
+        }, "");
+
+        return [opSpans, newHtml];
+    }
+
+    static positionTopBox(startPos, operand, box, numWidth, botBoxText, topBoxText, letterSpacing) {
+         return startPos + operand.width() + (box.width() - box.outerWidth(true)) + numWidth +
+             (Math.max(0, botBoxText.length - topBoxText.length) * (numWidth + letterSpacing));
+    }
+
+    static positionBotBox(startPos, operand, box, numWidth, botBoxText, topBoxText, letterSpacing) {
+        return startPos - (box.outerWidth(true) - box.width()) + operand.width() + numWidth / 2 +
+            (Math.max(0, topBoxText.length - botBoxText.length) * (numWidth + letterSpacing));
+    }
 }

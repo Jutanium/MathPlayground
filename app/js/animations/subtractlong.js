@@ -1,4 +1,4 @@
-import { TweenMax, TimelineMax } from "gsap";
+import { Power1, TweenMax, TimelineMax } from "gsap";
 import { Snap } from "snap.svg";
 import { RenderedObject, RenderedNumber, RenderedEquals } from "app/js/renderedobjects";
 import Utils from "app/js/animatorutils";
@@ -43,20 +43,14 @@ export default class LongSubtractAnimator {
         const topOpReversed = topOpArray.slice().reverse();
         const botOpReversed = botOpArray.slice().reverse();
 
-        let topOpSpans = [];
-        const newTopHtml = topOpArray.reduce((prev, curr, currIndex, array) => {
-            const id = this._animationId + "-topOp-" + (array.length - currIndex);
-            topOpSpans.unshift("#" + id);
-            return `${prev}<span class='${this._animationId}-operand' id='${id}'>${curr}</span>`;
-        }, "");
+        const topOpTuple = Utils.individualNumberHtml(topOpArray, this);
+        const topOpSpans = topOpTuple[0];
+        const newTopHtml = topOpTuple[1];
         topBox.find(".number-text").html(newTopHtml);
 
-        let botOpSpans = [];
-        const newBotHtml = botOpArray.reduce((prev, curr, currIndex, array) => {
-            const id = this._animationId + "-bottomOp-" + (array.length - currIndex);
-            botOpSpans.unshift("#" + id);
-            return `${prev}<span class='${this._animationId}-operand' id='${id}'>${curr}</span>`;
-        }, "");
+        const botOpTuple = Utils.individualNumberHtml(botOpArray, this, "botOp");
+        const botOpSpans = botOpTuple[0];
+        const newBotHtml = botOpTuple[1];
         botBox.find(".number-text").html(newBotHtml);
 
         const subtractSets = topOpReversed.map((currentValue, index) => {
@@ -143,13 +137,11 @@ export default class LongSubtractAnimator {
         //Timeline time!
         this._timeline.to(leftBox, 1, {
             "position": "absolute",
-            "left": leftLine + minus.width() + (leftBox.width() - leftBox.outerWidth(true)) + numWidth +
-            (Math.max(0, rightBoxText.length - leftBoxText.length) * (numWidth + letterSpacing)),
+            "left": Utils.positionTopBox(leftLine, minus, leftBox, numWidth, rightBoxText, leftBoxText, letterSpacing)
         });
         this._timeline.to(rightBox, 1, {
             "position": "absolute",
-            "left": leftLine - (rightBox.outerWidth(true) - rightBox.width()) + minus.width() + numWidth / 2 +
-            (Math.max(0, leftBoxText.length - rightBoxText.length) * (numWidth + letterSpacing)),
+            "left": Utils.positionBotBox(leftLine, minus, rightBox, numWidth, rightBoxText, leftBoxText, letterSpacing),
             "top": numWidth * 3
         }, "-=1");
 
@@ -190,7 +182,7 @@ export default class LongSubtractAnimator {
             const one = new RenderedNumber(
                 `${this._animationId}-newOne-${column}`,
                 leftPosOfColumn(column) - numWidth / 2,
-                2, //Trust me it looks better
+                2, //Trust me it looks better I dont believe you
                 1,
                 false
             );
@@ -251,7 +243,7 @@ export default class LongSubtractAnimator {
 
             this._timeline.set(sideLeft, {"text": String(subtractSet[0])});
             this._timeline.set(sideRight, {"text": String(subtractSet[1])});
-
+    
             let answer = new RenderedNumber(`${this._animationId}-answer-${i}`,
                 side.containerDiv.position().left + side.containerDiv.width() + letterSpacing
                     //Because .width() above does not account for runtime changes, we manually have to check for
