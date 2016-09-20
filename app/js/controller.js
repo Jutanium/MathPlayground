@@ -94,7 +94,7 @@ export default class Controller {
         const firstOp = container.children(".snapbox-left").find(".number-text").text();
         const secondOp = container.children(".snapbox-right").find(".number-text").text();
 
-        if (firstOp > 20 || secondOp > 20) return new DivideShort(container);
+        if (firstOp <= 144 && secondOp <= 12 && firstOp / secondOp <= 12) return new DivideShort(container);
 
         return new DivideLong(container);
     }

@@ -340,7 +340,7 @@ class RenderedMultiply extends RenderedOperation {
 
 class RenderedDivide extends RenderedOperation {
     constructor (name, x, y) {
-        super ("divide-"+name, x, y, "divide", "&divide;");
+        super ("divide-"+name, x, y, "divide", "&divide;", Controller.getDivideAnimation);
     }
 }
 import Utils from "app/js/animatorutils";
