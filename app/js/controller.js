@@ -1,10 +1,12 @@
-import {RenderedNumber, RenderedAdd, RenderedSubtract, RenderedMultiply, RenderedDivide} from "app/js/renderedobjects";
+import { RenderedNumber, RenderedAdd, RenderedSubtract, RenderedMultiply, RenderedDivide } from "app/js/renderedobjects";
 import AddShort from "app/js/animations/addshort";
 import AddLong from "app/js/animations/addlong";
-import MultiplyShort from "app/js/animations/multiplyshort";
-import MultiplyLong from "app/js/animations/multiplylong";
 import SubtractShort from "app/js/animations/subtractshort";
 import SubtractLong from "app/js/animations/subtractlong";
+import MultiplyShort from "app/js/animations/multiplyshort";
+import MultiplyLong from "app/js/animations/multiplylong";
+import DivideShort from "app/js/animations/divideshort";
+import DivideLong from "app/js/animations/dividelong";
 
 export default class Controller {
     constructor(parentDiv) {
@@ -87,6 +89,14 @@ export default class Controller {
 
     createDivide(parameters) {
         return this.createOperator(RenderedDivide, parameters);
+    }
+    static getDivideAnimation(container) {
+        const firstOp = container.children(".snapbox-left").find(".number-text").text();
+        const secondOp = container.children(".snapbox-right").find(".number-text").text();
+
+        if (firstOp <= 144 && secondOp <= 12 && firstOp / secondOp <= 12) return new DivideShort(container);
+
+        return new DivideLong(container);
     }
 
     createNumber(number, parameters) {

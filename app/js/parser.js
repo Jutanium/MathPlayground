@@ -8,6 +8,7 @@ export default class Parser {
         const add = /(\d+)\+(\d+)/.exec(text);
         const subtract = /(\d+)\-(\d+)/.exec(text);
         const multiply = /(\d+)\*(\d+)/.exec(text);
+        const divide = /(\(\d+)\)\/(\(\d+)\)/.exec(text);
         const number = /(\d+)/.exec(text);
 
         if (add) {
@@ -25,6 +26,15 @@ export default class Parser {
                 attachLeft: this._controller.createNumber(multiply[1]),
                 attachRight: this._controller.createNumber(multiply[2])
             });
+        } else if (divide) {
+            for (let i = 1; i < divide.length; i++) {
+                divide[i] = divide[i].substring(1);
+            }
+
+            this._controller.createDivide({
+                attachLeft: this._controller.createNumber(divide[1]),
+                attachRight: this._controller.createNumber(divide[2])
+            })
         } else if (number) {
             this._controller.createNumber(number[0]);
         }
