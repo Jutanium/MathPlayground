@@ -38,21 +38,23 @@ export default class ShortDivideAnimator {
         // Parameters
         const squaresPerRow = 10;
 
-        const svgWidth = 300;
-        const svgHeight = svgWidth / squaresPerRow * Math.ceil(firstOp / squaresPerRow);
+        const canvasWidth = 300;
 
-        const leftLine = svgWidth;
+        const leftLine = canvasWidth;
         const squareWidth = leftLine / squaresPerRow * .75;
         const squareMargins = leftLine / squaresPerRow * .25;
+        const vectorHeight = (squareWidth + squareMargins) * secondOp;
+
+        const canvasHeight = canvasWidth / squaresPerRow * Math.ceil(firstOp / squaresPerRow) + vectorHeight; // TODO: Improve
 
         // Canvas
-        const canvas = Snap(svgWidth, svgHeight);
+        const canvas = Snap(canvasWidth, canvasHeight);
 
         canvas.node.id = this._svgId;
         $(canvas.node).css({
             position: "absolute",
             top: "50px",
-            left: `-${svgWidth / 2 - numWidth * 2.5 - 25 / 2}px`,
+            left: `-${canvasWidth / 2 - numWidth * 2.5 - 25 / 2}px`,
         });
 
         this._container.append(canvas.node);
@@ -66,25 +68,39 @@ export default class ShortDivideAnimator {
             return Utils.drawSquare(canvas, x, y, width);
         }
 
-        // Position squares
+
+        // Create and position equals sign
+        const equals = new RenderedEquals(
+            `${this._svgId}-equals`,
+            this._container.width() + squareWidth + squareMargins,
+            this._container.height() + canvasHeight - vectorHeight / 2 - squareMargins
+        );
+        const equalsDiv = equals
+            .createElements(this._container)
+            .css("opacity", 0);
+
+        // Create and position squares
         for (let i = 0; i < firstOp; i++) {
+            const x = i % squaresPerRow * (squareWidth + squareMargins) + squareMargins / 2;
+            const y = Math.floor(i / squaresPerRow) * (squareWidth + squareMargins) + squareMargins / 2;
+
             const square = createSquare(
-                i % squaresPerRow * (squareWidth + squareMargins) + squareMargins / 2,
-                Math.floor(i / squaresPerRow) * (squareWidth + squareMargins) + squareMargins / 2,
+                x,
+                y,
                 squareWidth
             );
 
-            squareArray[i] = "#" + (square.node.id = this._svgId + i);
+            squareArray[i] = ["#" + (square.node.id = this._svgId + i), x, y];
         }
 
         /* Timeline */
         const squareTime = 1;
-        const stagger = .1;
+        const stagger = 0; // .1
 
         squareArray.forEach((square) => {
             // Animate square entrance
-            this._timeline.from(square, squareTime, {
-                x: "-100",
+            this._timeline.from(square[0], squareTime, {
+                x: "-100px",
                 opacity: 0,
                 ease: Power3.easeOut,
             }, `-=${squareTime - stagger}`);
@@ -97,8 +113,28 @@ export default class ShortDivideAnimator {
 
         // Fill vectors with squares
         for (let i = 0; i < vectorNum; i++) {
-            // TODO: Move last x squares to vector
+            for (let j = 0; j < secondOp; j++) {
+                const square = squareArray[squareArray.length - i * secondOp - j - 1];
+
+                const currX = square[1];
+                const currY = square[2];
+
+                const targetX = i * (canvasWidth / (secondOp + 1));
+                const targetY = canvasHeight - (squareWidth) * (j + 1) - squareMargins;
+
+                this._timeline.to(square[0], .5, {
+                    x: targetX - currX,
+                    y: targetY - currY,
+                    ease: Power3.easeOut,
+                }, "-=.5"); // If you have "-=.5" then it looks really cool
+            }
+
+            // Wait
+            this._timeline.to("", .5, { });
         }
+
+        // Show equals
+        this._timeline.to(equalsDiv, .5, { opacity: 0 });
     }
 
     go() {
