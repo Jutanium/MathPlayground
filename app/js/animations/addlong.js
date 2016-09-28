@@ -9,6 +9,14 @@ export default class LongAddAnimator {
         this._timeline = new TimelineMax();
         this._animationId = this._container.attr("id") + "-animation";
         this._toRemove = [];
+        this._topBox = this._container.children(".snapbox-left");
+        this._botBox = this._container.children(".snapbox-right");
+
+        //For restoring later
+        this._topNumber = this._topBox.children(".number-container");
+        this._topHtml = this._topNumber.html();
+        this._botNumber = this._botBox.children(".number-container");
+        this._botHtml = this._botNumber.html();
     }
 
     drawGo() {
@@ -18,10 +26,10 @@ export default class LongAddAnimator {
         }
         this._drawn = true;
 
-        const leftBox = this._container.children(".snapbox-left");
-        const rightBox = this._container.children(".snapbox-right");
-        const firstOpText = leftBox.find(".number-text").text();
-        const secondOpText = rightBox.find(".number-text").text();
+        const topBox = this._topBox;
+        const botBox = this._botBox;
+        const firstOpText = topBox.find(".number-text").text();
+        const secondOpText = botBox.find(".number-text").text();
 
         const firstOp = parseInt(firstOpText);
         const secondOp = parseInt(secondOpText);
@@ -59,8 +67,8 @@ export default class LongAddAnimator {
 
         console.log(addSets);
 
-        leftBox.find(".number-text").html(newLeftHtml);
-        rightBox.find(".number-text").html(newRightHtml);
+        topBox.find(".number-text").html(newLeftHtml);
+        botBox.find(".number-text").html(newRightHtml);
 
         const numWidth = Utils.numWidth;
 
@@ -73,14 +81,14 @@ export default class LongAddAnimator {
         //If AB + CD = XYZ, we need to move the plus and equals over to account for the new digit.
         const plusLeft = leftLine - (String(firstOp + secondOp).length - biggerOpLength) * (numWidth + letterSpacing);
 
-        const equals = new RenderedEquals(this._animationId + "-equals", plusLeft, rightBox.height() * heightMultiplier * 2);
+        const equals = new RenderedEquals(this._animationId + "-equals", plusLeft, botBox.height() * heightMultiplier * 2);
         const equalsDiv = equals.createElements(this._container);
         equalsDiv.css("opacity", 0);
         this._toRemove.push(equalsDiv);
 
         const side = new RenderedObject(this._animationId + "-side",
             leftLine + plus.width() + (biggerOpLength + 1) * (numWidth + letterSpacing),
-            rightBox.height() * .75,
+            botBox.height() * .75,
             "small",
             "<span id='op'><span id='carryOp'></span>" +
             "<span id='leftOp'></span><span id='plus'>+</span><span id='rightOp'>" +
@@ -113,19 +121,19 @@ export default class LongAddAnimator {
         //THESE NEXT TWO POSITIONS TOOK DAYS TO FIGURE OUT they are responsible for moving things over depending
         //on which number has more digits and by how much. Margins fluck slit up, which is why I have expressions like
         //box.width() - box.outerWidth(true), which returns the margin
-        this._timeline.to(leftBox, 1, {
+        this._timeline.to(topBox, 1, {
             "position": "absolute",
-            "left": Utils.positionTopBox(leftLine, plus, leftBox, numWidth, secondOpText, firstOpText, letterSpacing),
+            "left": Utils.positionTopBox(leftLine, plus, topBox, numWidth, secondOpText, firstOpText, letterSpacing),
             "top": numWidth * 3,
         });
-        this._timeline.to(rightBox, 1, {
-            "left": Utils.positionBotBox(leftLine, plus, rightBox, numWidth, secondOpText, firstOpText, letterSpacing),
+        this._timeline.to(botBox, 1, {
+            "left": Utils.positionBotBox(leftLine, plus, botBox, numWidth, secondOpText, firstOpText, letterSpacing),
         }, "-=1");
         //Move plus down next to big box
         this._timeline.to(plus, 1, {
             "position": "absolute",
             "left": plusLeft,
-            "top": rightBox.height() * heightMultiplier
+            "top": botBox.height() * heightMultiplier
         }, "-=1");
 
         //Animate padding (a bit choppy unfortunately, not sure if autoRound makes a difference).
@@ -143,7 +151,7 @@ export default class LongAddAnimator {
             const addSet = addSets[i];
 
             if (addSet.length === 1) { //If there's nothing to add to, just move the number down.
-                const top = firstOpText.length > secondOpText.length ? rightBox.height() * heightMultiplier : 0;
+                const top = firstOpText.length > secondOpText.length ? botBox.height() * heightMultiplier : 0;
 
                 const copy = new RenderedNumber(this._animationId + "-side-answerLast-" + i,
                     leftLine + plus.width() + numWidth / 2 + (biggerOpLength - i - 1) * (numWidth + letterSpacing),
@@ -155,7 +163,7 @@ export default class LongAddAnimator {
                 }).addClass(Utils.answerClass);
                 this._timeline.to(copy.containerDiv, 1, {
                     opacity: 1,
-                    top: rightBox.height() * heightMultiplier * 2,
+                    top: botBox.height() * heightMultiplier * 2,
                     ease: Power1.easeOut
                 });
                 this._toRemove.push(copy);
@@ -231,14 +239,14 @@ export default class LongAddAnimator {
 
             this._timeline.to(moveDown.containerDiv, 1, {
                 left: leftLine + plus.width() + numWidth / 2 + (biggerOpLength - i - 1) * (numWidth + letterSpacing),
-                top: rightBox.height() * heightMultiplier + numWidth * 2,
+                top: botBox.height() * heightMultiplier + numWidth * 2,
                 "font-size": numWidth
             });
 
             if (answerRight) { //Move up
                 this._timeline.to(answerLeft.containerDiv, 1, {
                     left: leftLine + plus.width() + numWidth / 2 + (biggerOpLength - i - 2) * (numWidth + letterSpacing),
-                    top: rightBox.height() * -heightMultiplier + numWidth / 2,
+                    top: botBox.height() * -heightMultiplier + numWidth / 2,
                     "font-size": numWidth,
                     className: "+=" + Utils.carryClass
                 }, "-=1");
@@ -273,6 +281,10 @@ export default class LongAddAnimator {
     }
 
     removeElements() {
+        //When we're done with this set of numbers, restore their original html (we modified them in the animation, surrounding each number with a span)
+        this._topNumber.html(this._topHtml);
+        this._botNumber.html(this._botHtml);
+
         this._toRemove.forEach(element => $(element).remove());
     }
 

@@ -67,7 +67,7 @@ export default class Controller {
         const firstOp = container.children(".snapbox-left").find(".number-text").text();
         const secondOp = container.children(".snapbox-right").find(".number-text").text();
 
-        if (firstOp > 10 && secondOp > 10) {
+        if (firstOp > 10 || secondOp > 10) {
             return new MultiplyLong(container);
         }
 

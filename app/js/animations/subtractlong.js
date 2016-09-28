@@ -9,6 +9,13 @@ export default class LongSubtractAnimator {
         this._timeline = new TimelineMax();
         this._animationId = this._container.attr("id") + "-animation";
         this._toRemove = [];
+        this._topBox  = this._container.children(".snapbox-left");
+        this._botBox = this._container.children(".snapbox-right");
+        //For restoring later
+        this._topNumber = this._topBox.children(".number-container");
+        this._topHtml = this._topNumber.html();
+        this._botNumber = this._botBox.children(".number-container");
+        this._botHtml = this._botNumber.html();
     }
 
     drawGo() {
@@ -21,8 +28,8 @@ export default class LongSubtractAnimator {
 
         const negativeClass = Utils.negativeClass;
 
-        const leftBox = this._container.children(".snapbox-left");
-        const rightBox = this._container.children(".snapbox-right");
+        const leftBox = this._topBox;
+        const rightBox = this._botBox;
         let topBox = leftBox, botBox = rightBox;
         const leftBoxText = leftBox.find(".number-text").text();
         const rightBoxText = rightBox.find(".number-text").text();
@@ -315,6 +322,10 @@ export default class LongSubtractAnimator {
     }
 
     removeElements() {
+        //When we're done with this set of numbers, restore their original html (we modified them in the animation, surrounding each number with a span)
+        this._topNumber.html(this._topHtml);
+        this._botNumber.html(this._botHtml);
+
         this._toRemove.forEach(element => $(element).remove());
     }
 }
