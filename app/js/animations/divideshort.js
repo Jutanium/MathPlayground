@@ -68,7 +68,6 @@ export default class ShortDivideAnimator {
             return Utils.drawSquare(canvas, x, y, width);
         }
 
-
         // Create and position equals sign
         const equals = new RenderedEquals(
             `${this._svgId}-equals`,
@@ -130,11 +129,51 @@ export default class ShortDivideAnimator {
             }
 
             // Wait
-            this._timeline.to("", .5, { });
+            this._timeline.to("", 0, {}); // .5
         }
 
         // Show equals
-        this._timeline.to(equalsDiv, .5, { opacity: 0 });
+        this._timeline.to(equalsDiv, .5, {opacity: 1});
+
+        // Create and position full number counter
+        /*const counter = new RenderedNumber(`${this._svgId}-counter`,
+         0,
+         0,
+         1, false)
+         const counterDiv = counter
+         .createElements(this._container)
+         .css({
+         position: "absolute",
+         })*/
+
+        for (let i = 0; i < vectorNum; i++) {
+            /*this._timeline.to(counterDiv, .5, {
+             x: 100,
+             y: 0,
+             ease: Bounce.easeOut
+             })*/
+            // TODO: Show which vector is being added either by highlighting, counter beneath, or pointer (maybe bouncing)
+            // Add 1 to the whole number
+            this._timeline.add(() => equals.tickBy(), "+=.5") // +=.5
+        }
+
+        // Add R if their is a remainder
+        const remainder = firstOp - vectorNum * secondOp
+
+        // TODO: Animate to improve aesthetics
+        if (remainder != 0) {
+            let countedRemainder = 0
+
+            this._timeline.add(() => equals.tickBy("R"), "+=.5")
+
+            // For each unassigned square
+            this._timeline.add(() => equals.tickBy(remainder))
+            /*for (let i = 0; i < firstOp - vectorNum * secondOp; i++) {
+                countedRemainder++
+
+                this._timeline.add(() => ))
+            }*/
+        }
     }
 
     go() {
