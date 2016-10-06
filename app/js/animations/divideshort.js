@@ -118,7 +118,7 @@ export default class ShortDivideAnimator {
                 const currX = square[1];
                 const currY = square[2];
 
-                const targetX = i * (canvasWidth / (secondOp + 1));
+                const targetX = i * (canvasWidth / (firstOp / secondOp + 1));
                 const targetY = canvasHeight - (squareWidth) * (j + 1) - squareMargins;
 
                 this._timeline.to(square[0], .5, {
