@@ -108,72 +108,72 @@ export default class ShortDivideAnimator {
         });
 
         // Amount of full vectors
-        const vectorNum = Math.floor(firstOp / secondOp);
+        const fullVectorNum = Math.floor(firstOp / secondOp);
 
-        // Fill vectors with squares
-        for (let i = 0; i < vectorNum; i++) {
-            for (let j = 0; j < secondOp; j++) {
-                const square = squareArray[squareArray.length - i * secondOp - j - 1];
+        // Remainder vector n
+        const remainder = firstOp - fullVectorNum * secondOp;
 
-                const currX = square[1];
-                const currY = square[2];
+        // If their is a remainder
+        const isRemainder = remainder != 0;
 
-                const targetX = i * (canvasWidth / (firstOp / secondOp + 1));
-                const targetY = canvasHeight - (squareWidth) * (j + 1) - squareMargins;
-
-                this._timeline.to(square[0], .5, {
-                    x: targetX - currX,
-                    y: targetY - currY,
-                    ease: Power3.easeOut,
-                }, "-=.5"); // If you have "-=.5" then it looks really cool
-            }
-
-            // Wait
-            this._timeline.to("", 0, {}); // .5
-        }
+        // Amount of vectors
+        const vectorNum = fullVectorNum + (isRemainder ? 1 : 0);
 
         // Show equals
         this._timeline.to(equalsDiv, .5, {opacity: 1});
 
-        // Create and position full number counter
-        /*const counter = new RenderedNumber(`${this._svgId}-counter`,
-         0,
-         0,
-         1, false)
-         const counterDiv = counter
-         .createElements(this._container)
-         .css({
-         position: "absolute",
-         })*/
-
+        // Fill vectors with squares
         for (let i = 0; i < vectorNum; i++) {
-            /*this._timeline.to(counterDiv, .5, {
-             x: 100,
-             y: 0,
-             ease: Bounce.easeOut
-             })*/
-            // TODO: Show which vector is being added either by highlighting, counter beneath, or pointer (maybe bouncing)
-            // Add 1 to the whole number
-            this._timeline.add(() => equals.tickBy(), "+=.5") // +=.5
+            const remainderTime = isRemainder && i === vectorNum - 1;
+
+            const entries = remainderTime ? remainder : secondOp;
+
+            for (let j = 0; j < entries; j++) {
+                const square = squareArray[firstOp - i * secondOp - j - 1];
+
+                const currX = square[1];
+                const currY = square[2];
+
+                const targetX = i * (canvasWidth / (firstOp / secondOp + (isRemainder ? 1 : 0)));
+                const targetY = canvasHeight - (squareWidth) * (j + 1) - squareMargins;
+
+                /*if (remainderTime) {
+                    this._timeline.to($(square[0]).find("rect"), .5, {
+                        fill: "orange",
+                        fade: Power3.easeOut,
+                    }, "-=.5");
+                }*/
+
+                // Move the squares
+                this._timeline.to(square[0], .5, {
+                    x: targetX - currX,
+                    y: targetY - currY,
+                    ease: Power3.easeOut,
+                }, "-=.5");
+            }
+
+            // Add 1 to the whole numbers if the iteration is not the remainder vector
+            if (!remainderTime) this._timeline.add(() => equals.tickBy(), "-=.5");
+
+            // Wait
+            this._timeline.to("", .5, { });
         }
 
-        // Add R if their is a remainder
-        const remainder = firstOp - vectorNum * secondOp
+        for (let i = 0; i < remainder; i++) {
+            const square = squareArray[remainder - i - 1];
+
+            this._timeline.to($(square[0]).find("rect"), .5, {
+                fill: "orange",
+                fade: Power3.easeOut,
+            });
+        }
 
         // TODO: Animate to improve aesthetics
-        if (remainder != 0) {
-            let countedRemainder = 0
-
-            this._timeline.add(() => equals.tickBy("R"), "+=.5")
-
-            // For each unassigned square
-            this._timeline.add(() => equals.tickBy(remainder))
-            /*for (let i = 0; i < firstOp - vectorNum * secondOp; i++) {
-                countedRemainder++
-
-                this._timeline.add(() => ))
-            }*/
-        }
+        /*if (remainder != 0) {
+            this._timeline
+                .add(() => equals.tickBy("R"), "+=.5")
+                .add(() => equals.tickBy(remainder));
+        }*/
     }
 
     go() {
