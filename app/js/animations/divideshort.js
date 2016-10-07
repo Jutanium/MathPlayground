@@ -164,11 +164,11 @@ export default class ShortDivideAnimator {
 
             this._timeline.to($(square[0]).find("rect"), .5, {
                 fill: "orange",
-                fade: Power3.easeOut,
             });
+
+            // TODO: Add 1 to remainder
         }
 
-        // TODO: Animate to improve aesthetics
         /*if (remainder != 0) {
             this._timeline
                 .add(() => equals.tickBy("R"), "+=.5")
