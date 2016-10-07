@@ -242,7 +242,10 @@ export default class ShortDivideAnimator {
             }, "-=.5");
         });
 
-        this._timeline.to(upDivs, .5, { top: vectorMid }, "-=.5")
+        this._timeline.to(upDivs, .5, {
+            top: vectorMid,
+            ease: Power3.easeOut,
+        }, "-=.5")
     }
 
     go() {
