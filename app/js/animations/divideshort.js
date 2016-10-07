@@ -61,7 +61,7 @@ export default class ShortDivideAnimator {
 
         this._container.append(canvas.node);
 
-        // Squares
+        // Squares (array, start X, start Y, current X, current Y
         let squareArray = [];
 
         const allZero = firstOp === 0 && secondOp === 0;
@@ -71,8 +71,9 @@ export default class ShortDivideAnimator {
         }
 
         // Create and position equals sign
+        const vectorMid = vectorHeight / 2 - squareMargins;
         const equalsX = this._container.width() + squareWidth + squareMargins;
-        const equalsY = this._container.height() + canvasHeight - vectorHeight / 2 - squareMargins;
+        const equalsY = this._container.height() + canvasHeight - vectorMid;
 
         const equals = new RenderedEquals(
             `${this._svgId}-equals`,
@@ -100,6 +101,7 @@ export default class ShortDivideAnimator {
                 opacity: 0,
                 color: wholeColor,
             });
+        const upDivs = [equalsDiv, wholeDiv];
 
         // Create and position squares
         for (let i = 0; i < firstOp; i++) {
@@ -117,7 +119,7 @@ export default class ShortDivideAnimator {
 
         /* Timeline */
         const squareTime = 1;
-        const stagger = .1; // .1
+        const stagger = .05; // .1
 
         squareArray.forEach((square) => {
             // Animate square entrance
@@ -150,18 +152,17 @@ export default class ShortDivideAnimator {
             const entries = remainderTime ? remainder : secondOp;
 
             for (let j = 0; j < entries; j++) {
-                const square = squareArray[firstOp - i * secondOp - j - 1];
+                const index = firstOp - i * secondOp - j - 1;
 
-                const currX = square[1];
-                const currY = square[2];
+                const square = squareArray[index];
 
                 const targetX = i * (canvasWidth / (firstOp / secondOp + (isRemainder ? 1 : 0)));
                 const targetY = canvasHeight - (squareWidth) * (j + 1) - squareMargins;
 
                 // Move the squares
                 this._timeline.to(square[0], .5, {
-                    x: targetX - currX,
-                    y: targetY - currY,
+                    x: targetX - square[1],
+                    y: targetY - square[2],
                     ease: Power3.easeOut,
                 }, "-=.5");
             }
@@ -169,10 +170,11 @@ export default class ShortDivideAnimator {
             // Add 1 to the whole numbers if the iteration is not the remainder vector
             if (!remainderTime) this._timeline.add(() => wholeAnswer.tickBy(), "-=.5");
 
-            // Wait
+            // Wait after each vector is filled
             this._timeline.to("", .5, { });
         }
 
+        // If their is a remainder animate it
         if (isRemainder) {
             const remainderColor = "orange";
 
@@ -192,6 +194,8 @@ export default class ShortDivideAnimator {
                     opacity: 0,
                 });
 
+            upDivs.push(rLetterDiv);
+
             // Create and position remainder number answer
             const remainderX = rX + numWidth + letterSpacing / 2;
             const remainderAnswer = new RenderedNumber(
@@ -209,6 +213,8 @@ export default class ShortDivideAnimator {
                     color: remainderColor,
                 });
 
+            upDivs.push(remainderDiv);
+
             // Show R and remainder
             this._timeline.to([rLetterDiv, remainderDiv], .5, {opacity: 1});
 
@@ -222,6 +228,21 @@ export default class ShortDivideAnimator {
                 this._timeline.add(() => remainderAnswer.tickBy(), "-=.5");
             }
         }
+
+        // Wait between counting quotient and filling shifting up
+        this._timeline.to("", .5, { });
+
+        // Move elements up to minimize white space
+        squareArray.forEach((val, index) => {
+            const targetY = index % secondOp * squareWidth;
+
+            this._timeline.to(val[0], .5, {
+                y: targetY - val[2],
+                ease: Power3.easeOut,
+            }, "-=.5");
+        });
+
+        this._timeline.to(upDivs, .5, { top: vectorMid }, "-=.5")
     }
 
     go() {
