@@ -72,7 +72,7 @@ export default class LongAddAnimator {
 
         const numWidth = Utils.numWidth;
 
-        const heightMultiplier = 1.4;
+        const heightMultiplier = 1.5;
         const letterSpacing = 10;
 
         const leftLine = 0;
@@ -228,7 +228,7 @@ export default class LongAddAnimator {
             }
             else this._timeline.set(sidePlus, {display: "none"});
 
-            this._timeline.fromTo(sideEquals, 1, {opacity: 0}, {opacity: 1}, "-=0.3");
+            this._timeline.fromTo(sideEquals, 1, {opacity: 0}, {opacity: 1}, "-=0.01");
 
             this._timeline.fromTo(answerLeft.containerDiv, 1, {opacity: 0}, {opacity: 1}, "-=1");
 

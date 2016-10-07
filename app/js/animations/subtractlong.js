@@ -69,7 +69,7 @@ export default class LongSubtractAnimator {
 
         const numWidth = Utils.numWidth;
 
-        const heightMultiplier = 1.4;
+        const heightMultiplier = 1.5;
         const letterSpacing = 18;
 
         const leftLine = 0;
@@ -189,7 +189,7 @@ export default class LongSubtractAnimator {
             const one = new RenderedNumber(
                 `${this._animationId}-newOne-${column}`,
                 leftPosOfColumn(column) - numWidth / 2,
-                2, //Trust me it looks better I dont believe you
+                7, //Trust me it looks better I dont believe you
                 1,
                 false
             );
