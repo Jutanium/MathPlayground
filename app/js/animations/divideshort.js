@@ -36,6 +36,8 @@ export default class ShortDivideAnimator {
         const secondOp = parseInt(this._rightBox.find(".number-text").text());
 
         // Parameters
+        const letterSpacing = 18;
+
         const squaresPerRow = 10;
 
         const canvasWidth = 300;
@@ -69,14 +71,34 @@ export default class ShortDivideAnimator {
         }
 
         // Create and position equals sign
+        const equalsX = this._container.width() + squareWidth + squareMargins;
+        const equalsY = this._container.height() + canvasHeight - vectorHeight / 2 - squareMargins;
+
         const equals = new RenderedEquals(
             `${this._svgId}-equals`,
-            this._container.width() + squareWidth + squareMargins,
-            this._container.height() + canvasHeight - vectorHeight / 2 - squareMargins
+            equalsX,
+            equalsY
         );
         const equalsDiv = equals
             .createElements(this._container)
-            .css("opacity", 0);
+            .css({ opacity: 0 });
+
+        // Create and position whole number answer
+        const wholeX = equalsX + numWidth + letterSpacing;
+
+        const wholeAnswer = new RenderedNumber(
+            `${this._svgId}-whole`,
+            wholeX,
+            equalsY,
+            0,
+            false
+        )
+        const wholeDiv = wholeAnswer
+            .createElements(this._container)
+            .css({
+                position: "absolute",
+                opacity: 0,
+            });
 
         // Create and position squares
         for (let i = 0; i < firstOp; i++) {
@@ -119,8 +141,8 @@ export default class ShortDivideAnimator {
         // Amount of vectors
         const vectorNum = fullVectorNum + (isRemainder ? 1 : 0);
 
-        // Show equals
-        this._timeline.to(equalsDiv, .5, {opacity: 1});
+        // Show equals and whole number answer
+        this._timeline.to([equalsDiv, wholeDiv], .5, {opacity: 1});
 
         // Fill vectors with squares
         for (let i = 0; i < vectorNum; i++) {
@@ -137,13 +159,6 @@ export default class ShortDivideAnimator {
                 const targetX = i * (canvasWidth / (firstOp / secondOp + (isRemainder ? 1 : 0)));
                 const targetY = canvasHeight - (squareWidth) * (j + 1) - squareMargins;
 
-                /*if (remainderTime) {
-                    this._timeline.to($(square[0]).find("rect"), .5, {
-                        fill: "orange",
-                        fade: Power3.easeOut,
-                    }, "-=.5");
-                }*/
-
                 // Move the squares
                 this._timeline.to(square[0], .5, {
                     x: targetX - currX,
@@ -153,27 +168,61 @@ export default class ShortDivideAnimator {
             }
 
             // Add 1 to the whole numbers if the iteration is not the remainder vector
-            if (!remainderTime) this._timeline.add(() => equals.tickBy(), "-=.5");
+            if (!remainderTime) this._timeline.add(() => wholeAnswer.tickBy(), "-=.5");
 
             // Wait
-            this._timeline.to("", .5, { });
+            //this._timeline.to("", .5, { });
         }
 
-        for (let i = 0; i < remainder; i++) {
-            const square = squareArray[remainder - i - 1];
+        if (isRemainder) {
+            // Create and position R letter
+            const rX = wholeX + numWidth * fullVectorNum.toString().length;
 
-            this._timeline.to($(square[0]).find("rect"), .5, {
-                fill: "orange",
-            });
+            const rLetter = new RenderedNumber(
+                `${this._svgId}-whole`,
+                rX,
+                equalsY,
+                "R",
+                false
+            )
+            const rLetterDiv = rLetter
+                .createElements(this._container)
+                .css({
+                    position: "absolute",
+                    opacity: 0,
+                });
 
-            // TODO: Add 1 to remainder
+            // Create and position remainder number answer
+            const remainderX = rX + numWidth + letterSpacing / 2;
+
+            const remainderAnswer = new RenderedNumber(
+                `${this._svgId}-whole`,
+                remainderX,
+                equalsY,
+                0,
+                false
+            )
+            const remainderDiv = remainderAnswer
+                .createElements(this._container)
+                .css({
+                    position: "absolute",
+                    opacity: 0,
+                    color: "orange",
+                });
+
+            // Show R and remainder
+            this._timeline.to([rLetterDiv, remainderDiv], .5, {opacity: 1});
+
+            for (let i = 0; i < remainder; i++) {
+                const square = squareArray[remainder - i - 1];
+
+                this._timeline.to($(square[0]).find("rect"), .5, {
+                    fill: "orange",
+                });
+
+                this._timeline.add(() => remainderAnswer.tickBy(), "-=.5");
+            }
         }
-
-        /*if (remainder != 0) {
-            this._timeline
-                .add(() => equals.tickBy("R"), "+=.5")
-                .add(() => equals.tickBy(remainder));
-        }*/
     }
 
     go() {
