@@ -117,7 +117,7 @@ export default class ShortDivideAnimator {
 
         /* Timeline */
         const squareTime = 1;
-        const stagger = 0; // .1
+        const stagger = .1; // .1
 
         squareArray.forEach((square) => {
             // Animate square entrance
@@ -126,8 +126,6 @@ export default class ShortDivideAnimator {
                 opacity: 0,
                 ease: Power3.easeOut,
             }, `-=${squareTime - stagger}`);
-
-            // TODO: Subtract 1 from firstOp
         });
 
         // Amount of full vectors
@@ -172,7 +170,7 @@ export default class ShortDivideAnimator {
             if (!remainderTime) this._timeline.add(() => wholeAnswer.tickBy(), "-=.5");
 
             // Wait
-            //this._timeline.to("", .5, { });
+            this._timeline.to("", .5, { });
         }
 
         if (isRemainder) {
