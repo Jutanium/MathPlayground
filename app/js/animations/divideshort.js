@@ -85,7 +85,7 @@ export default class ShortDivideAnimator {
 
         // Create and position whole number answer
         const wholeX = equalsX + numWidth + letterSpacing;
-
+        const wholeColor = "blue";
         const wholeAnswer = new RenderedNumber(
             `${this._svgId}-whole`,
             wholeX,
@@ -98,6 +98,7 @@ export default class ShortDivideAnimator {
             .css({
                 position: "absolute",
                 opacity: 0,
+                color: wholeColor,
             });
 
         // Create and position squares
@@ -175,9 +176,10 @@ export default class ShortDivideAnimator {
         }
 
         if (isRemainder) {
+            const remainderColor = "orange";
+
             // Create and position R letter
             const rX = wholeX + numWidth * fullVectorNum.toString().length;
-
             const rLetter = new RenderedNumber(
                 `${this._svgId}-whole`,
                 rX,
@@ -194,7 +196,6 @@ export default class ShortDivideAnimator {
 
             // Create and position remainder number answer
             const remainderX = rX + numWidth + letterSpacing / 2;
-
             const remainderAnswer = new RenderedNumber(
                 `${this._svgId}-whole`,
                 remainderX,
@@ -207,7 +208,7 @@ export default class ShortDivideAnimator {
                 .css({
                     position: "absolute",
                     opacity: 0,
-                    color: "orange",
+                    color: remainderColor,
                 });
 
             // Show R and remainder
@@ -217,7 +218,7 @@ export default class ShortDivideAnimator {
                 const square = squareArray[remainder - i - 1];
 
                 this._timeline.to($(square[0]).find("rect"), .5, {
-                    fill: "orange",
+                    fill: remainderColor,
                 });
 
                 this._timeline.add(() => remainderAnswer.tickBy(), "-=.5");
