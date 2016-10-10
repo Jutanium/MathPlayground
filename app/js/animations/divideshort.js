@@ -86,7 +86,7 @@ export default class ShortDivideAnimator {
 
         // Create and position whole number answer
         const wholeX = equalsX + numWidth + letterSpacing;
-        const wholeColor = "blue";
+        const wholeColor = "#FFD700";
         const wholeAnswer = new RenderedNumber(
             `${this._svgId}-whole`,
             wholeX,
@@ -179,7 +179,7 @@ export default class ShortDivideAnimator {
 
         // If their is a remainder animate it
         if (isRemainder) {
-            const remainderColor = "orange";
+            const remainderColor = "#2cc31c";
 
             // Create and position R letter
             const rX = wholeX + numWidth * fullVectorNum.toString().length;
