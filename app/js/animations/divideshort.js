@@ -142,6 +142,9 @@ export default class ShortDivideAnimator {
         // Amount of vectors
         const vectorNum = fullVectorNum + (isRemainder ? 1 : 0);
 
+        // Reset whole number answer
+        this._timeline.add(() => wholeAnswer.setNumber = 0);
+
         // Show equals and whole number answer
         this._timeline.to([equalsDiv, wholeDiv], .5, {opacity: 1});
 
@@ -214,6 +217,9 @@ export default class ShortDivideAnimator {
                 });
 
             upDivs.push(remainderDiv);
+
+            // Reset remainder answer
+            this._timeline.add(() => remainderAnswer.setNumber = 0);
 
             // Show R and remainder
             this._timeline.to([rLetterDiv, remainderDiv], .5, {opacity: 1});
