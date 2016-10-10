@@ -234,7 +234,17 @@ export default class ShortDivideAnimator {
 
         // Move elements up to minimize white space
         squareArray.forEach((val, index) => {
-            const targetY = index % secondOp * squareWidth;
+            let targetY
+
+            if (isRemainder) {
+                if (index < remainder) {
+                    targetY = squareWidth * (secondOp - 1) - index % secondOp * squareWidth;
+                } else {
+                    targetY = index % secondOp * squareWidth;
+                }
+            } else {
+                targetY = index % secondOp * squareWidth;
+            }
 
             this._timeline.to(val[0], .5, {
                 y: targetY - val[2],
