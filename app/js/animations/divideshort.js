@@ -47,7 +47,7 @@ export default class ShortDivideAnimator {
         const squareMargins = leftLine / squaresPerRow * .25;
         const vectorHeight = (squareWidth + squareMargins) * secondOp;
 
-        const canvasHeight = canvasWidth / squaresPerRow * Math.ceil(firstOp / squaresPerRow) + vectorHeight; // TODO: Improve
+        const canvasHeight = canvasWidth / squaresPerRow * Math.ceil(firstOp / squaresPerRow) + vectorHeight;
 
         // Canvas
         const canvas = Snap(canvasWidth, canvasHeight);
@@ -61,14 +61,14 @@ export default class ShortDivideAnimator {
 
         this._container.append(canvas.node);
 
-        // Squares (array, start X, start Y, current X, current Y
+        // Squares (array, start X, start Y, current X, current Y)
         let squareArray = [];
 
         const allZero = firstOp === 0 && secondOp === 0;
 
         const createSquare = (x, y, width) => {
             return Utils.drawSquare(canvas, x, y, width);
-        }
+        };
 
         // Create and position equals sign
         const vectorMid = vectorHeight / 2 - squareMargins;
@@ -93,7 +93,7 @@ export default class ShortDivideAnimator {
             equalsY,
             0,
             false
-        )
+        );
         const wholeDiv = wholeAnswer
             .createElements(this._container)
             .css({
@@ -118,8 +118,12 @@ export default class ShortDivideAnimator {
         }
 
         /* Timeline */
+        this._timeline.to(this._leftBox, .5, { color: "blue" });
+
+        const staggerLength = 3;
+
         const squareTime = 1;
-        const stagger = .05; // .1
+        const stagger = staggerLength / firstOp;
 
         squareArray.forEach((square) => {
             // Animate square entrance
@@ -129,6 +133,10 @@ export default class ShortDivideAnimator {
                 ease: Power3.easeOut,
             }, `-=${squareTime - stagger}`);
         });
+
+        this._timeline
+            .to(this._leftBox, .5, { color: "black" })
+            .to(this._rightBox, .5, { color: "blue" }, "-=.5");
 
         // Amount of full vectors
         const fullVectorNum = Math.floor(firstOp / secondOp);
@@ -171,11 +179,13 @@ export default class ShortDivideAnimator {
             }
 
             // Add 1 to the whole numbers if the iteration is not the remainder vector
-            if (!remainderTime) this._timeline.add(() => wholeAnswer.tickBy(), "-=.5");
+            if (!remainderTime) this._timeline.add(() => wholeAnswer.tickBy());
 
             // Wait after each vector is filled
-            this._timeline.to("", .5, { });
+            this._timeline.to("", .6, { });
         }
+
+        this._timeline.to(this._rightBox, .5, { color: "black" });
 
         // If their is a remainder animate it
         if (isRemainder) {
@@ -189,7 +199,7 @@ export default class ShortDivideAnimator {
                 equalsY,
                 "R",
                 false
-            )
+            );
             const rLetterDiv = rLetter
                 .createElements(this._container)
                 .css({
@@ -207,7 +217,7 @@ export default class ShortDivideAnimator {
                 equalsY,
                 0,
                 false
-            )
+            );
             const remainderDiv = remainderAnswer
                 .createElements(this._container)
                 .css({
@@ -240,7 +250,7 @@ export default class ShortDivideAnimator {
 
         // Move elements up to minimize white space
         squareArray.forEach((val, index) => {
-            let targetY
+            let targetY;
 
             if (isRemainder) {
                 if (index < remainder) {
@@ -258,8 +268,9 @@ export default class ShortDivideAnimator {
             }, "-=.5");
         });
 
+        // Move answer up with squares to minimize whitespace
         this._timeline.to(upDivs, .5, {
-            top: vectorMid,
+            top: numWidth + secondOp * squareWidth / 2 + squareMargins,
             ease: Power3.easeOut,
         }, "-=.5")
     }
