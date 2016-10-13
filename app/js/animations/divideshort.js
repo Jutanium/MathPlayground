@@ -182,7 +182,7 @@ export default class ShortDivideAnimator {
             if (!remainderTime) this._timeline.add(() => wholeAnswer.tickBy());
 
             // Wait after each vector is filled
-            this._timeline.to("", .6, { });
+            this._timeline.to("", .5, { });
         }
 
         this._timeline.to(this._rightBox, .5, { color: "black" });
