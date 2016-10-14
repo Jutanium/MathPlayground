@@ -150,11 +150,9 @@ export default class ShortDivideAnimator {
         // Amount of vectors
         const vectorNum = fullVectorNum + (isRemainder ? 1 : 0);
 
-        // Reset whole number answer
-        this._timeline.add(() => wholeAnswer.setNumber = 0);
-
-        // Show equals and whole number answer
-        this._timeline.to([equalsDiv, wholeDiv], .5, {opacity: 1});
+        this._timeline
+            .add(() => wholeAnswer.setNumber = 0)           /* Reset whole number answer */
+            .to([equalsDiv, wholeDiv], .5, {opacity: 1});   /* Show equals and whole number answer */
 
         // Fill vectors with squares
         for (let i = 0; i < vectorNum; i++) {
@@ -179,7 +177,7 @@ export default class ShortDivideAnimator {
             }
 
             // Add 1 to the whole numbers if the iteration is not the remainder vector
-            if (!remainderTime) this._timeline.add(() => wholeAnswer.tickBy());
+            if (!remainderTime) this._timeline.add(() => wholeAnswer.tickBy(), "-=.5");
 
             // Wait after each vector is filled
             this._timeline.to("", .5, { });
@@ -228,20 +226,18 @@ export default class ShortDivideAnimator {
 
             upDivs.push(remainderDiv);
 
-            // Reset remainder answer
-            this._timeline.add(() => remainderAnswer.setNumber = 0);
-
-            // Show R and remainder
-            this._timeline.to([rLetterDiv, remainderDiv], .5, {opacity: 1});
+            this._timeline
+                .add(() => remainderAnswer.setNumber = 0) /* Reset remainder answer */
+                .to([rLetterDiv, remainderDiv], .5, {opacity: 1}); /* Show R and remainder */
 
             for (let i = 0; i < remainder; i++) {
                 const square = squareArray[remainder - i - 1];
 
-                this._timeline.to($(square[0]).find("rect"), .5, {
-                    fill: remainderColor,
-                });
-
-                this._timeline.add(() => remainderAnswer.tickBy(), "-=.5");
+                this._timeline
+                    .to($(square[0]).find("rect"), .5, {
+                        fill: remainderColor,
+                    })
+                    .add(() => remainderAnswer.tickBy(), "-=.5");
             }
         }
 
