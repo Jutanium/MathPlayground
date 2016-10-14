@@ -64,7 +64,19 @@ export default class ShortDivideAnimator {
         // Squares (array, start X, start Y, current X, current Y)
         let squareArray = [];
 
-        const allZero = firstOp === 0 && secondOp === 0;
+        if (firstOp === 0 && secondOp === 0) {
+            const equals = new RenderedEquals(
+                `${this._svgId}-equals`,
+                this._rightBox.position().left + this._leftBox.position().outerWidth(true) + numWidth / 2,
+                numWidth / 2
+            )
+            const equalsDiv = equals.createElements(this._container);
+            equalsDiv.css({ opacity: 0 });
+
+            this._timeline.to(equalsDiv, .5, { opacity: 1 });
+
+            return;
+        }
 
         const createSquare = (x, y, width) => {
             return Utils.drawSquare(canvas, x, y, width);
@@ -165,9 +177,9 @@ export default class ShortDivideAnimator {
 
                 const square = squareArray[index];
 
-                const targetX = i * (canvasWidth / (firstOp / secondOp + (isRemainder ? 1 : 0)));
+                const targetX = i * (canvasWidth / vectorNum);
                 const targetY = canvasHeight - (squareWidth) * (j + 1) - squareMargins;
-
+                console.log(targetX)
                 // Move the squares
                 this._timeline.to(square[0], .5, {
                     x: targetX - square[1],
