@@ -255,8 +255,17 @@ class RenderedNumber extends SnapObject {
         super("number"+number+"-"+name, x, y, "number", number, "operation", draggable);
         this._number = number;
     }
-    
+
     get number () { return this._number; }
+
+    set setNumber(number) {
+        this._number = number;
+        this.contents = number;
+    }
+
+    tickBy(by = 1) {
+        this.setNumber = this._number + by;
+    }
 }
 
 class RenderedOperation extends HasSnapboxes { //Abstract
