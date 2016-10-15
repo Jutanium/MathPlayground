@@ -156,15 +156,19 @@ export default class ShortDivideAnimator {
         // Remainder vector n
         const remainder = firstOp - fullVectorNum * secondOp;
 
-        // If their is a remainder
+        // If there is a remainder
         const isRemainder = remainder != 0;
 
         // Amount of vectors
         const vectorNum = fullVectorNum + (isRemainder ? 1 : 0);
 
+        //TODO: Do we want the reverse animation starting from this, or is it good how it is?
+        //this._timeline.addLabel("beforeCount");
+
         this._timeline
             .add(() => wholeAnswer.setNumber = 0)           /* Reset whole number answer */
             .to([equalsDiv, wholeDiv], .5, {opacity: 1});   /* Show equals and whole number answer */
+
 
         // Fill vectors with squares
         for (let i = 0; i < vectorNum; i++) {
@@ -197,7 +201,7 @@ export default class ShortDivideAnimator {
 
         this._timeline.to(this._rightBox, .5, { color: "black" });
 
-        // If their is a remainder animate it
+        // If there is a remainder animate it
         if (isRemainder) {
             const remainderColor = "#2cc31c";
 
@@ -253,8 +257,8 @@ export default class ShortDivideAnimator {
             }
         }
 
-        // Wait between counting quotient and filling shifting up
-        this._timeline.to("", .5, { });
+        // Wait between counting quotient and filling shifting up Dan: I don't think we need a wait here.
+        //this._timeline.to("", .5, { });
 
         // Move elements up to minimize white space
         squareArray.forEach((val, index) => {
@@ -290,10 +294,10 @@ export default class ShortDivideAnimator {
 
     goAway() {
         if (this._drawn) {
-            if (this._timeline.time() > this._timeline.getLabelTime("beforeCount"))
-                this._timeline.seek("beforeCount");
+            //if (this._timeline.time() > this._timeline.getLabelTime("beforeCount"))
+            //    this._timeline.seek("beforeCount");
             this._timeline.reverse();
-            this._timeline.timeScale(16);
+            this._timeline.timeScale(8);
         }
     }
 

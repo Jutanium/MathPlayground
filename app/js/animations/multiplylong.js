@@ -214,6 +214,9 @@ export default class LongMultiplyAnimator {
                 ease: fade,
             }, "-=1");    /* Add padding between numbers */
 
+        //The reverse animation will start here and go backwards. Excludes all the subequations
+        this._timeline.addLabel("reverseStart");
+
         // Create sub-equations
         let sum = 0;
         let i = 0;
@@ -415,6 +418,8 @@ export default class LongMultiplyAnimator {
 
     goAway() {
         if (this._drawn) {
+            if (this._timeline.time() > this._timeline.getLabelTime("reverseStart"))
+                this._timeline.seek("reverseStart");
             this._timeline.reverse();
             this._timeline.timeScale(16);
         }
