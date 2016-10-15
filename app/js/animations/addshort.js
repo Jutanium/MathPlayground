@@ -90,7 +90,7 @@ export default class ShortAddAnimator {
                 ease: Power1.easeInOut
             }, "-=1");
             this._timeline.to(this._rightBox, 1, {
-                "left": 62 - (secondOp.toString().length - 1) * numWidth / 2,
+                "left": 63 - (secondOp.toString().length - 1) * numWidth / 2,
                 ease: Power1.easeInOut
             }, "-=1");
         }
