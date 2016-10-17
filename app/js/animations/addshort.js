@@ -36,7 +36,7 @@ export default class ShortAddAnimator {
         $(canvas.node).css({
             position: "absolute",
             top: "50px",
-            left: "-" + (svgWidth / 2 - numWidth * 2.5) + "px"
+            left: "-80px" //Make this dynamic
         });
         this._container.append(canvas.node);
 
@@ -86,11 +86,11 @@ export default class ShortAddAnimator {
         if (!allZero) {
             this._timeline.to(plus, 1, {"position": "relative", "top": svgHeight / 2 + plus.width() / 3, ease: Power1.easeInOut});
             this._timeline.to(this._leftBox, 1, {
-                "left": -leftLine / 3 + numWidth / 4,
+                "left": -28 - (firstOp.toString().length - 1) * numWidth / 2,
                 ease: Power1.easeInOut
             }, "-=1");
             this._timeline.to(this._rightBox, 1, {
-                "left": rightLine / 3 - numWidth / 4,
+                "left": 63 - (secondOp.toString().length - 1) * numWidth / 2,
                 ease: Power1.easeInOut
             }, "-=1");
         }

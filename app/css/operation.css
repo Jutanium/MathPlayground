@@ -5,6 +5,7 @@ div.operation-container {
     width: 200px; /*For some reason something (jQuery UI I think) sets the div to a width of 1000+ if we don't set a width explicitly.*/
 }
 div.operation-text {
+    font-family: "Times New Roman";
     text-align: center;
     font-size: 3em;
     display: inline-block;

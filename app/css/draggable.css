@@ -15,6 +15,7 @@ div.number-container {
 }
 
 div.number-text {
+    font-family: "Times New Roman";
     line-height:32px;
     font-size: 3em;
 }

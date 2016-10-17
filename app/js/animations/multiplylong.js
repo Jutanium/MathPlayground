@@ -9,9 +9,16 @@ export default class LongMultiplyAnimator {
 
         this._container = elem;
         this._timeline = new TimelineMax();
-        this._animationId = this._container.attr("id") + "-animation";
-        this._svgId = this._container.attr("id") + "-animation";
+        this._animationId = elem.attr("id") + "-animation";
+        this._svgId = elem.attr("id") + "-animation";
         this._toRemove = [];
+        this._topBox = elem.children(".snapbox-left");
+        this._botBox = elem.children(".snapbox-right");
+        //For restoring later
+        this._topNumber = this._topBox.children(".number-container");
+        this._topHtml = this._topNumber.html();
+        this._botNumber = this._botBox.children(".number-container");
+        this._botHtml = this._botNumber.html();
     }
 
     drawGo() {
@@ -38,10 +45,8 @@ export default class LongMultiplyAnimator {
         const times = this._container.find(".operation-text");
 
         // Boxes
-        const leftBox = this._container.children(".snapbox-left");
-        const rightBox = this._container.children(".snapbox-right");
-
-        let topBox = leftBox, botBox = rightBox;
+        const topBox = this._topBox;
+        const botBox = this._botBox;
 
         // Box text
         const topOpText = topBox.find(".number-text").text();
@@ -54,9 +59,8 @@ export default class LongMultiplyAnimator {
         const topOpReversed = topOpArray.slice().reverse();
         const botOpReversed = botOpArray.slice().reverse();
 
-        // Detect if answer is positive or negative
+        // Detect if answer is positive or negative - NEGATIVE PRODUCTS NOT YET IMPLEMENTED
         let isNegative = false;
-
         if (botOpText * topOpText < 0) isNegative = true;
 
         // Set up HTML for individual numbers
@@ -86,7 +90,7 @@ export default class LongMultiplyAnimator {
         // Render equal sign
         const equals = new RenderedObject(this._animationId + "-equals",
             0,
-            rightBox.height() * heightCoefficient * 2,
+            botBox.height() * heightCoefficient * 2,
             "",
             "<span id='equals'><hr></span>",
             false
@@ -105,7 +109,7 @@ export default class LongMultiplyAnimator {
         // Render sub equal sign
         const subEquals = new RenderedObject(this._animationId + "-subEquals",
             subLeftLine,
-            equalsDiv.height() + rightBox.height() * heightCoefficient * 4,
+            equalsDiv.height() + botBox.height() * heightCoefficient * 4,
             "",
             "<span id='subEquals'><hr></span>",
             false
@@ -123,7 +127,7 @@ export default class LongMultiplyAnimator {
         // Render sub plus
         const subPlus = new RenderedObject(`${this._animationId}-subPlus`,
             subLeftLine,
-            equalsDiv.height() / 2 + 3 * (rightBox.height() * heightCoefficient),
+            equalsDiv.height() / 2 + 3 * (botBox.height() * heightCoefficient),
             "",
             "<span>+</span>",
             false
@@ -143,7 +147,7 @@ export default class LongMultiplyAnimator {
         // Render side equation
         const side = new RenderedObject(this._animationId + "-side",
             topWidth,
-            rightBox.height() * .75,
+            botBox.height() * .75,
             "small",
             "<span id='leftOp'></span><span id='times'>&times</span><span id='rightOp'></span></span>"+
             "<span id='equals'>=</span>",
@@ -188,27 +192,30 @@ export default class LongMultiplyAnimator {
                 opacity: 1,
                 ease: fade,
             })                           /* Fade is equal line, sub equal line, and plus */
-            .to(leftBox, 1, {
+            .to(topBox, 1, {
                 position: "absolute",
-                left: Utils.positionTopBox(leftLine, times, leftBox, numWidth, botOpText, topOpText, letterSpacing),
+                left: Utils.positionTopBox(leftLine, times, topBox, numWidth, botOpText, topOpText, letterSpacing),
                 ease: fade,
             }, "-=1")            /* Fade in top box */
-            .to(rightBox, 1, {
+            .to(botBox, 1, {
                 position: "absolute",
-                left: Utils.positionBotBox(leftLine, times, rightBox, numWidth, botOpText, topOpText, letterSpacing),
+                left: Utils.positionBotBox(leftLine, times, botBox, numWidth, botOpText, topOpText, letterSpacing),
                 top: numWidth * 3,
                 ease: fade,
             }, "-=1")           /* Fade in bot box */
             .to(times, 1, {
                 position: "absolute",
                 left: 0,
-                top: rightBox.height() * heightCoefficient,
+                top: botBox.height() * heightCoefficient,
                 ease: fade,
             }, "-=1")              /* Fade in times */
             .to("." + this._animationId + "-operand", 1, {
                 "padding-right": letterSpacing,
                 ease: fade,
             }, "-=1");    /* Add padding between numbers */
+
+        //The reverse animation will start here and go backwards. Excludes all the subequations
+        this._timeline.addLabel("reverseStart");
 
         // Create sub-equations
         let sum = 0;
@@ -298,7 +305,7 @@ export default class LongMultiplyAnimator {
                 // Move product to top of sub-addition equation
                 this._timeline.to(answerDiv, 1.25, {
                     left: topWidth - (product.toString().length * (letterSpacing + numWidth)),
-                    top: equalsDiv.height() + (2 + (additionNums.length - 1)) * (rightBox.height() * heightCoefficient),
+                    top: equalsDiv.height() + (2 + (additionNums.length - 1)) * (botBox.height() * heightCoefficient),
                     "font-size": numWidth,
                     "letter-spacing": `${letterSpacing}px`,
                     color: subEquationColor,
@@ -318,7 +325,7 @@ export default class LongMultiplyAnimator {
 
                     const subAnswer = new RenderedNumber(`${this._animationId}-answer-${i}`,
                         topWidth - (additionNums[0].toString().length * (letterSpacing + numWidth)),
-                        2 * equalsDiv.height() + rightBox.height() * heightCoefficient * 4,
+                        2 * equalsDiv.height() + botBox.height() * heightCoefficient * 4,
                         additionNums[0],
                         false
                     );
@@ -340,7 +347,7 @@ export default class LongMultiplyAnimator {
                         }, "+=.25")                     /* Show sum */
                         .to(subAnswerDiv, 1, {
                             left: topWidth - (additionNums[0].toString().length * (letterSpacing + numWidth)),
-                            top: equalsDiv.height() + rightBox.height() * heightCoefficient + numWidth * 2,
+                            top: equalsDiv.height() + botBox.height() * heightCoefficient + numWidth * 2,
                             "letter-spacing": `${letterSpacing}px`,
                             ease: fade,
                         })    /* Replace top sub addition with sum */
@@ -411,12 +418,18 @@ export default class LongMultiplyAnimator {
 
     goAway() {
         if (this._drawn) {
+            if (this._timeline.time() > this._timeline.getLabelTime("reverseStart"))
+                this._timeline.seek("reverseStart");
             this._timeline.reverse();
             this._timeline.timeScale(16);
         }
     }
 
     removeElements() {
+        //When we're done with this set of numbers, restore their original html (we modified them in the animation, surrounding each number with a span)
+        this._topNumber.html(this._topHtml);
+        this._botNumber.html(this._botHtml);
+
         this._toRemove.forEach(element => $(element).remove());
     }
 }
