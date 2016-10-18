@@ -43,6 +43,7 @@ class RenderedObject {
 
     removeElements() {
         console.log(this._id);
+        this.dragStop($(this._containerDiv));
         this._contentDiv.remove();
         this._containerDiv.remove();
     }
