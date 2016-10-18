@@ -19,6 +19,7 @@ $(document).ready(function() {
 
     controller.createDivide({attachLeft: controller.createNumber(42), attachRight: controller.createNumber(6)});
     controller.createDivide({attachLeft: controller.createNumber(4), attachRight: controller.createNumber(613)});
+    controller.createDivide({attachLeft: controller.createNumber(613), attachRight: controller.createNumber(4)});
 });
 
 function onBoxEdit() {
