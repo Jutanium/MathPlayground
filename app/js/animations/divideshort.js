@@ -130,7 +130,7 @@ export default class ShortDivideAnimator {
         }
 
         /* Timeline */
-        this._timeline.to(this._leftBox, .5, { color: "blue" });
+        this._timeline.to(this._leftBox, .5, { color: "blue", className: "+=dropshadow"});
 
         const staggerLength = 3;
 
@@ -147,8 +147,8 @@ export default class ShortDivideAnimator {
         });
 
         this._timeline
-            .to(this._leftBox, .5, { color: "black" })
-            .to(this._rightBox, .5, { color: "blue" }, "-=.5");
+            .to(this._leftBox, .5, { color: "black", className: "-=dropshadow"})
+            .to(this._rightBox, .5, { color: "blue", className: "+=dropshadow"}, "-=.5");
 
         // Amount of full vectors
         const fullVectorNum = Math.floor(firstOp / secondOp);
@@ -199,7 +199,7 @@ export default class ShortDivideAnimator {
             this._timeline.to("", .5, { });
         }
 
-        this._timeline.to(this._rightBox, .5, { color: "black" });
+        this._timeline.to(this._rightBox, .5, { color: "black", className: "-=dropshadow"});
 
         // If there is a remainder animate it
         if (isRemainder) {

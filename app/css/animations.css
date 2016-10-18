@@ -10,3 +10,7 @@
 .negative {
     color: #0074D9;
 }
+
+.dropshadow {
+    text-shadow: 0 0 15px gold;
+}

@@ -65,13 +65,13 @@ export default class ShortSubtractAnimator {
             rightSquares[i] = "#" + (square.node.id = `${svgId}-right-` + i);
         }
 
-        const operand = this._container.find(".operation-text");
+        const operator = this._container.find(".operation-text");
 
-        let equalsX = this._rightBox.position().left + this._rightBox.outerWidth(true) + operand.width() / 2;
+        let equalsX = this._rightBox.position().left + this._rightBox.outerWidth(true) + operator.width() / 2;
         let equalsY = 0;
         if (!allZero) {
-            equalsX = svgWidth / 2 + operand.width();
-            equalsY = svgHeight / 2 + operand.width() / 2;
+            equalsX = svgWidth / 2 + operator.width();
+            equalsY = svgHeight / 2 + operator.width() / 2;
         }
 
         const equals = new RenderedEquals(`${svgId}-equals`, equalsX, equalsY);
@@ -92,6 +92,8 @@ export default class ShortSubtractAnimator {
         }
 
         //Drop the squares
+        this._timeline.to(this._leftBox, 0.5, {className: "+=dropshadow"});
+
         const dropOverlap = Math.max(firstOp, secondOp) <= 9 ? "-=0.35" : "-=0.45";
         for (let i = 0; i < leftSquares.length; i++) {
             this._timeline.call(() => { Utils.insidesOn(leftSquares[i]); }); //Ensure that the signs are on the squares
@@ -100,6 +102,10 @@ export default class ShortSubtractAnimator {
                 ease: Power1.easeOut
             }, dropOverlap);
         }
+
+        this._timeline.to(this._leftBox, 0.5, {className: "-=dropshadow"});
+
+        this._timeline.to(this._rightBox, 0.5, {className: "+=dropshadow"});
 
         if (rightSquares.length > 0) {
             this._timeline.call(() => { Utils.insidesOn(rightSquares[0]); });
@@ -118,11 +124,15 @@ export default class ShortSubtractAnimator {
             }, dropOverlap);
         }
 
+        this._timeline.to(this._rightBox, 0.5, {className: "-=dropshadow"});
+
+
         if (allZero) {
             this._timeline.call(() => {equals.value = 0});
         }
 
         //Merge the squares
+        this._timeline.to(operator, 0.2, {className: "+=dropshadow"});
         const leftTotalSquareWidth = squaresPerRow * (squareWidth + squareMargins);
         const moveSquares = svgWidth / 2 - leftTotalSquareWidth / 2;
 
@@ -166,6 +176,7 @@ export default class ShortSubtractAnimator {
 
         this._timeline.to(equalsDiv, 1, {opacity: 1, ease: Power1.easeIn});
 
+        this._timeline.to(operator, 0.2, {className: "-=dropshadow"}, "fading-=0.24");
         //Count unfaded squares
         this._timeline.addLabel("beforeCount");
         const countDuration = 3.6 / Math.max(9, Math.max(firstOp, secondOp));
