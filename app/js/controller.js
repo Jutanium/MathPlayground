@@ -15,6 +15,24 @@ export default class Controller {
         this._objects = new Map();
     }
 
+    printObjects() {
+
+    }
+    removeObject(id) {
+        const obj = this._objects;
+        //Loop through its id-bearing children to get any attached objects and remove those from the map
+        $(`#${id}`).find('[id]').each(
+            function() {
+                const id = $(this).attr("id");
+                if (obj.has(id)) {
+                    obj.get(id).removeElements();
+                    obj.delete(id);
+                }
+            }
+        );
+        obj.get(id).removeElements();
+        obj.delete(id);
+    }
     createOperator(ObjClass, parameters) {
         let x, y, attachLeft, attachRight;
 
@@ -112,6 +130,8 @@ export default class Controller {
         }
         const object = new RenderedNumber(this._idCounter++, x, y, number);
         object.createElements(this._parentDiv);
+
+        this._objects.set(object.id, object);
         return object;
     }
 

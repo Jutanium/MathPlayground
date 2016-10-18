@@ -1,4 +1,4 @@
-
+/*TODO: CHANGE ALL EMS TO PX? I was super noobish in using ems for everything... these apparently scale with the browser's font size... probably going to need to change this at some point (I do like them being larger units though :P) On every browser I've used, 1em = 16px though so I haven't actually seen them scale in practice
 /*Top strip*/
 div#magic-box-div {
     margin-left: auto;
@@ -10,6 +10,17 @@ span#magic-box {
     width: inherit;
     font-size: 3em;
     text-align:center;
+}
+
+div#trash{
+    position: fixed;
+    width: 6em;
+    height: 6em;
+    bottom: 1em;
+    right: 1em;
+    background-color: red;
+    border-radius: 10px;
+    opacity: 0;
 }
 /*
 div.ui-draggable {

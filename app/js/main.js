@@ -21,6 +21,19 @@ $(document).ready(function() {
     controller.createMultiply({attachLeft: controller.createNumber(274), attachRight: controller.createNumber(13)});
     controller.createSubtract({attachLeft: controller.createNumber(123), attachRight: controller.createNumber(45)});
     controller.createAdd({attachLeft: controller.createNumber(49), attachRight: controller.createNumber(173)});
+
+    $("#trash")
+        .droppable({
+            activate: function (event, ui) {
+                TweenMax.to($(this), 0.5, {opacity: 0.2})
+            },
+            deactivate: function (event, ui) { TweenMax.to($(this), 0.2, {opacity: 0}) },
+            over: function (event, ui) { TweenMax.to($(this), 0.2, {opacity: 1}) },
+            out: function (event, ui) { TweenMax.to($(this), 0.2, {opacity: 0.2}) },
+            drop: function (event, ui) {
+                controller.removeObject(ui.draggable.attr("id"));
+            }
+        })
 });
 
 function onBoxEdit() {
@@ -30,4 +43,3 @@ function onBoxEdit() {
 function onBoxEnter() {
     parser.parseAndCreate(magicBox.text());
 }
-

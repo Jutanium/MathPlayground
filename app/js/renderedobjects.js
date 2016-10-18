@@ -1,7 +1,7 @@
 import AnimatorUtils from "app/js/animatorutils";
 
 class RenderedObject {
-    //A draggable element
+    //A draggable (or not) DOM-rendered element
     constructor (id, x, y, type, contents, draggable = true) {
         this._id = id;
         this._x = x;
@@ -24,7 +24,6 @@ class RenderedObject {
             .addClass(this._type + "-container")
             .css({left: this._x, top: this._y});
 
-
         const content = $("<div></div>")
             .addClass(this._type + "-text")
             .html(this._contents);
@@ -34,9 +33,25 @@ class RenderedObject {
 
         if (this._draggable) container.draggable();
 
+        container.on("dragstart", () => this.dragStart(container));
+        container.on("dragstop", () => this.dragStop(container));
+
         this._contentDiv = content;
         this._containerDiv = container;
         return container;
+    }
+
+    removeElements() {
+        console.log(this._id);
+        this._contentDiv.remove();
+        this._containerDiv.remove();
+    }
+
+    dragStart(dragger) {
+        $("#trash").trigger("dragStart");
+    }
+    dragStop(dragger) {
+        $("#trash").trigger("dragStop");
     }
 }
 
@@ -58,20 +73,26 @@ class SnapObject extends RenderedObject {
                 snap: "." + this._snapTo +  "snapbox",
                 snapMode: "inner",
                 snapTolerance: 9,
-                start: () => { this._onStart(elem); },
-                stop: () => { this._onStop(elem); }
+                //start: () => { this._onStart(elem); },
+                //stop: () => { this._onStop(elem); }
             });
         //elem.on("click", () => {alert(this._lastSnapped)});
         return elem;
     }
 
+    dragStart(dragger) {
+        $(`.${this._snapTo}-container .snapbox`).each(function() {
+            $(this).trigger("dragStart", dragger);
+        });
+        super.dragStart(dragger);
+    }
     _onStart(dragger) {
-        $(".snapbox").each(function() {
-            $(dragger).trigger("dragStart", dragger);
+       $(`.${this._snapTo}-container .snapbox`).each(function() {
+          $(this).trigger("dragStart", dragger);
         });
     }
 
-    _onStop(dragger) {
+    dragStop(dragger) {
         let lastSnapped = this._lastSnapped;
         //Thanks to this answer: http://stackoverflow.com/a/5181159
         /* Get the possible snap targets: */
@@ -81,7 +102,6 @@ class SnapObject extends RenderedObject {
         const snappedTo = $.map(snapElements, function(element) {
             return element.snapping ? element.item : null;
         });
-
 
         //If it isn't snapping to anything, make sure it is the child of the playground div
         if (snappedTo.length == 0) {
@@ -123,7 +143,64 @@ class SnapObject extends RenderedObject {
                 $(lastSnapped).trigger("unsnapped");
             this._lastSnapped = snapped;
         }
-        $(".snapbox").each(function() {
+        $(`.${this._snapTo}-container .snapbox`).each(function() {
+            $(this).trigger("dragStop", dragger);
+        });
+
+        super.dragStop(dragger);
+    }
+    _onStop(dragger) {
+        let lastSnapped = this._lastSnapped;
+        //Thanks to this answer: http://stackoverflow.com/a/5181159
+        /* Get the possible snap targets: */
+        const snapElements = dragger.data('ui-draggable').snapElements;
+
+        /* Pull out only the snap targets that are "snapping": */
+        const snappedTo = $.map(snapElements, function(element) {
+            return element.snapping ? element.item : null;
+        });
+
+        //If it isn't snapping to anything, make sure it is the child of the playground div
+        if (snappedTo.length == 0) {
+            if (lastSnapped) {
+                const top = dragger.offset().top;
+                const left = dragger.offset().left;
+                dragger.detach().appendTo($("#playground"));
+                dragger.css({position: 'absolute'})
+                dragger.css("width", "auto");
+                dragger.offset({top: top, left: left});
+                $(lastSnapped).trigger("unsnapped");
+                this._lastSnapped = null;
+            }
+        }
+        else {
+            let snapped = null;
+            if (snappedTo.length > 1) { //Select the closest snapped element
+                let closest;
+                let closestDistance = 10000;
+                for (let i = 1; i < snappedTo.length; i++) {
+                    const s = $(snappedTo[i]);
+                    console.log(snappedTo.length, i);
+                    let distance = Math.sqrt( //Distance formula :) Pre-Algebra was not for nothing!
+                        Math.pow(dragger.offset().left - s.offset().left, 2) +
+                        Math.pow(dragger.offset().top - s.offset().top, 2));
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closest = s;
+                    }
+                }
+                snapped = closest;
+            }
+            else if (snappedTo.length == 1)
+                snapped = snappedTo[0];
+            dragger.detach().appendTo(snapped);
+            dragger.css({position: "relative", "left": 0, "top": 0});
+            $(snapped).trigger("snapped", dragger);
+            if (lastSnapped != null && !$(lastSnapped).is($(snapped)))
+                $(lastSnapped).trigger("unsnapped");
+            this._lastSnapped = snapped;
+        }
+        $(`.${this._snapTo}-container .snapbox`).each(function() {
             $(this).trigger("dragStop", dragger);
         });
 
@@ -132,6 +209,7 @@ class SnapObject extends RenderedObject {
 }
 
 //TODO: Make this work or add a new classes for up/down (fraction) snapboxes and matrix snapboxes
+//TODO: Make it a droppable and use those events rather than tossing around dragStart and dragStop triggers
 class HasSnapboxes extends SnapObject { //Abstract.
 
     constructor (id, x, y, type, contents, snapTo, draggable) {
