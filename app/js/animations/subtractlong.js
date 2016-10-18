@@ -144,7 +144,8 @@ export default class LongSubtractAnimator {
         //Timeline time!
         this._timeline.to(leftBox, 1, {
             "position": "absolute",
-            "left": Utils.positionTopBox(leftLine, minus, leftBox, numWidth, rightBoxText, leftBoxText, letterSpacing)
+            "left": Utils.positionTopBox(leftLine, minus, leftBox, numWidth, rightBoxText, leftBoxText, letterSpacing),
+            "top": numWidth
         });
         this._timeline.to(rightBox, 1, {
             "position": "absolute",
@@ -189,7 +190,7 @@ export default class LongSubtractAnimator {
             const one = new RenderedNumber(
                 `${this._animationId}-newOne-${column}`,
                 leftPosOfColumn(column) - numWidth / 2,
-                7, //Trust me it looks better I dont believe you
+                4, //Trust me it looks better I dont believe you
                 1,
                 false
             );
@@ -232,7 +233,7 @@ export default class LongSubtractAnimator {
                 .addClass(Utils.answerClass);
                 this._timeline.to(copy.containerDiv, 1, {
                     opacity: 1,
-                    top: rightBox.height() * heightMultiplier * 2,
+                    top: rightBox.height() * heightMultiplier + numWidth * 2.2,
                     ease: Power1.easeOut
                 });
                 answerNums.push(copy);
@@ -274,7 +275,7 @@ export default class LongSubtractAnimator {
 
             this._timeline.to(answer.containerDiv, 1, {
                 left: leftPosOfColumn(i),
-                top: rightBox.height() * heightMultiplier + numWidth * 2,
+                top: rightBox.height() * heightMultiplier + numWidth * 2.2,
                 "font-size": numWidth
             });
 
