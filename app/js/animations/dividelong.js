@@ -39,13 +39,14 @@ export default class LongDivideAnimator {
 
         // Parameters
         const letterSpacing = 18;
+        const numSpacing = numWidth + letterSpacing;
         const middleSpace = (intLength(firstOp) + intLength(secondOp) + 2) * numWidth + 2 * letterSpacing +
-            divideSign.width() + intLength(firstOp) * (numWidth + letterSpacing);
+            divideSign.width() + intLength(firstOp) * numSpacing;
 
         const divisorArray = firstOp.toString().split("").map(i => parseInt(i));
 
         // Divide
-        const divideLeft =  -(numWidth + letterSpacing) * intLength(firstOp) - 2 * letterSpacing;
+        const divideLeft =  -numSpacing * intLength(firstOp) - 2 * letterSpacing;
         const divideTop = 3 * numWidth + letterSpacing + numWidth / 2;
 
         const divide = new RenderedObject(`${this._svgId}-divide`, 0, 0, "", "", false);
@@ -106,8 +107,7 @@ export default class LongDivideAnimator {
 
         // Canvas
         // TODO: Replace 10 with the largest digit
-
-        const canvas = Snap(intLength(firstOp) * (numWidth + letterSpacing), numWidth * 10);
+        const canvas = Snap(intLength(firstOp) * numSpacing, numWidth * 10);
         canvas.node.id = this._svgId;
         $(canvas.node).css({
             position: "absolute",
@@ -151,9 +151,27 @@ export default class LongDivideAnimator {
                 ease: Power3.easeOut
             }, `-=${enterTime}`);  /* Move the divisor box part from the firstOp */
 
+        // Create squares
+        const squareEnterTime = 1;
+        const stagger = .1;
+
+        let squareArray = [];
+        let num = 0;
+
+        this._timeline.to("", 1, {});  // Wait
+
         divisorArray.forEach((value, index) => {
             for (let i = 0; i < value; i++) {
-                createSquare(index * (numWidth + letterSpacing), i * (numWidth + letterSpacing), numWidth);
+                const square = createSquare(index * numSpacing, i * numSpacing, numWidth);
+                squareArray[num] = "#" + (square.node.id = this._svgId + value + "-" + i);
+
+                this._timeline.from(squareArray[num], squareEnterTime, {
+                    y: "-100px",
+                    opacity: 0,
+                    ease: Power3.easeOut,
+                }, `-=${squareEnterTime - stagger}`);
+
+                num++;
             }
         });
     }
