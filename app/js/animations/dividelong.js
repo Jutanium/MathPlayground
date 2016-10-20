@@ -35,10 +35,14 @@ export default class LongDivideAnimator {
         // Operators
         const firstOp = parseInt(this._leftBox.find(".number-text").text());
         const secondOp = parseInt(this._rightBox.find(".number-text").text());
+        const divideSign = this._container.find(".operation-text");
 
         // Parameters
         const letterSpacing = 18;
+        const middleSpace = (intLength(firstOp) + intLength(secondOp) + 2) * numWidth + 2 * letterSpacing +
+            divideSign.width() + intLength(firstOp) * (numWidth + letterSpacing);
 
+        const divisorArray = firstOp.toString().split("").map(i => parseInt(i));
 
         // Divide
         const divideLeft =  -(numWidth + letterSpacing) * intLength(firstOp) - 2 * letterSpacing;
@@ -81,8 +85,45 @@ export default class LongDivideAnimator {
                 opacity: 0,
             });
 
+        // Divisor Box
+        const divisorTopPos = divideTop + letterSpacing;
+        const divisorBoxLeftPos = divideLeft + middleSpace;
+
+        const divisorBox = new RenderedNumber(
+            `${this._svgId}-divisor-box`,
+            divisorBoxLeftPos,
+            divisorTopPos,
+            firstOp,
+            false
+        );
+        const divisorBoxDiv = divisorBox
+            .createElements(this._container)
+            .css({
+                position: "absolute",
+                opacity: 1,
+                "letter-spacing": `${letterSpacing}px`,
+            });
+
+        // Canvas
+        // TODO: Replace 10 with the largest digit
+
+        const canvas = Snap(intLength(firstOp) * (numWidth + letterSpacing), numWidth * 10);
+        canvas.node.id = this._svgId;
+        $(canvas.node).css({
+            position: "absolute",
+            left: divideLeft + middleSpace,
+            top: divisorTopPos + numWidth + letterSpacing,
+        });
+        this._container.append(canvas.node);
+
+        const createSquare = (x, y, width) => {
+            return Utils.drawSquare(canvas, x, y, width);
+        };
+
         // Timeline
         const enterTime = .5;
+
+        const divisorLeftPos = divideLeft - numWidth * intLength(secondOp) - letterSpacing;
 
         this._timeline
             .from(dividendDiv, enterTime, {
@@ -95,11 +136,26 @@ export default class LongDivideAnimator {
                 ease: Power3.easeOut
             })  /* Enter the dividend from the firstOp */
             .to(divisorDiv, enterTime, {
-                left: divideLeft - numWidth * intLength(secondOp) - letterSpacing,
-                top: divideTop + letterSpacing,
+                left: divisorLeftPos,
+                top: divisorTopPos,
                 opacity: 1,
                 ease: Power3.easeOut,
-            }, `-=${enterTime}`);  /* Move the divisor from the secondOp */
+            }, `-=${enterTime}`)  /* Move the divisor from the secondOp */
+            .from(divisorBoxDiv, enterTime, {
+                position: "absolute",
+                left: 0,
+                top: numWidth / 2,
+                padding: 0,
+                "letter-spacing": 0,
+                opacity: 1,
+                ease: Power3.easeOut
+            }, `-=${enterTime}`);  /* Move the divisor box part from the firstOp */
+
+        divisorArray.forEach((value, index) => {
+            for (let i = 0; i < value; i++) {
+                createSquare(index * (numWidth + letterSpacing), i * (numWidth + letterSpacing), numWidth);
+            }
+        });
     }
 
     go() {
