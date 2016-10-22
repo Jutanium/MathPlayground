@@ -7,31 +7,40 @@ div#toolbar {
     display: flex;
 }
 
-#toolbar .number-box.dropdown {
+#toolbar #mathquill-box {
+    width: 400px;
+    min-width: 400px;
+    font-size: 3em;
+    text-align:center;
+}
+
+#toolbar .number-box.dropdown { /*The # in the toolbar*/
     height: 56px;
     min-width: 56px;
     width: 56px;
     margin-left: 10px;
     border: 1px solid gray;
 }
-#toolbar .number-box {
+
+#toolbar .number-box { /*Each number in the dropdown as well as the # in the toolbar*/
     font-size: 48px;
     text-align: center;
     font-family: "Times New Roman";
+    /*Note: Because these need to be draggable, their positions will be set to absolute by jQuery UI. Their positions therefore are manually set in main.js*/
 }
-
-.dropdown-content .dropdown-number:hover {
-
+#toolbar .operation-box {
+    height: 56px;
+    min-width: 56px;
+    width: 56px;
+    margin-left: 10px;
+    font-size: 48px;
+    text-align: center;
+    font-family: "Times New Roman"
 }
-
-#toolbar .dropdown-content .number-box {
-    display:inline-block;
-}
-
-#toolbar #mathquill-box {
-    width: inherit; /*effectively "large as possible"*/
-    font-size: 3em;
-    text-align:center;
+.dropdown-content .number-box span:hover { /*Make them big on hover, and change the margin to compensate*/
+    font-size: 56px;
+    display: inline-block;
+    margin-top: -18px;
 }
 
 .dropdown:hover .dropdown-content {
@@ -47,15 +56,13 @@ div#toolbar {
     width: 306px;
     height: 56px;
 }
-.dropdown-content .number-box span:hover {
-    font-size: 56px;
-    display: inline-block;
-    margin-top: -18px;
-}
+
+
+/*These colors are arbitrary, just my own intuition; we can change them later. I wanted to have colors to separate the
+numbers, rather than using boxes or dividers or having a huge column*/
 #one-box {
     color: red;
 }
-
 #two-box {
     color: orange
 }

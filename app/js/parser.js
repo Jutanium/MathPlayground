@@ -18,30 +18,30 @@ export default class Parser {
                 params.attachLeft = this._controller.createNumber(add[1]);
             if (add[2])
                 params.attachRight = this._controller.createNumber(add[2]);
-            this._controller.createAdd(params);
+            return this._controller.createAdd(params);
         } else if (subtract) {
             let params = {};
             if (subtract[1])
                 params.attachLeft = this._controller.createNumber(subtract[1]);
             if (subtract[2])
                 params.attachRight = this._controller.createNumber(subtract[2]);
-            this._controller.createSubtract(params);
+            return this._controller.createSubtract(params);
         } else if (multiply) {
             let params = {};
             if (multiply[1])
                 params.attachLeft = this._controller.createNumber(multiply[1]);
             if (multiply[2])
                 params.attachRight = this._controller.createNumber(multiply[2]);
-            this._controller.createMultiply(params);
+            return this._controller.createMultiply(params);
         } else if (divide) {
             let params = {};
             if (divide[1])
                 params.attachLeft = this._controller.createNumber(divide[1]);
             if (divide[2])
                 params.attachRight = this._controller.createNumber(divide[2]);
-            this._controller.createDivide(params);
+            return this._controller.createDivide(params);
         } else if (number) {
-            this._controller.createNumber(number[0]);
+            return this._controller.createNumber(number[0]);
         }
     }
 }

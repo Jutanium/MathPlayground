@@ -46,14 +46,21 @@ $(document).ready(function() {
     $("#playground")
         .droppable({
             drop: (event, ui) => {
-                console.log("dropped on playground");
-                const number = ui.draggable.attr("number");
-                if (number && ui.helper.hasClass("helper")) //If it has the number attribute then it's a new number drag helper
+                const parse = ui.draggable.attr("parse");
+                if (parse) {
+                    const isOperator = "+-*/".includes(parse);
+                    parser.parseAndCreate(parse).containerDiv.css({
+                        left: ui.helper.position().left - (isOperator ? 55 : 0), //Because (0,0) of a renderedoperator isn't the + or - or / or * sign
+                        top: ui.helper.position().top - (isOperator ? 72 : 0),
+                        position: "absolute"
+                    });
+                }
+                /*if (number && ui.helper.hasClass("helper")) //If it has the number attribute then it's a new number drag helper
                      controller.createNumber(number, 0, 0).containerDiv.css({
                          left: ui.helper.position().left,
                          top: ui.helper.position().top,
                          position: "absolute"
-                     });
+                     });*/
             }
         });
 
@@ -61,9 +68,9 @@ $(document).ready(function() {
     let left = 5;
     $(".dropdown-content .number-box").draggable({
         //We make the appropriate draggable helper look exactly like the number that will be created in the droppable event above.
-        //I did try it the simpler way with the helper being the created object but, long story, it didn't work
+        //I did try it the simpler way with the helper being the created object but, long story, it didn't work. Neither did setting helper to "clone" because the clone was appended to the disappearing dropdown div
         helper: function() {
-            const number = $(this).attr("number");
+            const number = $(this).attr("parse");
             return new RenderedNumber("temphelper", 0, 0, number).createElements(playgroundDiv).addClass("helper");
         },
         stop: function( e, ui ) {
@@ -75,6 +82,10 @@ $(document).ready(function() {
             // manually position our divs in the dropdown menu
             $(this).css("left", left);
             left += 30;
+    })
+
+    $(".operation-draggable").draggable({
+        helper: "clone"
     })
 
 });
