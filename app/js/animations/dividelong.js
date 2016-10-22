@@ -120,6 +120,47 @@ export default class LongDivideAnimator {
             return Utils.drawSquare(canvas, x, y, width);
         };
 
+        // Side
+        const leftPosOfCol = (col) => divideLeft + divideDiv.width() + letterSpacing;
+        const sideY = divideTop + (divideDiv.height() - letterSpacing) / 2;
+
+        const side = new RenderedObject(this._animationId + "-side",
+            leftPosOfCol(-1),
+            sideY,
+            "small",
+            "<span id='leftOp'></span><span id='divide'>&divide;</span><span id='rightOp'></span></span>"+
+            "<span id='equals'>=</span>",
+            false
+        );
+        const sideDiv = side
+            .createElements(this._container)
+            .css({
+                position: "absolute",
+                "font-size": "2em",
+                display: "inline-block",
+            });
+        this._toRemove.push(sideDiv);
+
+        const sideLeft = side
+            .containerDiv.find("#leftOp")
+            .css({
+                color: "red",
+                "padding-right": letterSpacing,
+            });
+        const sideRight = side
+            .containerDiv.find("#rightOp")
+            .css({
+                color: "red",
+                "padding-right": letterSpacing,
+            });
+        const sideDivide = side
+            .containerDiv.find("#minus")
+            .css({
+                "font-weight": "bold",
+                "padding-right": letterSpacing,
+            });
+        const sideEquals = side.containerDiv.find("#equals");
+
         // Timeline
         const enterTime = .5;
 
@@ -173,6 +214,39 @@ export default class LongDivideAnimator {
 
                 num++;
             }
+        });
+
+        // Show division steps
+        let answerNums = [];
+
+        divisorArray.reverse().forEach((value, index) => {
+            this._timeline.set(sideLeft, { text: String(value) });
+            this._timeline.set(sideRight, { text: String(secondOp) });
+
+            const wholeValue = Math.floor(value / secondOp);
+
+            const answerWhole = new RenderedNumber(
+                `${this._animationId}-answerwhole-${index}`,
+                sideDiv.position().left + sideDiv.width() + letterSpacing,
+                sideY,
+                wholeValue,
+                false
+            );
+            const answerWholeDiv = answerWhole
+                .createElements(this._container)
+                .css({
+                    opacity: 0,
+                })
+                .addClass(Utils.answerClass);
+            answerNums.push(answerWhole);
+            this._toRemove.push(answerWholeDiv);
+
+            this._timeline
+                .set(answerWholeDiv, { opacity: 1 })
+                .to(answerWholeDiv, .5, {
+                    left: divideLeft + index * (letterSpacing + numWidth) + letterSpacing,
+                    top: divideTop - numWidth - letterSpacing,
+                });
         });
     }
 
