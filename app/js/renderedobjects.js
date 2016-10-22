@@ -31,7 +31,10 @@ class RenderedObject {
         content.appendTo(container);
         container.appendTo(parent);
 
-        if (this._draggable) container.draggable();
+        if (this._draggable) container.draggable({
+            containment: parent,
+            stack: ".ui-draggable"
+        });
 
         container.on("dragstart", () => this.dragStart(container));
         container.on("dragstop", () => this.dragStop(container));
@@ -49,10 +52,10 @@ class RenderedObject {
     }
 
     dragStart(dragger) {
-        $("#trash").trigger("dragStart");
+        //$("#trash").trigger("dragStart");
     }
     dragStop(dragger) {
-        $("#trash").trigger("dragStop");
+        //$("#trash").trigger("dragStop");
     }
 }
 

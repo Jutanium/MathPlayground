@@ -16,7 +16,11 @@ export default class Controller {
     }
 
     printObjects() {
-
+        let string = "";
+        for (let key of this._objects.keys()) {
+            string += key + ", ";
+        }
+        console.log(string);
     }
     removeObject(id) {
         const obj = this._objects;
@@ -30,8 +34,10 @@ export default class Controller {
                 }
             }
         );
-        obj.get(id).removeElements();
-        obj.delete(id);
+        if (obj.has(id)) {
+            obj.get(id).removeElements();
+            obj.delete(id);
+        }
     }
     createOperator(ObjClass, parameters) {
         let x, y, attachLeft, attachRight;
@@ -132,6 +138,7 @@ export default class Controller {
         object.createElements(this._parentDiv);
 
         this._objects.set(object.id, object);
+        this.printObjects();
         return object;
     }
 
