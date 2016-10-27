@@ -18,10 +18,8 @@ $(document).ready(function() {
         }
     });
 
-    controller.createDivide({attachLeft: controller.createNumber(42), attachRight: controller.createNumber(6)});
-    controller.createMultiply({attachLeft: controller.createNumber(274), attachRight: controller.createNumber(13)});
-    controller.createSubtract({attachLeft: controller.createNumber(123), attachRight: controller.createNumber(45)});
-    controller.createAdd({attachLeft: controller.createNumber(49), attachRight: controller.createNumber(173)});
+    controller.createDivide({attachLeft: controller.createNumber(613), attachRight: controller.createNumber(42)});
+    controller.createDivide({attachLeft: controller.createNumber(42), attachRight: controller.createNumber(613)});
 
     $("#trash")
         .droppable({
@@ -87,7 +85,6 @@ $(document).ready(function() {
     $(".operation-draggable").draggable({
         helper: "clone"
     })
-
 });
 
 function onBoxEdit() {
