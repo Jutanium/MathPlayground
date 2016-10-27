@@ -273,7 +273,7 @@ export default class LongMultiplyAnimator {
                 const digits = String(product).split("").length;
 
                 const answer = new RenderedNumber(`${this._animationId}-answer-${i}`,
-                    sideDiv.position().left + sideDiv.width() + letterSpacing + 16 * digits,
+                    sideDiv.position().left + sideDiv.width() + letterSpacing + 30 * digits,
                     sideDiv.height() - numWidth / 2,
                     product,
                     false
