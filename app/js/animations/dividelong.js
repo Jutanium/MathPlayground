@@ -121,7 +121,8 @@ export default class LongDivideAnimator {
         };
 
         // Side
-        const leftPosOfCol = (col) => divideLeft + divideDiv.width() + letterSpacing;
+        const divideWidth = divideDiv.width();
+        const leftPosOfCol = (col) => divideLeft + divideWidth + letterSpacing;
         const sideY = divideTop + (divideDiv.height() - letterSpacing) / 2;
 
         const side = new RenderedObject(this._animationId + "-side",
@@ -154,12 +155,49 @@ export default class LongDivideAnimator {
                 "padding-right": letterSpacing,
             });
         const sideDivide = side
-            .containerDiv.find("#minus")
+            .containerDiv.find("#divide")
             .css({
                 "font-weight": "bold",
                 "padding-right": letterSpacing,
             });
         const sideEquals = side.containerDiv.find("#equals");
+
+        const sideBot = new RenderedObject(this._animationId + "-sidebot",
+            leftPosOfCol(-1),
+            sideY + numWidth + letterSpacing,
+            "small",
+            "<span id='leftBotOp'></span><span id='times'>&times;</span><span id='rightBotOp'></span></span>"+
+            "<span id='equalsBot'>=</span>",
+            false
+        );
+        const sideBotDiv = sideBot
+            .createElements(this._container)
+            .css({
+                position: "absolute",
+                "font-size": "2em",
+                display: "inline-block",
+            });
+        this._toRemove.push(sideBotDiv);
+        
+        const sideBotLeft = sideBot
+            .containerDiv.find("#leftBotOp")
+            .css({
+                color: "red",
+                "padding-right": letterSpacing,
+            });
+        const sideBotRight = sideBot
+            .containerDiv.find("#rightBotOp")
+            .css({
+                color: "red",
+                "padding-right": letterSpacing,
+            });
+        const sideBotDivide = sideBot
+            .containerDiv.find("#times")
+            .css({
+                "font-weight": "bold",
+                "padding-right": letterSpacing,
+            });
+        const sideBotEquals = sideBot.containerDiv.find("#equalsBot");
 
         // Timeline
         const enterTime = .5;
@@ -217,14 +255,16 @@ export default class LongDivideAnimator {
         });
 
         // Show division steps
+        const dividendLeft = divideLeft + letterSpacing;
         let answerNums = [];
+        let leftVal = divisorArray[0];
 
-        divisorArray.reverse().forEach((value, index) => {
-            this._timeline.set(sideLeft, { text: String(value) });
-            this._timeline.set(sideRight, { text: String(secondOp) });
+        divisorArray.forEach((value, index) => {
+            const wholeValue = Math.floor(leftVal / secondOp);
+            const subtractValue = secondOp * wholeValue;
+            const postValue = leftVal - subtractValue;
 
-            const wholeValue = Math.floor(value / secondOp);
-
+            // Whole answer
             const answerWhole = new RenderedNumber(
                 `${this._animationId}-answerwhole-${index}`,
                 sideDiv.position().left + sideDiv.width() + letterSpacing,
@@ -241,12 +281,125 @@ export default class LongDivideAnimator {
             answerNums.push(answerWhole);
             this._toRemove.push(answerWholeDiv);
 
-            this._timeline
-                .set(answerWholeDiv, { opacity: 1 })
-                .to(answerWholeDiv, .5, {
-                    left: divideLeft + index * (letterSpacing + numWidth) + letterSpacing,
-                    top: divideTop - numWidth - letterSpacing,
+            // Value to subtract by
+            const subtractVal = new RenderedNumber(
+                `${this._animationId}-subtractval-${index}`,
+                sideBotDiv.position().left + sideBotDiv.width() + letterSpacing,
+                sideY + numWidth + letterSpacing,
+                subtractValue,
+                false
+            );
+            const subtractValDiv = subtractVal
+                .createElements(this._container)
+                .css({
+                    opacity: 0,
+                    "letter-spacing": letterSpacing,
+                })
+                .addClass(Utils.answerClass);
+            answerNums.push(subtractVal);
+            this._toRemove.push(subtractValDiv);
+
+            // Value after subtraction
+            const botVal = new RenderedNumber(
+                `${this._animationId}-botval-${index}`,
+                dividendLeft,
+                sideY + (index + 1) * 2 * numSpacing,
+                leftVal - subtractValue,
+                false
+            );
+            const botValDiv = botVal
+                .createElements(this._container)
+                .css({
+                    position: "absolute",
+                    opacity: 0,
+                    "letter-spacing": letterSpacing,
+                    color: "blue",
                 });
+            this._toRemove.push(botValDiv);
+
+            const minus = new RenderedObject(
+                `${this._animationId}-minus-${index}`,
+                divideLeft - letterSpacing,
+                divideTop + letterSpacing + index * 2 * numSpacing + numSpacing,
+                "small",
+                "<span id='minus'>&minus;</span>",
+                false
+            );
+            const minusDiv = minus
+                .createElements(this._container)
+                .css({
+                    position: "absolute",
+                    "font-size": "2em",
+                    "font-weight": "bold",
+                    opacity: 0,
+                });
+            this._toRemove.push(minusDiv);
+
+            // Render sub equal sign
+            const subEquals = new RenderedObject(
+                `${this._animationId}-subequals-${index}`,
+                divideLeft,
+                divideTop + numSpacing + index * 2 * numSpacing + numSpacing + letterSpacing / 4,
+                "",
+                "<span id='subEquals'><hr></span>",
+                false
+            );
+            const subEqualsDiv = subEquals.createElements(this._container);
+
+            subEqualsDiv.css({
+                position: "absolute",
+                width: divideWidth,
+                opacity: 0,
+            });
+
+            this._toRemove.push(subEqualsDiv);
+
+            this._timeline
+                .set(sideLeft, { text: String(leftVal) })  /* Set the top left side number */
+                .set(sideRight, { text: String(secondOp) })  /* Set the top right side number */
+                .to(sideDiv, .5, { opacity: 1 })  /* Show the top side equation */
+                .to(answerWholeDiv, 0.5, { opacity: 1 })  /* Fade in the top side answer */
+                .set(sideBotLeft, { text: String(secondOp) })  /* Set the bottom left side number */
+                .set(sideBotRight, { text: String(wholeValue) })  /* Set the bottom right side number */
+                .to(sideBotDiv, .5, { opacity: 1 })  /* Show the bot side equation */
+                .to(subtractValDiv, 0.5, { opacity: 1 })  /* Fade in the bottom side answer */
+                .to(answerWholeDiv, .5, {
+                    left: dividendLeft + index * numSpacing,
+                    top: divideTop - numWidth - letterSpacing,
+                })  /* Move the top side answer to the answer */
+                .to(subtractValDiv, .5, {
+                    left: dividendLeft,
+                    top: divideTop + letterSpacing + index * 2 * numSpacing + numSpacing,
+                }, "-=.5")  /* Move the bot side answer to its location to show subtraction */
+                .to(minusDiv, .5, { opacity: 1 })  /* Show the minus sign */
+                .to(subEqualsDiv, .5, { opacity: 1 }, "-=.5")  /* Show the sub equals */
+                .to(botValDiv, .5, { opacity: 1 })  /* Show the bot value after subtraction */
+                .to([sideDiv, sideBotDiv], .5, { opacity: 0 });  /* Hide the side equations */
+
+            if (index < divisorArray.length) {
+                const nextVal = new RenderedNumber(
+                    `${this._animationId}-nextval-${index}`,
+                    dividendLeft + (index + 1) * numSpacing,
+                    sideY,
+                    divisorArray[index + 1],
+                    false
+                );
+                const nextValDiv = nextVal
+                    .createElements(this._container)
+                    .css({
+                        position: "absolute",
+                        color: "green",
+                        opacity: 0,
+                    });
+                this._toRemove.push(nextValDiv);
+
+                this._timeline.to(nextValDiv, .5, {
+                    top: sideY + (index + 1) * 2 * numSpacing,
+                    opacity: 1,
+                });
+            }
+
+            leftVal = parseInt("" + (leftVal - subtractValue) + divisorArray[index + 1])
         });
     }
 

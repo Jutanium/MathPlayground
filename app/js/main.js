@@ -20,6 +20,7 @@ $(document).ready(function() {
 
     controller.createDivide({attachLeft: controller.createNumber(613), attachRight: controller.createNumber(42)});
     controller.createDivide({attachLeft: controller.createNumber(42), attachRight: controller.createNumber(613)});
+    controller.createDivide({attachLeft: controller.createNumber(425), attachRight: controller.createNumber(25)});
 
     $("#trash")
         .droppable({
