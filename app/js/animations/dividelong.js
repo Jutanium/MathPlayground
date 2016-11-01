@@ -42,6 +42,8 @@ export default class LongDivideAnimator {
 
         const divisorArray = firstOp.toString().split("").map(i => parseInt(i));
 
+        const globalEase = Power3.easeOut;
+
         // Divide
         const divideLeft = 0;
         const divideTop = 3 * numWidth + letterSpacing + numWidth / 2;
@@ -175,14 +177,14 @@ export default class LongDivideAnimator {
                 padding: 0,
                 "letter-spacing": 0,
                 opacity: 0,
-                ease: Power3.easeOut
+                ease: globalEase,
             })  /* Enter the dividend from the firstOp */
             .to(divisorDiv, enterTime, {
                 left: divisorLeftPos,
                 top: divideTop + letterSpacing,
                 opacity: 1,
-                ease: Power3.easeOut,
-            }, `-=${enterTime}`);  /* Move the divisor from the secondOp */
+                ease: globalEase,
+            }, `-=${enterTime}`); /* Move the divisor from the secondOp */
 
         // Show division steps
         const dividendLeft = divideLeft + letterSpacing;
@@ -286,26 +288,52 @@ export default class LongDivideAnimator {
             this._timeline
                 .set(sideLeft, { text: String(leftVal) })  /* Set the top left side number */
                 .set(sideRight, { text: String(secondOp) })  /* Set the top right side number */
-                .to(sideDiv, .5, { opacity: 1 })  /* Show the top side equation */
-                .to(answerWholeDiv, 0.5, { opacity: 1 })  /* Fade in the top side answer */
+                .to(sideDiv, .5, {
+                    opacity: 1,
+                    ease: globalEase,
+                })  /* Show the top side equation */
+                .to(answerWholeDiv, 0.5, {
+                    opacity: 1,
+                    ease: globalEase,
+                })  /* Fade in the top side answer */
                 .set(sideBotLeft, { text: String(secondOp) })  /* Set the bottom left side number */
                 .set(sideBotRight, { text: String(wholeValue) })  /* Set the bottom right side number */
-                .to(sideBotDiv, .5, { opacity: 1 })  /* Show the bot side equation */
-                .to(subtractValDiv, 0.5, { opacity: 1 })  /* Fade in the bottom side answer */
+                .to(sideBotDiv, .5, {
+                    opacity: 1,
+                    ease: globalEase,
+                })  /* Show the bot side equation */
+                .to(subtractValDiv, 0.5, {
+                    opacity: 1,
+                    ease: globalEase,
+                })  /* Fade in the bottom side answer */
                 .to(answerWholeDiv, .5, {
                     left: dividendLeft + index * numSpacing,
                     top: divideTop - numWidth - letterSpacing,
+                    ease: globalEase,
                 })  /* Move the top side answer to the answer */
                 .to(subtractValDiv, .5, {
                     left: dividendLeft,
                     top: divideTop + letterSpacing + index * 2 * numSpacing + numSpacing,
+                    ease: globalEase,
                 }, "-=.5")  /* Move the bot side answer to its location to show subtraction */
-                .to(minusDiv, .5, { opacity: 1 })  /* Show the minus sign */
-                .to(subEqualsDiv, .5, { opacity: 1 }, "-=.5")  /* Show the sub equals */
-                .to(botValDiv, .5, { opacity: 1 })  /* Show the bot value after subtraction */
-                .to([sideDiv, sideBotDiv], .5, { opacity: 0 });  /* Hide the side equations */
+                .to(minusDiv, .5, {
+                    opacity: 1,
+                    ease: globalEase,
+                })  /* Show the minus sign */
+                .to(subEqualsDiv, .5, {
+                    opacity: 1,
+                    ease: globalEase,
+                }, "-=.5")  /* Show the sub equals */
+                .to(botValDiv, .5, {
+                    opacity: 1,
+                    ease: globalEase,
+                })  /* Show the bot value after subtraction */
+                .to([sideDiv, sideBotDiv], .5, {
+                    opacity: 0,
+                    ease: globalEase,
+                });  /* Hide the side equations */
 
-            if (index < divisorArray.length) {
+            if (index < divisorArray.length - 1) {
                 const nextVal = new RenderedNumber(
                     `${this._animationId}-nextval-${index}`,
                     dividendLeft + (index + 1) * numSpacing,
@@ -326,7 +354,55 @@ export default class LongDivideAnimator {
                     top: sideY + (index + 1) * 2 * numSpacing,
                     color: "blue",
                     opacity: 1,
+                    ease: globalEase,
                 });
+            } else if (leftVal - subtractValue != 0) {
+                // Remainder "R"
+                const rLetter = new RenderedNumber(
+                    `${this._animationId}-R`,
+                    dividendLeft + (index + 1) * numSpacing,
+                    divideTop - numWidth - letterSpacing,
+                    "R",
+                    false
+                );
+                const rLetterDiv = rLetter
+                    .createElements(this._container)
+                    .css({
+                        position: "absolute",
+                        opacity: 0,
+                    });
+
+                this._toRemove.push(rLetterDiv);
+
+                // Remainder value
+                const remainder = new RenderedNumber(
+                    `${this._animationId}-remainder`,
+                    dividendLeft + (index + 1 - intLength(leftVal - subtractValue)) * numSpacing,
+                    sideY + (index + 1) * 2 * numSpacing,
+                    leftVal - subtractValue,
+                    false
+                );
+                const remainderDiv = remainder
+                    .createElements(this._container)
+                    .css({
+                        position: "absolute",
+                        "letter-spacing": letterSpacing,
+                        opacity: 0,
+                    });
+
+                this._toRemove.push(remainderDiv);
+
+                this._timeline
+                    .to(rLetterDiv, .5, {
+                        opacity: 1,
+                        ease: globalEase,
+                    })  /* Show the "R" for remainder */
+                    .to(remainderDiv, .5, {
+                        left: dividendLeft + (index + 2) * numSpacing,
+                        top: divideTop - numWidth - letterSpacing,
+                        opacity: 1,
+                        ease: globalEase,
+                    });  /* Move and show the remainder value */
             }
 
             leftVal = parseInt("" + (leftVal - subtractValue) + divisorArray[index + 1])
