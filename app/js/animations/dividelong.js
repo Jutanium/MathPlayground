@@ -302,7 +302,7 @@ export default class LongDivideAnimator {
             // Value after subtraction
             const botVal = new RenderedNumber(
                 `${this._animationId}-botval-${index}`,
-                dividendLeft,
+                dividendLeft + (index + 1 - intLength(leftVal - subtractValue)) * numSpacing,
                 sideY + (index + 1) * 2 * numSpacing,
                 leftVal - subtractValue,
                 false
@@ -388,13 +388,14 @@ export default class LongDivideAnimator {
                     .createElements(this._container)
                     .css({
                         position: "absolute",
-                        color: "green",
+                        color: "black",
                         opacity: 0,
                     });
                 this._toRemove.push(nextValDiv);
 
                 this._timeline.to(nextValDiv, .5, {
                     top: sideY + (index + 1) * 2 * numSpacing,
+                    color: "blue",
                     opacity: 1,
                 });
             }
