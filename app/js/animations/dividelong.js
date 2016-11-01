@@ -35,18 +35,15 @@ export default class LongDivideAnimator {
         // Operators
         const firstOp = parseInt(this._leftBox.find(".number-text").text());
         const secondOp = parseInt(this._rightBox.find(".number-text").text());
-        const divideSign = this._container.find(".operation-text");
 
         // Parameters
         const letterSpacing = 18;
         const numSpacing = numWidth + letterSpacing;
-        const middleSpace = (intLength(firstOp) + intLength(secondOp) + 2) * numWidth + 2 * letterSpacing +
-            divideSign.width() + intLength(firstOp) * numSpacing;
 
         const divisorArray = firstOp.toString().split("").map(i => parseInt(i));
 
         // Divide
-        const divideLeft =  -numSpacing * intLength(firstOp) - 2 * letterSpacing;
+        const divideLeft = 0;
         const divideTop = 3 * numWidth + letterSpacing + numWidth / 2;
 
         const divide = new RenderedObject(`${this._svgId}-divide`, 0, 0, "", "", false);
@@ -73,7 +70,6 @@ export default class LongDivideAnimator {
         divide.contents = dividendDiv;
 
         // Divisor
-        // TODO: Right align correctly
         const divisorLeft = ((intLength(firstOp) > intLength(secondOp)) ?
         numWidth * (intLength(firstOp) - intLength(secondOp) + 1) + letterSpacing : 0);
         const divisorTop = numWidth / 2;
@@ -85,40 +81,6 @@ export default class LongDivideAnimator {
                 position: "absolute",
                 opacity: 0,
             });
-
-        // Divisor Box
-        const divisorTopPos = divideTop + letterSpacing;
-        const divisorBoxLeftPos = divideLeft + middleSpace;
-
-        const divisorBox = new RenderedNumber(
-            `${this._svgId}-divisor-box`,
-            divisorBoxLeftPos,
-            divisorTopPos,
-            firstOp,
-            false
-        );
-        const divisorBoxDiv = divisorBox
-            .createElements(this._container)
-            .css({
-                position: "absolute",
-                opacity: 1,
-                "letter-spacing": `${letterSpacing}px`,
-            });
-
-        // Canvas
-        // TODO: Replace 10 with the largest digit
-        const canvas = Snap(intLength(firstOp) * numSpacing, numWidth * 10);
-        canvas.node.id = this._svgId;
-        $(canvas.node).css({
-            position: "absolute",
-            left: divideLeft + middleSpace,
-            top: divisorTopPos + numWidth + letterSpacing,
-        });
-        this._container.append(canvas.node);
-
-        const createSquare = (x, y, width) => {
-            return Utils.drawSquare(canvas, x, y, width);
-        };
 
         // Side
         const divideWidth = divideDiv.width();
@@ -200,59 +162,7 @@ export default class LongDivideAnimator {
         const sideBotEquals = sideBot.containerDiv.find("#equalsBot");
 
         // Timeline
-        const enterTime = .5;
-
-        const divisorLeftPos = divideLeft - numWidth * intLength(secondOp) - letterSpacing;
-
-        this._timeline
-            .from(dividendDiv, enterTime, {
-                position: "absolute",
-                left: -divideLeft - 1,
-                top: -divideTop + numWidth / 2 - 1,
-                padding: 0,
-                "letter-spacing": 0,
-                opacity: 0,
-                ease: Power3.easeOut
-            })  /* Enter the dividend from the firstOp */
-            .to(divisorDiv, enterTime, {
-                left: divisorLeftPos,
-                top: divisorTopPos,
-                opacity: 1,
-                ease: Power3.easeOut,
-            }, `-=${enterTime}`)  /* Move the divisor from the secondOp */
-            .from(divisorBoxDiv, enterTime, {
-                position: "absolute",
-                left: 0,
-                top: numWidth / 2,
-                padding: 0,
-                "letter-spacing": 0,
-                opacity: 1,
-                ease: Power3.easeOut
-            }, `-=${enterTime}`);  /* Move the divisor box part from the firstOp */
-
-        // Create squares
-        const squareEnterTime = 1;
-        const stagger = .1;
-
-        let squareArray = [];
-        let num = 0;
-
         this._timeline.to("", 1, {});  // Wait
-
-        divisorArray.forEach((value, index) => {
-            for (let i = 0; i < value; i++) {
-                const square = createSquare(index * numSpacing, i * numSpacing, numWidth);
-                squareArray[num] = "#" + (square.node.id = this._svgId + value + "-" + i);
-
-                this._timeline.from(squareArray[num], squareEnterTime, {
-                    y: "-100px",
-                    opacity: 0,
-                    ease: Power3.easeOut,
-                }, `-=${squareEnterTime - stagger}`);
-
-                num++;
-            }
-        });
 
         // Show division steps
         const dividendLeft = divideLeft + letterSpacing;
