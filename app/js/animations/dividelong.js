@@ -172,7 +172,6 @@ export default class LongDivideAnimator {
         divisorArray.forEach((value, index) => {
             const wholeValue = Math.floor(leftVal / secondOp);
             const subtractValue = secondOp * wholeValue;
-            const postValue = leftVal - subtractValue;
 
             // Whole answer
             const answerWhole = new RenderedNumber(
