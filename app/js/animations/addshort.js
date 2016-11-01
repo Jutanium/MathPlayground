@@ -26,6 +26,11 @@ export default class ShortAddAnimator {
         const svgHeight = svgWidth / 2;
         const svgId = this._svgId;
 
+        let squaresPerRow = 3;
+        while (Math.max(firstOp, secondOp) > squaresPerRow * squaresPerRow) {
+            squaresPerRow += 1;
+        }
+
         const numWidth = Utils.numWidth;
 
         const plus = this._container.find(".operation-text");
@@ -36,7 +41,7 @@ export default class ShortAddAnimator {
         $(canvas.node).css({
             position: "absolute",
             top: "50px",
-            left: "-80px" //Make this dynamic
+            left: "-" + (svgWidth / 2 - numWidth * 2.5) + "px"
         });
         this._container.append(canvas.node);
 
@@ -44,10 +49,6 @@ export default class ShortAddAnimator {
         const leftLine = svgWidth / 2 - lineGap;
         const rightLine = svgWidth / 2 + lineGap;
 
-        let squaresPerRow = 3;
-        while (Math.max(firstOp, secondOp) > squaresPerRow * squaresPerRow) {
-            squaresPerRow += 1;
-        }
 
         const leftSquares = new Array(firstOp);
         const rightSquares = new Array(secondOp);
@@ -86,11 +87,11 @@ export default class ShortAddAnimator {
         if (!allZero) {
             this._timeline.to(plus, 1, {"position": "relative", "top": svgHeight / 2 + plus.width() / 3, ease: Power1.easeInOut});
             this._timeline.to(this._leftBox, 1, {
-                "left": -28 - (firstOp.toString().length - 1) * numWidth / 2,
+                "left": -leftLine / 3 + numWidth / 4,
                 ease: Power1.easeInOut
             }, "-=1");
             this._timeline.to(this._rightBox, 1, {
-                "left": 63 - (secondOp.toString().length - 1) * numWidth / 2,
+                "left": rightLine / 3 - numWidth / 4,
                 ease: Power1.easeInOut
             }, "-=1");
         }
@@ -98,7 +99,7 @@ export default class ShortAddAnimator {
         //Drop the squares
         const dropOverlap = Math.max(firstOp, secondOp) <= 9 ? "-=0.35" : "-=0.45";
 
-        this._timeline.to(this._leftBox, 0.5, {className: "+=dropshadow"});
+        this._timeline.to(this._leftBox.find(".number-container"), 0.5, {className: "+=dropshadow"});
 
         for (let i = 0; i < leftSquares.length; i++) {
             this._timeline.from(leftSquares[i], 0.5, {
@@ -107,8 +108,8 @@ export default class ShortAddAnimator {
             }, dropOverlap);
         }
 
-        this._timeline.to(this._leftBox, 0.5, {className: "-=dropshadow"});
-        this._timeline.to(this._rightBox, 0.5, {className: "+=dropshadow"});
+        this._timeline.to(this._leftBox.find(".number-container"), 0.5, {className: "-=dropshadow"});
+        this._timeline.to(this._rightBox.find(".number-container"), 0.5, {className: "+=dropshadow"});
 
         if (rightSquares.length > 0) {
             this._timeline.from(rightSquares[0], 0.5, {
@@ -125,7 +126,7 @@ export default class ShortAddAnimator {
             }, dropOverlap);
         }
 
-        this._timeline.to(this._rightBox, 0.5, {className: "-=dropshadow"});
+        this._timeline.to(this._rightBox.find(".number-container"), 0.5, {className: "-=dropshadow"});
 
         if (allZero) {
             this._timeline.call(() => equals.value = 0);

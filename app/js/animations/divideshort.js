@@ -117,7 +117,7 @@ export default class ShortDivideAnimator {
 
         // Create and position squares
         for (let i = 0; i < firstOp; i++) {
-            const x = i % squaresPerRow * (squareWidth + squareMargins) + squareMargins / 2;
+            const x = i % squaresPerRow * (squareWidth + squareMargins) + squareMargins / 2 + 1;
             const y = Math.floor(i / squaresPerRow) * (squareWidth + squareMargins) + squareMargins / 2;
 
             const square = createSquare(
@@ -130,7 +130,7 @@ export default class ShortDivideAnimator {
         }
 
         /* Timeline */
-        this._timeline.to(this._leftBox, .5, { color: "blue", className: "+=dropshadow"});
+        this._timeline.to(this._leftBox.find(".number-container"), .5, { color: "blue", className: "+=dropshadow"});
 
         const staggerLength = 3;
 
@@ -147,8 +147,8 @@ export default class ShortDivideAnimator {
         });
 
         this._timeline
-            .to(this._leftBox, .5, { color: "black", className: "-=dropshadow"})
-            .to(this._rightBox, .5, { color: "blue", className: "+=dropshadow"}, "-=.5");
+            .to(this._leftBox.find(".number-container"), .5, { color: "black", className: "-=dropshadow"})
+            .to(this._rightBox.find(".number-container"), .5, { color: "blue", className: "+=dropshadow"}, "-=.5");
 
         // Amount of full vectors
         const fullVectorNum = Math.floor(firstOp / secondOp);
@@ -186,7 +186,7 @@ export default class ShortDivideAnimator {
                 console.log(targetX)
                 // Move the squares
                 this._timeline.to(square[0], .5, {
-                    x: targetX - square[1],
+                    x: targetX - square[1] + 1,
                     y: targetY - square[2],
                     ease: Power3.easeOut,
                 }, "-=.5");
@@ -199,7 +199,7 @@ export default class ShortDivideAnimator {
             this._timeline.to("", .5, { });
         }
 
-        this._timeline.to(this._rightBox, .5, { color: "black", className: "-=dropshadow"});
+        this._timeline.to(this._rightBox.find(".number-container"), .5, { color: "black", className: "-=dropshadow"});
 
         // If there is a remainder animate it
         if (isRemainder) {
@@ -275,7 +275,7 @@ export default class ShortDivideAnimator {
             }
 
             this._timeline.to(val[0], .5, {
-                y: targetY - val[2],
+                y: targetY - val[2] + 2,
                 ease: Power3.easeOut,
             }, "-=.5");
         });

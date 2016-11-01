@@ -14,16 +14,16 @@ div.operation-text {
 div.snapped {
     font-weight: bold;
 }
-div.snapped.add {
+div.snapped.add, #add-box {
     color: #0074D9;
 }
-div.snapped.subtract{
+div.snapped.subtract, #subtract-box{
     color: red;
 }
-div.snapped.multiply{
+div.snapped.multiply, #multiply-box{
     color: green;
 }
-div.snapped.divide{
+div.snapped.divide, #divide-box{
     color: #FFD700;
 }
 

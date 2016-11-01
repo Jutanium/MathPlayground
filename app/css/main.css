@@ -90,6 +90,7 @@ numbers, rather than using boxes or dividers or having a huge column*/
 #zero {
     color: black;
 }
+
 div#trash{
     position: fixed;
     width: 6em;

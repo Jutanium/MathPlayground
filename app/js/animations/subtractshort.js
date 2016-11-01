@@ -92,7 +92,7 @@ export default class ShortSubtractAnimator {
         }
 
         //Drop the squares
-        this._timeline.to(this._leftBox, 0.5, {className: "+=dropshadow"});
+        this._timeline.to(this._leftBox.find(".number-container"), 0.5, {className: "+=dropshadow"});
 
         const dropOverlap = Math.max(firstOp, secondOp) <= 9 ? "-=0.35" : "-=0.45";
         for (let i = 0; i < leftSquares.length; i++) {
@@ -103,9 +103,9 @@ export default class ShortSubtractAnimator {
             }, dropOverlap);
         }
 
-        this._timeline.to(this._leftBox, 0.5, {className: "-=dropshadow"});
+        this._timeline.to(this._leftBox.find(".number-container"), 0.5, {className: "-=dropshadow"});
 
-        this._timeline.to(this._rightBox, 0.5, {className: "+=dropshadow"});
+        this._timeline.to(this._rightBox.find(".number-container"), 0.5, {className: "+=dropshadow"});
 
         if (rightSquares.length > 0) {
             this._timeline.call(() => { Utils.insidesOn(rightSquares[0]); });
@@ -124,7 +124,7 @@ export default class ShortSubtractAnimator {
             }, dropOverlap);
         }
 
-        this._timeline.to(this._rightBox, 0.5, {className: "-=dropshadow"});
+        this._timeline.to(this._rightBox.find(".number-container"), 0.5, {className: "-=dropshadow"});
 
 
         if (allZero) {

@@ -2553,7 +2553,9 @@ $.ui.plugin.add("draggable", "snap", {
 		});
 
 	},
-	drag: function( event, ui, inst ) {
+	drag: function( event, ui, inst )
+	{
+		//console.log("test");
 
 		var ts, bs, ls, rs, l, r, t, b, i, first,
 			o = inst.options,
