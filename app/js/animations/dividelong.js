@@ -81,6 +81,7 @@ export default class LongDivideAnimator {
                 position: "absolute",
                 opacity: 0,
             });
+        this._toRemove.push(divideDiv);
 
         // Side
         const divideWidth = divideDiv.width();
@@ -162,7 +163,26 @@ export default class LongDivideAnimator {
         const sideBotEquals = sideBot.containerDiv.find("#equalsBot");
 
         // Timeline
-        this._timeline.to("", 1, {});  // Wait
+        const enterTime = .5;
+
+        const divisorLeftPos = divideLeft - numWidth * intLength(secondOp) - letterSpacing;
+
+        this._timeline
+            .from(dividendDiv, enterTime, {
+                position: "absolute",
+                left: -divideLeft - 1,
+                top: -divideTop + numWidth / 2 - 1,
+                padding: 0,
+                "letter-spacing": 0,
+                opacity: 0,
+                ease: Power3.easeOut
+            })  /* Enter the dividend from the firstOp */
+            .to(divisorDiv, enterTime, {
+                left: divisorLeftPos,
+                top: divideTop + letterSpacing,
+                opacity: 1,
+                ease: Power3.easeOut,
+            }, `-=${enterTime}`);  /* Move the divisor from the secondOp */
 
         // Show division steps
         const dividendLeft = divideLeft + letterSpacing;
