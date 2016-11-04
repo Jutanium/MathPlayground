@@ -104,6 +104,7 @@ export default class LongDivideAnimator {
                 position: "absolute",
                 "font-size": "2em",
                 display: "inline-block",
+                opacity: 0,
             });
         this._toRemove.push(sideDiv);
 
@@ -141,6 +142,7 @@ export default class LongDivideAnimator {
                 position: "absolute",
                 "font-size": "2em",
                 display: "inline-block",
+                opacity: 0,
             });
         this._toRemove.push(sideBotDiv);
         
@@ -184,21 +186,24 @@ export default class LongDivideAnimator {
                 top: divideTop + letterSpacing,
                 opacity: 1,
                 ease: globalEase,
-            }, `-=${enterTime}`); /* Move the divisor from the secondOp */
+            }, `-=${enterTime}`) /* Move the divisor from the secondOp */
+            .to("", .5, { });  /* Wait */
 
         // Show division steps
         const dividendLeft = divideLeft + letterSpacing;
+
         let answerNums = [];
         let leftVal = divisorArray[0];
 
         divisorArray.forEach((value, index) => {
             const wholeValue = Math.floor(leftVal / secondOp);
             const subtractValue = secondOp * wholeValue;
+            const sideAnswerLeft = sideDiv.position().left + sideDiv.width() + letterSpacing + intLength(wholeValue) * numSpacing;
 
             // Whole answer
             const answerWhole = new RenderedNumber(
                 `${this._animationId}-answerwhole-${index}`,
-                sideDiv.position().left + sideDiv.width() + letterSpacing,
+                0,
                 sideY,
                 wholeValue,
                 false
@@ -288,7 +293,8 @@ export default class LongDivideAnimator {
             this._timeline
                 .set(sideLeft, { text: String(leftVal) })  /* Set the top left side number */
                 .set(sideRight, { text: String(secondOp) })  /* Set the top right side number */
-                .to(sideDiv, .5, {
+                .set(answerWholeDiv, { left: sideDiv.position().left + sideDiv.width() })
+                .to(sideDiv, 1, {
                     opacity: 1,
                     ease: globalEase,
                 })  /* Show the top side equation */
@@ -298,7 +304,7 @@ export default class LongDivideAnimator {
                 })  /* Fade in the top side answer */
                 .set(sideBotLeft, { text: String(secondOp) })  /* Set the bottom left side number */
                 .set(sideBotRight, { text: String(wholeValue) })  /* Set the bottom right side number */
-                .to(sideBotDiv, .5, {
+                .to(sideBotDiv, 1, {
                     opacity: 1,
                     ease: globalEase,
                 })  /* Show the bot side equation */
@@ -306,16 +312,16 @@ export default class LongDivideAnimator {
                     opacity: 1,
                     ease: globalEase,
                 })  /* Fade in the bottom side answer */
-                .to(answerWholeDiv, .5, {
+                .to(answerWholeDiv, 1, {
                     left: dividendLeft + index * numSpacing,
                     top: divideTop - numWidth - letterSpacing,
                     ease: globalEase,
                 })  /* Move the top side answer to the answer */
-                .to(subtractValDiv, .5, {
+                .to(subtractValDiv, 1, {
                     left: dividendLeft,
                     top: divideTop + letterSpacing + index * 2 * numSpacing + numSpacing,
                     ease: globalEase,
-                }, "-=.5")  /* Move the bot side answer to its location to show subtraction */
+                }, "-=1")  /* Move the bot side answer to its location to show subtraction (sync with answerWholeDiv) */
                 .to(minusDiv, .5, {
                     opacity: 1,
                     ease: globalEase,
@@ -323,12 +329,12 @@ export default class LongDivideAnimator {
                 .to(subEqualsDiv, .5, {
                     opacity: 1,
                     ease: globalEase,
-                }, "-=.5")  /* Show the sub equals */
-                .to(botValDiv, .5, {
+                }, "-=1")  /* Show the sub equals (sync with minusDiv) */
+                .to(botValDiv, 1, {
                     opacity: 1,
                     ease: globalEase,
                 })  /* Show the bot value after subtraction */
-                .to([sideDiv, sideBotDiv], .5, {
+                .to([sideDiv, sideBotDiv], 1, {
                     opacity: 0,
                     ease: globalEase,
                 });  /* Hide the side equations */
@@ -350,7 +356,7 @@ export default class LongDivideAnimator {
                     });
                 this._toRemove.push(nextValDiv);
 
-                this._timeline.to(nextValDiv, .5, {
+                this._timeline.to(nextValDiv, 1, {
                     top: sideY + (index + 1) * 2 * numSpacing,
                     color: "blue",
                     opacity: 1,
@@ -382,27 +388,30 @@ export default class LongDivideAnimator {
                     leftVal - subtractValue,
                     false
                 );
+                // TODO: Start as same color (blue) then transition to #2cc31c
                 const remainderDiv = remainder
                     .createElements(this._container)
                     .css({
                         position: "absolute",
                         "letter-spacing": letterSpacing,
+                        color: "blue",
                         opacity: 0,
                     });
 
                 this._toRemove.push(remainderDiv);
 
                 this._timeline
-                    .to(rLetterDiv, .5, {
+                    .to(rLetterDiv, 1, {
                         opacity: 1,
                         ease: globalEase,
                     })  /* Show the "R" for remainder */
-                    .to(remainderDiv, .5, {
+                    .to(remainderDiv, 1, {
                         left: dividendLeft + (index + 2) * numSpacing,
                         top: divideTop - numWidth - letterSpacing,
+                        color: "#2cc31c",
                         opacity: 1,
                         ease: globalEase,
-                    });  /* Move and show the remainder value */
+                    }, "-=1");  /* Move and show the remainder value (sync with rLetterDiv) */
             }
 
             leftVal = parseInt("" + (leftVal - subtractValue) + divisorArray[index + 1])
