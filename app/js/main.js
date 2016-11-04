@@ -49,18 +49,24 @@ $(document).ready(function() {
                 const parse = ui.draggable.attr("parse");
                 if (parse) {
                     const isOperator = "+-*/".includes(parse);
-                    parser.parseAndCreate(parse).containerDiv.css({
+                    const renderednum = parser.parseAndCreate(parse);
+                    const obj = renderednum.containerDiv.css({
                         left: ui.helper.position().left - (isOperator ? 55 : 0), //Because (0,0) of a renderedoperator isn't the + or - or / or * sign
                         top: ui.helper.position().top - (isOperator ? 72 : 0),
                         position: "absolute"
                     });
+
+                    if (!isOperator)
+                    {
+                        const snapped = renderednum.getSnapped(ui.draggable);
+                        if (snapped) {
+                            obj.detach().appendTo(snapped);
+                            obj.css({position: "relative", "left": 0, "top": 0});
+                            $(snapped).trigger("snapped", obj).trigger("dragStop", obj);
+                            renderednum._lastSnapped = snapped;
+                        }
+                    }
                 }
-                /*if (number && ui.helper.hasClass("helper")) //If it has the number attribute then it's a new number drag helper
-                     controller.createNumber(number, 0, 0).containerDiv.css({
-                         left: ui.helper.position().left,
-                         top: ui.helper.position().top,
-                         position: "absolute"
-                     });*/
             }
         });
 
@@ -75,7 +81,10 @@ $(document).ready(function() {
         },
         stop: function( e, ui ) {
 
-        }
+        },
+        snap: ".snapbox",
+        snapMode: "inner",
+        snapTolerance: 9,
     })
         .each(function() {
             //Since jQuery UI draggable objects are automatically set to position: absolute, we have to

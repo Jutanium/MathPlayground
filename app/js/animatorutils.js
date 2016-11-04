@@ -80,7 +80,7 @@ export default class Utils {
             return `${prev}<span class='${animation._animationId}-operand' id='${id}'>${curr}</span>`;
         }, "");
 
-        return [opSpans, newHtml];
+        return {spans: opSpans, html: newHtml};
     }
 
     static positionTopBox(startPos, operand, box, numWidth, botBoxText, topBoxText, letterSpacing) {

@@ -64,15 +64,16 @@ export default class LongMultiplyAnimator {
         if (botOpText * topOpText < 0) isNegative = true;
 
         // Set up HTML for individual numbers
-        const topOpTuple = Utils.individualNumberHtml(topOpArray, this);
-        const topOpSpans = topOpTuple[0];
-        const newTopHtml = topOpTuple[1];
+
+        const topOpData= Utils.individualNumberHtml(topOpArray, this);
+        const topOpSpans = topOpData.spans;
+        const newTopHtml = topOpData.html;
 
         topBox.find(".number-text").html(newTopHtml);
 
-        const botOpTuple = Utils.individualNumberHtml(botOpArray, this, "botOp");
-        const botOpSpans = botOpTuple[0];
-        const newBotHtml = botOpTuple[1];
+        const botOpData = Utils.individualNumberHtml(botOpArray, this, "botOp");
+        const botOpSpans = botOpData.spans;
+        const newBotHtml = botOpData.html;
 
         botBox.find(".number-text").html(newBotHtml);
 

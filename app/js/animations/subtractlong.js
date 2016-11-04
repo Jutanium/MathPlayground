@@ -50,14 +50,17 @@ export default class LongSubtractAnimator {
         const topOpReversed = topOpArray.slice().reverse();
         const botOpReversed = botOpArray.slice().reverse();
 
-        const topOpTuple = Utils.individualNumberHtml(topOpArray, this);
-        const topOpSpans = topOpTuple[0];
-        const newTopHtml = topOpTuple[1];
+
+        const topOpData= Utils.individualNumberHtml(topOpArray, this);
+        const topOpSpans = topOpData.spans;
+        const newTopHtml = topOpData.html;
+
         topBox.find(".number-text").html(newTopHtml);
 
-        const botOpTuple = Utils.individualNumberHtml(botOpArray, this, "botOp");
-        const botOpSpans = botOpTuple[0];
-        const newBotHtml = botOpTuple[1];
+        const botOpData = Utils.individualNumberHtml(botOpArray, this, "botOp");
+        const botOpSpans = botOpData.spans;
+        const newBotHtml = botOpData.html;
+
         botBox.find(".number-text").html(newBotHtml);
 
         const subtractSets = topOpReversed.map((currentValue, index) => {

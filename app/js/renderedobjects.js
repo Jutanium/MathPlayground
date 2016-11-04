@@ -96,10 +96,8 @@ class SnapObject extends RenderedObject {
         });
     }
 
-    dragStop(dragger) {
-        let lastSnapped = this._lastSnapped;
-        //Thanks to this answer: http://stackoverflow.com/a/5181159
-        /* Get the possible snap targets: */
+    //TODO: Maybe pull this into a utility class. Called also when a helper dragger is dropped (see main.js $("#playground").droppable())
+    getSnapped(dragger) {
         const snapElements = dragger.data('ui-draggable').snapElements;
 
         /* Pull out only the snap targets that are "snapping": */
@@ -109,14 +107,14 @@ class SnapObject extends RenderedObject {
 
         //If it isn't snapping to anything, make sure it is the child of the playground div
         if (snappedTo.length == 0) {
-            if (lastSnapped) {
+            if (this._lastSnapped) {
                 const top = dragger.offset().top;
                 const left = dragger.offset().left;
                 dragger.detach().appendTo($("#playground"));
                 dragger.css({position: 'absolute'})
                 dragger.css("width", "auto");
                 dragger.offset({top: top, left: left});
-                $(lastSnapped).trigger("unsnapped");
+                $(this._lastSnapped).trigger("unsnapped");
                 this._lastSnapped = null;
             }
         }
@@ -140,74 +138,33 @@ class SnapObject extends RenderedObject {
             }
             else if (snappedTo.length == 1)
                 snapped = snappedTo[0];
+
+            return snapped;
+        }
+    }
+    dragStop(dragger) {
+        console.log("That!!!");
+        let lastSnapped = this._lastSnapped;
+        //Thanks to this answer: http://stackoverflow.com/a/5181159
+        /* Get the possible snap targets: */
+
+        const snapped = this.getSnapped(dragger);
+        if (snapped) {
             dragger.detach().appendTo(snapped);
+
             dragger.css({position: "relative", "left": 0, "top": 0});
+
             $(snapped).trigger("snapped", dragger);
             if (lastSnapped != null && !$(lastSnapped).is($(snapped)))
                 $(lastSnapped).trigger("unsnapped");
             this._lastSnapped = snapped;
+
+            $(`.${this._snapTo}-container .snapbox`).each(function() {
+                $(this).trigger("dragStop", dragger);
+            });
         }
-        $(`.${this._snapTo}-container .snapbox`).each(function() {
-            $(this).trigger("dragStop", dragger);
-        });
 
         super.dragStop(dragger);
-    }
-    _onStop(dragger) {
-        let lastSnapped = this._lastSnapped;
-        //Thanks to this answer: http://stackoverflow.com/a/5181159
-        /* Get the possible snap targets: */
-        const snapElements = dragger.data('ui-draggable').snapElements;
-
-        /* Pull out only the snap targets that are "snapping": */
-        const snappedTo = $.map(snapElements, function(element) {
-            return element.snapping ? element.item : null;
-        });
-
-        //If it isn't snapping to anything, make sure it is the child of the playground div
-        if (snappedTo.length == 0) {
-            if (lastSnapped) {
-                const top = dragger.offset().top;
-                const left = dragger.offset().left;
-                dragger.detach().appendTo($("#playground"));
-                dragger.css({position: 'absolute'})
-                dragger.css("width", "auto");
-                dragger.offset({top: top, left: left});
-                $(lastSnapped).trigger("unsnapped");
-                this._lastSnapped = null;
-            }
-        }
-        else {
-            let snapped = null;
-            if (snappedTo.length > 1) { //Select the closest snapped element
-                let closest;
-                let closestDistance = 10000;
-                for (let i = 1; i < snappedTo.length; i++) {
-                    const s = $(snappedTo[i]);
-                    console.log(snappedTo.length, i);
-                    let distance = Math.sqrt( //Distance formula :) Pre-Algebra was not for nothing!
-                        Math.pow(dragger.offset().left - s.offset().left, 2) +
-                        Math.pow(dragger.offset().top - s.offset().top, 2));
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        closest = s;
-                    }
-                }
-                snapped = closest;
-            }
-            else if (snappedTo.length == 1)
-                snapped = snappedTo[0];
-            dragger.detach().appendTo(snapped);
-            dragger.css({position: "relative", "left": 0, "top": 0});
-            $(snapped).trigger("snapped", dragger);
-            if (lastSnapped != null && !$(lastSnapped).is($(snapped)))
-                $(lastSnapped).trigger("unsnapped");
-            this._lastSnapped = snapped;
-        }
-        $(`.${this._snapTo}-container .snapbox`).each(function() {
-            $(this).trigger("dragStop", dragger);
-        });
-
     }
 
 }

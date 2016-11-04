@@ -41,13 +41,13 @@ export default class LongAddAnimator {
         const firstOpReversed = firstOpArray.slice().reverse();
         const secondOpReversed = secondOpArray.slice().reverse();
 
-        const topOpTuple = Utils.individualNumberHtml(firstOpArray, this);
-        const firstOpSpans = topOpTuple[0];
-        const newLeftHtml = topOpTuple[1];
+        const topOpData= Utils.individualNumberHtml(firstOpArray, this);
+        const firstOpSpans = topOpData.spans;
+        const newLeftHtml = topOpData.html;
 
-        const botOpTuple = Utils.individualNumberHtml(secondOpArray, this, "botOp");
-        const secondOpSpans = botOpTuple[0];
-        const newRightHtml = botOpTuple[1];
+        const botOpData = Utils.individualNumberHtml(secondOpArray, this, "botOp");
+        const secondOpSpans = botOpData.spans;
+        const newRightHtml = botOpData.html;
 
         const addSets = firstOp > secondOp ?
                 firstOpReversed.map((currentValue, index) => {
