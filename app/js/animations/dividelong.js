@@ -102,7 +102,7 @@ export default class LongDivideAnimator {
             .createElements(this._container)
             .css({
                 position: "absolute",
-                "font-size": "2em",
+                fontSize: "2em",
                 display: "inline-block",
                 opacity: 0,
             });
@@ -112,19 +112,19 @@ export default class LongDivideAnimator {
             .containerDiv.find("#leftOp")
             .css({
                 color: "red",
-                "padding-right": letterSpacing,
+                paddingRight: letterSpacing,
             });
         const sideRight = side
             .containerDiv.find("#rightOp")
             .css({
                 color: "red",
-                "padding-right": letterSpacing,
+                paddingRight: letterSpacing,
             });
         const sideDivide = side
             .containerDiv.find("#divide")
             .css({
-                "font-weight": "bold",
-                "padding-right": letterSpacing,
+                fontWeight: "bold",
+                paddingRight: letterSpacing,
             });
         const sideEquals = side.containerDiv.find("#equals");
 
@@ -140,7 +140,7 @@ export default class LongDivideAnimator {
             .createElements(this._container)
             .css({
                 position: "absolute",
-                "font-size": "2em",
+                fontSize: "2em",
                 display: "inline-block",
                 opacity: 0,
             });
@@ -150,19 +150,19 @@ export default class LongDivideAnimator {
             .containerDiv.find("#leftBotOp")
             .css({
                 color: "red",
-                "padding-right": letterSpacing,
+                paddingRight: letterSpacing,
             });
         const sideBotRight = sideBot
             .containerDiv.find("#rightBotOp")
             .css({
                 color: "red",
-                "padding-right": letterSpacing,
+                paddingRight: letterSpacing,
             });
         const sideBotDivide = sideBot
             .containerDiv.find("#times")
             .css({
-                "font-weight": "bold",
-                "padding-right": letterSpacing,
+                fontWeight: "bold",
+                paddingRight: letterSpacing,
             });
         const sideBotEquals = sideBot.containerDiv.find("#equalsBot");
 
@@ -191,6 +191,7 @@ export default class LongDivideAnimator {
 
         // Show division steps
         const dividendLeft = divideLeft + letterSpacing;
+        const smallNumWidth = 16
 
         let answerNums = [];
         let leftVal = divisorArray[0];
@@ -198,12 +199,11 @@ export default class LongDivideAnimator {
         divisorArray.forEach((value, index) => {
             const wholeValue = Math.floor(leftVal / secondOp);
             const subtractValue = secondOp * wholeValue;
-            const sideAnswerLeft = sideDiv.position().left + sideDiv.width() + letterSpacing + intLength(wholeValue) * numSpacing;
 
             // Whole answer
             const answerWhole = new RenderedNumber(
                 `${this._animationId}-answerwhole-${index}`,
-                0,
+                sideDiv.position().left + smallNumWidth * (6 + intLength(leftVal) + intLength(secondOp)),
                 sideY,
                 wholeValue,
                 false
@@ -212,15 +212,16 @@ export default class LongDivideAnimator {
                 .createElements(this._container)
                 .css({
                     opacity: 0,
-                })
-                .addClass(Utils.answerClass);
+                });
+
+            answerWhole.containerDiv.addClass(Utils.answerClass);
             answerNums.push(answerWhole);
             this._toRemove.push(answerWholeDiv);
 
             // Value to subtract by
             const subtractVal = new RenderedNumber(
                 `${this._animationId}-subtractval-${index}`,
-                sideBotDiv.position().left + sideBotDiv.width() + letterSpacing,
+                sideBotDiv.position().left + smallNumWidth * (6 + intLength(leftVal) + intLength(secondOp)),
                 sideY + numWidth + letterSpacing,
                 subtractValue,
                 false
@@ -229,7 +230,7 @@ export default class LongDivideAnimator {
                 .createElements(this._container)
                 .css({
                     opacity: 0,
-                    "letter-spacing": letterSpacing,
+                    //letterSpacing: letterSpacing,
                 })
                 .addClass(Utils.answerClass);
             answerNums.push(subtractVal);
@@ -248,7 +249,7 @@ export default class LongDivideAnimator {
                 .css({
                     position: "absolute",
                     opacity: 0,
-                    "letter-spacing": letterSpacing,
+                    letterSpacing: letterSpacing,
                     color: "blue",
                 });
             this._toRemove.push(botValDiv);
@@ -265,8 +266,8 @@ export default class LongDivideAnimator {
                 .createElements(this._container)
                 .css({
                     position: "absolute",
-                    "font-size": "2em",
-                    "font-weight": "bold",
+                    fontSize: "2em",
+                    fontWeight: "bold",
                     opacity: 0,
                 });
             this._toRemove.push(minusDiv);
@@ -293,7 +294,6 @@ export default class LongDivideAnimator {
             this._timeline
                 .set(sideLeft, { text: String(leftVal) })  /* Set the top left side number */
                 .set(sideRight, { text: String(secondOp) })  /* Set the top right side number */
-                .set(answerWholeDiv, { left: sideDiv.position().left + sideDiv.width() })
                 .to(sideDiv, 1, {
                     opacity: 1,
                     ease: globalEase,
@@ -320,6 +320,7 @@ export default class LongDivideAnimator {
                 .to(subtractValDiv, 1, {
                     left: dividendLeft,
                     top: divideTop + letterSpacing + index * 2 * numSpacing + numSpacing,
+                    letterSpacing: `${letterSpacing}px`,
                     ease: globalEase,
                 }, "-=1")  /* Move the bot side answer to its location to show subtraction (sync with answerWholeDiv) */
                 .to(minusDiv, .5, {
@@ -393,7 +394,7 @@ export default class LongDivideAnimator {
                     .createElements(this._container)
                     .css({
                         position: "absolute",
-                        "letter-spacing": letterSpacing,
+                        letterSpacing: letterSpacing,
                         color: "blue",
                         opacity: 0,
                     });
