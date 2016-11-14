@@ -102,7 +102,7 @@ export default class LongDivideAnimator {
             .createElements(this._container)
             .css({
                 position: "absolute",
-                fontSize: "2em",
+                fontSize: 32,
                 display: "inline-block",
                 opacity: 0,
             });
@@ -140,7 +140,7 @@ export default class LongDivideAnimator {
             .createElements(this._container)
             .css({
                 position: "absolute",
-                fontSize: "2em",
+                fontSize: 32,
                 display: "inline-block",
                 opacity: 0,
             });
@@ -151,12 +151,14 @@ export default class LongDivideAnimator {
             .css({
                 color: "red",
                 paddingRight: letterSpacing,
+                opacity: 0,
             });
         const sideBotRight = sideBot
             .containerDiv.find("#rightBotOp")
             .css({
                 color: "red",
                 paddingRight: letterSpacing,
+                opacity: 0,
             });
         const sideBotDivide = sideBot
             .containerDiv.find("#times")
@@ -191,7 +193,7 @@ export default class LongDivideAnimator {
 
         // Show division steps
         const dividendLeft = divideLeft + letterSpacing;
-        const smallNumWidth = 16
+        const smallNumWidth = 16;
 
         let answerNums = [];
         let leftVal = divisorArray[0];
@@ -199,11 +201,12 @@ export default class LongDivideAnimator {
         divisorArray.forEach((value, index) => {
             const wholeValue = Math.floor(leftVal / secondOp);
             const subtractValue = secondOp * wholeValue;
+            const wholeValueLeft = sideDiv.position().left + smallNumWidth * (6 + intLength(leftVal) + intLength(secondOp));
 
             // Whole answer
             const answerWhole = new RenderedNumber(
                 `${this._animationId}-answerwhole-${index}`,
-                sideDiv.position().left + smallNumWidth * (6 + intLength(leftVal) + intLength(secondOp)),
+                wholeValueLeft,
                 sideY,
                 wholeValue,
                 false
@@ -230,7 +233,6 @@ export default class LongDivideAnimator {
                 .createElements(this._container)
                 .css({
                     opacity: 0,
-                    //letterSpacing: letterSpacing,
                 })
                 .addClass(Utils.answerClass);
             answerNums.push(subtractVal);
@@ -266,7 +268,7 @@ export default class LongDivideAnimator {
                 .createElements(this._container)
                 .css({
                     position: "absolute",
-                    fontSize: "2em",
+                    fontSize: 32,
                     fontWeight: "bold",
                     opacity: 0,
                 });
@@ -291,6 +293,41 @@ export default class LongDivideAnimator {
 
             this._toRemove.push(subEqualsDiv);
 
+            // Render copy of top side equation secondOp for clarification
+            const secondOpCopy = new RenderedNumber(
+                `${this._animationId}-secandopcopy-${index}`,
+                sideDiv.position().left + smallNumWidth * (3.5 - 1 / 9 + intLength(wholeValue)),
+                sideY + 2,
+                secondOp,
+                false
+            );
+            const secondOpCopyDiv = secondOpCopy
+                .createElements(this._container)
+                .css({
+                    position: "absolute",
+                    fontSize: 32 / 3,
+                    color: "red",
+                    opacity: 0,
+                });
+            this._toRemove.push(secondOpCopyDiv);
+
+            // Render copy of wholeValue for clarification
+            const wholeValueCopy = new RenderedNumber(
+                `${this._animationId}-wholevaluecopy-${index}`,
+                wholeValueLeft,
+                sideY,
+                wholeValue,
+                false
+            );
+            const wholeValueCopyDiv = wholeValueCopy
+                .createElements(this._container)
+                .css({
+                    position: "absolute",
+                    color: "2cc31c",
+                    opacity: 0,
+                });
+            this._toRemove.push(answerWholeDiv);
+
             this._timeline
                 .set(sideLeft, { text: String(leftVal) })  /* Set the top left side number */
                 .set(sideRight, { text: String(secondOp) })  /* Set the top right side number */
@@ -304,6 +341,18 @@ export default class LongDivideAnimator {
                 })  /* Fade in the top side answer */
                 .set(sideBotLeft, { text: String(secondOp) })  /* Set the bottom left side number */
                 .set(sideBotRight, { text: String(wholeValue) })  /* Set the bottom right side number */
+                .to(wholeValueCopyDiv, 1, {
+                    left: sideBotDiv.position().left + smallNumWidth * (3.5 - 1 / 9 + intLength(secondOp)),
+                    top: sideY + numWidth + letterSpacing + smallNumWidth / 3 - 2,
+                    fontSize: 32 / 3,
+                    color: "red",
+                    opacity: 1,
+                })  /* Move top side answer to bot side equation position */
+                .to(secondOpCopyDiv, 1, {
+                    left: sideBotDiv.position().left,
+                    top: sideY + numWidth + letterSpacing + smallNumWidth / 3 - 2,
+                    opacity: 1,
+                }, "-=1")  /* Move the top side second op to the bot side equation position */
                 .to(sideBotDiv, 1, {
                     opacity: 1,
                     ease: globalEase,
@@ -312,22 +361,23 @@ export default class LongDivideAnimator {
                     opacity: 1,
                     ease: globalEase,
                 })  /* Fade in the bottom side answer */
-                .to(answerWholeDiv, 1, {
+                .to(answerWholeDiv, 1.5, {
                     left: dividendLeft + index * numSpacing,
                     top: divideTop - numWidth - letterSpacing,
                     ease: globalEase,
                 })  /* Move the top side answer to the answer */
-                .to(subtractValDiv, 1, {
-                    left: dividendLeft,
+                // Fix this positioning (im done trying, i have spent the last 4 days working on this "left" line and I can't find what I'm missing. It's your problem now Dan (it needs to right-align with the sub-subtract equation) nm I solved this but I like my comment I am proud of the literary work that went into it and I shall keep it unless it begins to annoy me
+                .to(subtractValDiv, 1.5, {
+                    left: dividendLeft + numSpacing * ((index + 1) - intLength(leftVal)),
                     top: divideTop + letterSpacing + index * 2 * numSpacing + numSpacing,
                     letterSpacing: `${letterSpacing}px`,
                     ease: globalEase,
-                }, "-=1")  /* Move the bot side answer to its location to show subtraction (sync with answerWholeDiv) */
-                .to(minusDiv, .5, {
+                }, "-=1.5")  /* Move the bot side answer to its location to show subtraction (sync with answerWholeDiv) */
+                .to(minusDiv, 0.5, {
                     opacity: 1,
                     ease: globalEase,
                 })  /* Show the minus sign */
-                .to(subEqualsDiv, .5, {
+                .to(subEqualsDiv, 0.5, {
                     opacity: 1,
                     ease: globalEase,
                 }, "-=1")  /* Show the sub equals (sync with minusDiv) */
@@ -335,7 +385,7 @@ export default class LongDivideAnimator {
                     opacity: 1,
                     ease: globalEase,
                 })  /* Show the bot value after subtraction */
-                .to([sideDiv, sideBotDiv], 1, {
+                .to([sideDiv, sideBotDiv, wholeValueCopyDiv, secondOpCopyDiv], 1, {
                     opacity: 0,
                     ease: globalEase,
                 });  /* Hide the side equations */
@@ -389,7 +439,6 @@ export default class LongDivideAnimator {
                     leftVal - subtractValue,
                     false
                 );
-                // TODO: Start as same color (blue) then transition to #2cc31c
                 const remainderDiv = remainder
                     .createElements(this._container)
                     .css({
@@ -402,17 +451,17 @@ export default class LongDivideAnimator {
                 this._toRemove.push(remainderDiv);
 
                 this._timeline
-                    .to(rLetterDiv, 1, {
+                    .to(rLetterDiv, 1.5, {
                         opacity: 1,
                         ease: globalEase,
                     })  /* Show the "R" for remainder */
-                    .to(remainderDiv, 1, {
+                    .to(remainderDiv, 1.5, {
                         left: dividendLeft + (index + 2) * numSpacing,
                         top: divideTop - numWidth - letterSpacing,
                         color: "#2cc31c",
                         opacity: 1,
                         ease: globalEase,
-                    }, "-=1");  /* Move and show the remainder value (sync with rLetterDiv) */
+                    }, "-=1.5");  /* Move and show the remainder value (sync with rLetterDiv) */
             }
 
             leftVal = parseInt("" + (leftVal - subtractValue) + divisorArray[index + 1])
