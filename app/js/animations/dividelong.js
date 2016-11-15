@@ -323,7 +323,7 @@ export default class LongDivideAnimator {
                 .createElements(this._container)
                 .css({
                     position: "absolute",
-                    color: "2cc31c",
+                    color: "#2cc31c",
                     opacity: 0,
                 });
             this._toRemove.push(answerWholeDiv);
@@ -341,6 +341,7 @@ export default class LongDivideAnimator {
                 })  /* Fade in the top side answer */
                 .set(sideBotLeft, { text: String(secondOp) })  /* Set the bottom left side number */
                 .set(sideBotRight, { text: String(wholeValue) })  /* Set the bottom right side number */
+                .set([wholeValueCopyDiv, secondOpCopyDiv], { opacity: 1 })  /* Show faded side info */
                 .to(wholeValueCopyDiv, 1, {
                     left: sideBotDiv.position().left + smallNumWidth * (3.5 - 1 / 9 + intLength(secondOp)),
                     top: sideY + numWidth + letterSpacing + smallNumWidth / 3 - 2,
