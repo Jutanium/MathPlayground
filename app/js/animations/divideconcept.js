@@ -53,6 +53,8 @@ export default class ConceptDivideAnimation {
 
         const globalEase = Power3.easeOut;
 
+        const squareArray = [];
+
         // Canvas
         const canvas = Snap(canvasWidth + 1, canvasHeight);
 
@@ -79,10 +81,24 @@ export default class ConceptDivideAnimation {
                 position: "absolute",
             });
 
+        this._toRemove.push(dividendDiv);
+
         // Squares
         const createSquare = (x, y, width) => {
             return Utils.drawSquare(canvas, x, y, width);
         };
+
+        divisorArray.forEach((value, index) => {
+            const currentSquares = [];
+
+            for (let i = 0; i < value; i++) {
+                const square = createSquare(index * (numWidth + letterSpacing), i * (numWidth + letterSpacing) + 1, numWidth);
+
+                currentSquares[i] = "#" + (square.node.id = this._svgId + index + "-" + i);
+            }
+
+            squareArray[index] = currentSquares;
+        });
 
         /* Timeline */
         // TODO: Improve dividendDiv centering left algorithm
@@ -95,10 +111,20 @@ export default class ConceptDivideAnimation {
                 top: numSpacing,
             });  /* Position the dividend */
 
-        divisorArray.forEach((value, index) => {
-           for (let i = 0; i < value; i++) {
-               createSquare(index * (numWidth + letterSpacing), i * (numWidth + letterSpacing) + 1, numWidth);
-           }
+
+        const staggerLength = 2;
+
+        const squareTime = 1;
+        const stagger = staggerLength / firstOp.toString().split("").reduce((callB, init) => { return parseInt(callB) + parseInt(init) });
+
+        squareArray.forEach(value => {
+            value.forEach(val => {
+                this._timeline.from(val, squareTime, {
+                    y: -canvasHeight,
+                    opacity: 0,
+                    ease: Power3.easeOut,
+                }, `-=${squareTime - stagger}`);
+            })
         });
     }
 
