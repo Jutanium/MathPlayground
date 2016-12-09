@@ -121,9 +121,10 @@ export default class Controller {
 
         if (firstOp <= 144 && secondOp <= 12 && firstOp / secondOp <= 12) return new DivideShort(container);
 
-        return new DivideConcept(container); // TODO: Change to DivideLong for long division animation
+        //return new DivideConcept(container); // TODO: Change to DivideLong for long division animation
+        return new DivideLong(container);
     }
-
+    
     createNumber(number, parameters) {
         let x, y;
         if (parameters) {
