@@ -18,9 +18,14 @@ $(document).ready(function() {
         }
     });
 
-    controller.createDivide({attachLeft: controller.createNumber(613), attachRight: controller.createNumber(42)});
-    controller.createDivide({attachLeft: controller.createNumber(42), attachRight: controller.createNumber(613)});
-    controller.createDivide({attachLeft: controller.createNumber(425), attachRight: controller.createNumber(25)});
+    controller.createDivide({x: 200, y: 160, attachLeft: controller.createNumber(42), attachRight: controller.createNumber(6)});
+    controller.createMultiply({x: 400, y: 44, attachLeft: controller.createNumber(274), attachRight: controller.createNumber(13)});
+    controller.createSubtract({x: 600, y: -30, attachLeft: controller.createNumber(123), attachRight: controller.createNumber(45)});
+    controller.createAdd({x: 800, y: -68, attachLeft: controller.createNumber(49), attachRight: controller.createNumber(173)});
+    controller.createSubtract({x: 1000, y: -64});
+    controller.createDivide({x: 500, y: 100, attachLeft: controller.createNumber(425), attachRight: controller.createNumber(25)});
+    controller.createNumber(Math.floor(Math.random() * 9) + 1 , {x: 950, y: -60});
+    controller.createNumber(Math.floor(Math.random() * 9) + 1 , {x: 1100, y: -50});
 
     $("#trash")
         .droppable({
