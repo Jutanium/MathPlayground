@@ -7,6 +7,7 @@ import MultiplyShort from "app/js/animations/multiplyshort";
 import MultiplyLong from "app/js/animations/multiplylong";
 import DivideShort from "app/js/animations/divideshort";
 import DivideLong from "app/js/animations/dividelong";
+import DivideConcept from "app/js/animations/divideconcept";
 
 export default class Controller {
     constructor(parentDiv) {
@@ -120,9 +121,10 @@ export default class Controller {
 
         if (firstOp <= 144 && secondOp <= 12 && firstOp / secondOp <= 12) return new DivideShort(container);
 
+        //return new DivideConcept(container); // TODO: Change to DivideLong for long division animation
         return new DivideLong(container);
     }
-
+    
     createNumber(number, parameters) {
         let x, y;
         if (parameters) {

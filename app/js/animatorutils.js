@@ -92,4 +92,8 @@ export default class Utils {
         return startPos - (box.outerWidth(true) - box.width()) + operand.width() + numWidth / 2 +
             (Math.max(0, topBoxText.length - botBoxText.length) * (numWidth + letterSpacing));
     }
+
+    static intLength(num) {
+        return num.toString().length;
+    }
 }
