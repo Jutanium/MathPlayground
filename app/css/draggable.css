@@ -1,0 +1,25 @@
+div.ui-draggable {
+    cursor: pointer;
+    position: absolute;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+
+div.number-container {
+    display: inline-block;
+    width: auto;
+    height: 32px;
+}
+
+div.number-text {
+    font-family: "Times New Roman";
+    line-height:32px;
+    font-size: 3em;
+}
+
+div.equals {
+    position: absolute;
+}
